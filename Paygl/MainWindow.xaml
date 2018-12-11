@@ -1,12 +1,102 @@
 ﻿<Window x:Class="Paygl.MainWindow"
+        WindowStyle="None"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Paygl"
+        xmlns:paygl="clr-namespace:Paygl"
+        xmlns:views ="clr-namespace:Paygl.Views" 
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Paygl" Height="600" Width="1200"
+        MinHeight="290" MinWidth="516"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip"
+        Icon="./img/logo.ico">
+
+    <Border  Style="{StaticResource MyBorder2}" BorderThickness="1">
+        <Grid Margin="0,0,0,0" Style="{StaticResource MyGrid}">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="24"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource MyBorder}" BorderThickness="1" Margin="12,46,6,12" Grid.Row="0" Grid.Column="0">
+                <DockPanel>
+                    <StackPanel>
+                        <ItemsControl x:Name="ic">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type Button}">
+                                    <Button Style="{StaticResource MyButton}" Content="{Binding Content}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border Style="{StaticResource MyBorder}" BorderThickness="1" Margin="6,46,12,12" Grid.Row="0" Grid.Column="1" Name="brdMain">
+                <UserControl x:Name="MainControl"/>
+            </Border>
+            <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Margin="12,0,12,0" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+            </Grid>
+
+            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource MyPurple}" Margin="0,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="168"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="Info" Content="" FontSize="10" Grid.Column="0" Foreground="{StaticResource MyWhite}" Margin="13,-3" />
+                <Label x:Name="Info2" Content="" FontSize="10" Grid.Column="1" Grid.ColumnSpan="2" Foreground="{StaticResource MyWhite}" Margin="13,-3" />
+            </Grid>
+
+
+            <DockPanel x:Name="Dock" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource MyDockPanel}" LastChildFill="False" Height="30" VerticalAlignment="Top">
+                <DockPanel x:Name="TitleBar" Style="{StaticResource MyDockPanel}" Width="{Binding ActualWidth, ElementName=Dock}" MouseDown="TitleBar_MouseDown">
+                    <Image Source="Img/logo.png" DockPanel.Dock="Left" Width="26" Height="26" Margin="13,0,0,0"/>
+                    <Button x:Name="CloseButton" Style="{StaticResource MyControlButton}" DockPanel.Dock="Right" HorizontalAlignment="Left" Margin="0,3,10,3" Click="CloseButton_Click" >
+                        <Button.Background>
+                            <ImageBrush ImageSource="./img/close.png" />
+                        </Button.Background>
+                    </Button>
+                    <Button x:Name="MaxButton" Style="{StaticResource MyControlButton}" DockPanel.Dock="Right" HorizontalAlignment="Left" Margin="0,3,5,3" Click="MaxButton_Click" >
+                        <Button.Background>
+                            <ImageBrush ImageSource="./img/max.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Button x:Name="MinButton" Style="{StaticResource MyControlButton}" DockPanel.Dock="Right" HorizontalAlignment="Left" Margin="0,3,5,3" Click="MinButton_Click" >
+                        <Button.Background>
+                            <ImageBrush ImageSource="./img/minimize.png"/>
+                        </Button.Background>
+                    </Button>
+                    <Button x:Name="MenuButton" Style="{StaticResource MyControlButton}" DockPanel.Dock="Right" HorizontalAlignment="Left" Margin="0,3,20,3" Click="MenuButton_Click" >
+                        <Button.Background>
+                            <ImageBrush ImageSource="./img/menu.png" />
+                        </Button.Background>
+                    </Button>
+
+                    <TextBlock Style="{StaticResource MyTextBlock}" Margin="15,7,70,0" DockPanel.Dock="Left" Height="23">Paygl</TextBlock>
+                </DockPanel>
+            </DockPanel>
+            <paygl:RounderProgressBarControl x:Name="LoadingBar" Visibility="Hidden" Grid.Row="0" Grid.Column="1"></paygl:RounderProgressBarControl>
+        </Grid>
+    </Border>
 </Window>
