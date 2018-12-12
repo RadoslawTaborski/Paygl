@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Interfaces.Dal
 {
-    public interface IEntityConnector <DalEntity>
+    public interface IAdapter <DalEntity>
     {
         IEnumerable<DalEntity> GetAll(string filter);
         DalEntity GetById(int id);

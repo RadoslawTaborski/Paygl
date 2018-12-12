@@ -1,0 +1,213 @@
+DROP DATABASE IF EXISTS `paygl`;
+CREATE DATABASE IF NOT EXISTS `paygl` DEFAULT CHARACTER SET utf8 COLLATE utf8_polish_ci;
+USE `paygl`;
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS PROC_DROP_FOREIGN_KEY $$
+CREATE PROCEDURE PROC_DROP_FOREIGN_KEY(IN tableName VARCHAR(64) COLLATE utf8_general_ci, IN constraintName VARCHAR(64) COLLATE utf8_general_ci)
+BEGIN
+    IF EXISTS(
+        SELECT * FROM information_schema.table_constraints
+        WHERE 
+            table_schema    = DATABASE()     AND
+            table_name      = tableName      AND
+            constraint_name = constraintName AND
+            constraint_type = 'FOREIGN KEY' )
+    THEN
+        SET @query = CONCAT('ALTER TABLE ', tableName, ' DROP FOREIGN KEY ', constraintName, ';');
+        PREPARE stmt FROM @query; 
+        EXECUTE stmt; 
+        DEALLOCATE PREPARE stmt; 
+    END IF; 
+END$$
+
+
+DELIMITER ;
+
+CALL PROC_DROP_FOREIGN_KEY('users', 'fk__users__details_id');
+CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__user_id');
+CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__parent_id');
+CALL PROC_DROP_FOREIGN_KEY('operation_details', 'fk__operation_details__operation_id');
+CALL PROC_DROP_FOREIGN_KEY('operation_tags', 'fk__operation_tags__operation_id');
+CALL PROC_DROP_FOREIGN_KEY('operation_tags', 'fk__operation_tags__tag_id');
+CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__frequent_id');
+CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__importance_id');
+CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__transfer_type_id');
+CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__transaction_type_id');
+CALL PROC_DROP_FOREIGN_KEY('importances', 'fk__importances__language_id');
+CALL PROC_DROP_FOREIGN_KEY('transaction_types', 'fk__transaction_types__language_id');
+CALL PROC_DROP_FOREIGN_KEY('transfer_types', 'fk__transfer_types__language_id');
+CALL PROC_DROP_FOREIGN_KEY('frequencies', 'fk__frequencies__language_id');
+CALL PROC_DROP_FOREIGN_KEY('tags', 'fk__tags__language_id');
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` ( 
+`id` INT NOT NULL AUTO_INCREMENT 
+, `login` VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `password` VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL 
+, `details_id` INT NOT NULL 
+, PRIMARY KEY (`id`)
+, UNIQUE (`details_id`)) 
+ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+DROP TABLE IF EXISTS `user_details`;
+CREATE TABLE `user_details`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `last_name` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `first_name` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+DROP TABLE IF EXISTS `operations`;
+CREATE TABLE `operations`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `parent_id` INT
+, `user_id` INT
+, `amount` DECIMAL(10,2) NOT NULL
+, `transfer_type_id` INT NOT NULL
+, `transaction_type_id` INT NOT NULL
+, `frequent_id` INT
+, `importance_id` INT
+, `date` datetime NOT NULL
+, `receipt_path` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+DROP TABLE IF EXISTS `operation_details`;
+CREATE TABLE `operation_details`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `operation_id` INT
+, `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `quantity` DECIMAL(10,3) NOT NULL
+, `amount` DECIMAL(10,2) NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+DROP TABLE IF EXISTS `languages`;
+CREATE TABLE `languages`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `short` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `full` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+INSERT INTO `languages` (`id`, `short`, `full`) VALUES(NULL, 'pl-PL','polski');
+
+DROP TABLE IF EXISTS `tags`;
+CREATE TABLE `tags`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `text` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `language_id` INT NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'spożywcze',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'odzież',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'chemia',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'opłaty',1);
+
+DROP TABLE IF EXISTS `frequencies`;
+CREATE TABLE `frequencies`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `text` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `language_id` INT NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+INSERT INTO `frequencies` (`id`, `text`, `language_id`) VALUES(NULL, 'codzienne',1);
+INSERT INTO `frequencies` (`id`, `text`, `language_id`) VALUES(NULL, 'miesięczne',1);
+INSERT INTO `frequencies` (`id`, `text`, `language_id`) VALUES(NULL, 'kwartalne',1);
+INSERT INTO `frequencies` (`id`, `text`, `language_id`) VALUES(NULL, 'częste',1);
+INSERT INTO `frequencies` (`id`, `text`, `language_id`) VALUES(NULL, 'od czasu do czasu',1);
+INSERT INTO `frequencies` (`id`, `text`, `language_id`) VALUES(NULL, 'okazjonalne',1);
+INSERT INTO `frequencies` (`id`, `text`, `language_id`) VALUES(NULL, 'bardzo rzadkie',1);
+INSERT INTO `frequencies` (`id`, `text`, `language_id`) VALUES(NULL, 'jednorazowe',1);
+
+DROP TABLE IF EXISTS `transfer_types`;
+CREATE TABLE `transfer_types`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `text` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `language_id` INT NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+INSERT INTO `transfer_types` (`id`, `text`, `language_id`) VALUES(NULL, 'gotówka',1);
+INSERT INTO `transfer_types` (`id`, `text`, `language_id`) VALUES(NULL, 'przelew',1);
+
+DROP TABLE IF EXISTS `transaction_types`;
+CREATE TABLE `transaction_types`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `text` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `language_id` INT NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+INSERT INTO `transaction_types` (`id`, `text`, `language_id`) VALUES(NULL, 'przychód',1);
+INSERT INTO `transaction_types` (`id`, `text`, `language_id`) VALUES(NULL, 'wydatek',1);
+
+DROP TABLE IF EXISTS `importances`;
+CREATE TABLE `importances`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `text` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `language_id` INT NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+INSERT INTO `importances` (`id`, `text`, `language_id`) VALUES(NULL, 'konieczne',1);
+INSERT INTO `importances` (`id`, `text`, `language_id`) VALUES(NULL, 'oczekiwane',1);
+INSERT INTO `importances` (`id`, `text`, `language_id`) VALUES(NULL, 'przydatne',1);
+INSERT INTO `importances` (`id`, `text`, `language_id`) VALUES(NULL, 'mało przydatne',1);
+
+DROP TABLE IF EXISTS `operation_tags`;
+CREATE TABLE `operation_tags`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `operation_id` INT NOT NULL
+, `tag_id` INT NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+
+ALTER TABLE `users` ADD CONSTRAINT `fk__users__details_id`
+FOREIGN KEY (`details_id`) REFERENCES `user_details`(`id`);
+
+ALTER TABLE `operations` ADD CONSTRAINT `fk__operations__user_id`
+FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
+
+ALTER TABLE `operations` ADD CONSTRAINT `fk__operations__parent_id`
+FOREIGN KEY (`parent_id`) REFERENCES `operations`(`id`);
+
+ALTER TABLE `operation_details` ADD CONSTRAINT `fk__operation_details__operation_id`
+FOREIGN KEY (`operation_id`) REFERENCES `operations`(`id`);
+
+ALTER TABLE `operation_tags` ADD CONSTRAINT `fk__operation_tags__operation_id`
+FOREIGN KEY (`operation_id`) REFERENCES `operations`(`id`);
+
+ALTER TABLE `operation_tags` ADD CONSTRAINT `fk__operation_tags__tag_id`
+FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`);
+
+ALTER TABLE `operations` ADD CONSTRAINT `fk__operations__frequent_id`
+FOREIGN KEY (`frequent_id`) REFERENCES `frequencies`(`id`);
+
+ALTER TABLE `operations` ADD CONSTRAINT `fk__operations__importance_id`
+FOREIGN KEY (`importance_id`) REFERENCES `importances`(`id`);
+
+ALTER TABLE `operations` ADD CONSTRAINT `fk__operations__transfer_type_id`
+FOREIGN KEY (`transfer_type_id`) REFERENCES `transfer_types`(`id`);
+
+ALTER TABLE `operations` ADD CONSTRAINT `fk__operations__transaction_type_id`
+FOREIGN KEY (`transaction_type_id`) REFERENCES `transaction_types`(`id`);
+
+ALTER TABLE `importances` ADD CONSTRAINT `fk__importances__language_id`
+FOREIGN KEY (`language_id`) REFERENCES `languages`(`id`);
+
+ALTER TABLE `transaction_types` ADD CONSTRAINT `fk__transaction_types__language_id`
+FOREIGN KEY (`language_id`) REFERENCES `languages`(`id`);
+
+ALTER TABLE `transfer_types` ADD CONSTRAINT `fk__transfer_types__language_id`
+FOREIGN KEY (`language_id`) REFERENCES `languages`(`id`);
+
+ALTER TABLE `frequencies` ADD CONSTRAINT `fk__frequencies__language_id`
+FOREIGN KEY (`language_id`) REFERENCES `languages`(`id`);
+
+ALTER TABLE `tags` ADD CONSTRAINT `fk__tags__language_id`
+FOREIGN KEY (`language_id`) REFERENCES `languages`(`id`);

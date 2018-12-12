@@ -10,20 +10,26 @@ namespace DataBaseWithBusinessLogicConnector.Dal.DalEntities
         public int ParentId { get; private set; }
         public int UserId { get; private set; }
         public decimal Amount { get; private set; }
-        //TODO: enumy do tabeli
-        public int FrequentId { get; private set; }
+        public int TransactionTypeId { get; private set; }
+        public int TransferTypeId { get; private set; }
+        public int FrequenceId { get; private set; }
         public int ImportanceId { get; private set; }
         public string Date { get; private set; }
         public string ReceiptPath { get; private set; }
 
 
-        public DalOperationDetails(int id, int operationId, string name, double quantity, decimal amount)
+        public DalOperation(int id, int parentId, int userId, decimal amount, int transactionTypeId, int transferTypeId, int frequenceId, int importanceId, string date, string receiptPath)
         {
             Id = id;
-            Name = name;
-            Quantity = quantity;
+            ParentId = parentId;
+            UserId = userId;
             Amount = amount;
-            ParentId = operationId;
+            TransactionTypeId = transactionTypeId;
+            TransferTypeId = transferTypeId;
+            FrequenceId = frequenceId;
+            ImportanceId = importanceId;
+            Date = date;
+            ReceiptPath = receiptPath;
         }
     }
 }

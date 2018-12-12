@@ -8,11 +8,15 @@ namespace DataBaseWithBusinessLogicConnector.Entities
     {
         public int Id { get; private set; }
         public string Text { get; private set; }
+        public Language Language { get; private set; }
+        public List<Operation> Operations { get; private set; }
 
-        public Tag(int id, string text)
+        public Tag(int id, string text, Language language)
         {
             Id = id;
             Text = text;
+            Language = language;
+            Operations = new List<Operation>();
         }
     }
 }

@@ -4,13 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataBaseWithBusinessLogicConnector.Dal.Connectors
+namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
-    public class FrequenceConnector : IEntityConnector<DalFrequence>
+    public class FrequenceAdapter : IAdapter<DalFrequence>
     {
         private DbConnector _connection;
 
-        public FrequenceConnector(DbConnector connection)
+        public FrequenceAdapter(DbConnector connection)
         {
             _connection = connection;
         }
@@ -35,7 +35,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Connectors
             for (var i = 0; i < data.Tables[0].Rows.Count; ++i)
             {
                 var dataRow = data.Tables[0].Rows[i].ItemArray;
-                result.Add(new DalFrequence(int.Parse(dataRow[0].ToString()), dataRow[1].ToString()));
+                result.Add(new DalFrequence(int.Parse(dataRow[0].ToString()), dataRow[1].ToString(), int.Parse(dataRow[2].ToString())));
             }
 
             return result;
@@ -56,6 +56,14 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Connectors
         public void Update(int id, DalFrequence entity)
         {
             throw new NotImplementedException();
+        }
+
+        private static class Queries
+        {
+            const string select = "";
+            const string insert = "";
+            const string delete = "";
+            const string update = "";
         }
     }
 }

@@ -8,11 +8,13 @@ namespace DataBaseWithBusinessLogicConnector.Dal.DalEntities
     {
         public int Id { get; private set; }
         public string Text { get; private set; }
+        public int LanguageId { get; private set; }
 
-        public DalImportance(int id, string text)
+        public DalImportance(int id, string text, int languageId)
         {
             Id = id;
             Text = text;
+            LanguageId = languageId;
         }
     }
 }

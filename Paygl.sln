@@ -7,9 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paygl", "Paygl\Paygl.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{E1847C86-2E78-467D-91BB-AE8C457B5757}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBaseWithBusinessLogicConnector", "DataBaseWithBusinessLogicConnector\DataBaseWithBusinessLogicConnector.csproj", "{3C8791AD-A9A0-4FAA-9DBA-4B5E7144CA1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBaseWithBusinessLogicConnector", "DataBaseWithBusinessLogicConnector\DataBaseWithBusinessLogicConnector.csproj", "{3C8791AD-A9A0-4FAA-9DBA-4B5E7144CA1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Importer", "Importer\Importer.csproj", "{6E605F33-BC68-4A5E-AF67-19C7B8DCCD20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importer", "Importer\Importer.csproj", "{6E605F33-BC68-4A5E-AF67-19C7B8DCCD20}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{17B74542-838F-47F0-B014-697C68CD743E}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\db.txt = Scripts\db.txt
+		Scripts\Diagram.png = Scripts\Diagram.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
