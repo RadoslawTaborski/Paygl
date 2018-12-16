@@ -1,10 +1,11 @@
-﻿using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
+﻿using DataBaseWithBusinessLogicConnector.Interfaces;
+using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using System;
 using System.Collections.Generic;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {
-    public class Operation
+    public class Operation : IEntity
     {
         public int Id { get; private set; }
         public Operation Parent { get; private set; }
@@ -17,7 +18,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public DateTime Date { get; private set; }
         public string ReceiptPath { get; private set; }
         public List<Tag> Tags { get; private set; }
-
+        public bool IsDirty { get; private set; }
 
         public Operation(int id, Operation parent, User user, decimal amount, TransactionType transactionType, TransferType transferType, Frequence frequence, Importance importance, DateTime date, string receiptPath)
         {

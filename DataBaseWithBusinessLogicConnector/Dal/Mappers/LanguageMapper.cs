@@ -1,4 +1,5 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
+using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using System;
 using System.Collections.Generic;
@@ -6,26 +7,40 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
-    public class LanguageMapper : IMapper<LanguageMapper, DalLanguage>
+    public class LanguageMapper : IMapper<Language, DalLanguage>
     {
-        public IEnumerable<LanguageMapper> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalLanguage> dataEntities)
+        public IEnumerable<Language> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalLanguage> dataEntities)
         {
-            throw new NotImplementedException();
+            var result = new List<Language>();
+            foreach (var item in dataEntities)
+            {
+                result.Add(ConvertToBusinessLogicEntity(item));
+            }
+
+            return result;
         }
 
-        public LanguageMapper ConvertToBusinessLogicEntity(DalLanguage dataEntity)
+        public Language ConvertToBusinessLogicEntity(DalLanguage dataEntity)
         {
-            throw new NotImplementedException();
+            var result = new Language(dataEntity.Id, dataEntity.ShortName, dataEntity.FullName);
+            return result;
         }
 
-        public IEnumerable<DalLanguage> ConvertToDALEntitiesCollection(IEnumerable<LanguageMapper> dataEntities)
+        public IEnumerable<DalLanguage> ConvertToDALEntitiesCollection(IEnumerable<Language> dataEntities)
         {
-            throw new NotImplementedException();
+            var result = new List<DalLanguage>();
+            foreach (var item in dataEntities)
+            {
+                result.Add(ConvertToDALEntity(item));
+            }
+
+            return result;
         }
 
-        public DalLanguage ConvertToDALEntity(LanguageMapper businessEntity)
+        public DalLanguage ConvertToDALEntity(Language businessEntity)
         {
-            throw new NotImplementedException();
+            var result = new DalLanguage(businessEntity.Id, businessEntity.ShortName, businessEntity.FullName);
+            return result;
         }
     }
 }

@@ -3,30 +3,56 @@ using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
     public class TagMapper : IMapper<Tag, DalTag>
     {
+        private Language _language;
+        public TagMapper(Language language)
+        {
+            _language = language;
+        }
+
+        public void Update(Language language)
+        {
+            _language = language;
+        }
+
         public IEnumerable<Tag> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalTag> dataEntities)
         {
-            throw new NotImplementedException();
+            var result = new List<Tag>();
+            foreach (var item in dataEntities)
+            {
+                result.Add(ConvertToBusinessLogicEntity(item));
+            }
+
+            return result;
         }
 
         public Tag ConvertToBusinessLogicEntity(DalTag dataEntity)
         {
-            throw new NotImplementedException();
+            var result = new Tag(dataEntity.Id, dataEntity.Text, _language);
+            return result;
         }
 
         public IEnumerable<DalTag> ConvertToDALEntitiesCollection(IEnumerable<Tag> dataEntities)
         {
-            throw new NotImplementedException();
+            var result = new List<DalTag>();
+            foreach (var item in dataEntities)
+            {
+                result.Add(ConvertToDALEntity(item));
+            }
+
+            return result;
         }
 
         public DalTag ConvertToDALEntity(Tag businessEntity)
         {
-            throw new NotImplementedException();
+            var result = new DalTag(businessEntity.Id, businessEntity.Text, businessEntity.Id);
+            return result;
         }
     }
 }
