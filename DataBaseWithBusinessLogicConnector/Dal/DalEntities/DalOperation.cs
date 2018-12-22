@@ -1,10 +1,11 @@
-﻿using System;
+﻿using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.DalEntities
 {
-    public class DalOperation
+    public class DalOperation : IDalEntity
     {
         public int Id { get; private set; }
         public int ParentId { get; private set; }

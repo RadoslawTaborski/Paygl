@@ -9,7 +9,7 @@ namespace DataBaseWithBusinessLogicConnector.Interfaces.Dal
         IEnumerable<DalEntity> GetAll(string filter);
         DalEntity GetById(int id);
         void Insert(DalEntity entity);
-        void Update(int id, DalEntity entity);
-        void Delete(int id);
+        void Update(DalEntity entity);
+        void Delete(DalEntity entity);
     }
 }

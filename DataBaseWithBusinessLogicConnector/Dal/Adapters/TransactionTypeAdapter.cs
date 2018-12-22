@@ -2,50 +2,66 @@
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class TransactionTypeAdapter : IAdapter<DalTransactionType>
     {
-        private DbConnector _connection;
+        private readonly string TABLE = "transaction_types";
+        private readonly string[] COLUMNS = { "text", "language_id" };
 
-        public TransactionTypeAdapter(DbConnector connection)
+        private AdapterHelper _adapterHelper;
+
+        public TransactionTypeAdapter(DbConnector connector)
         {
-            _connection = connection;
+            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.ToList());
         }
 
-        public void Delete(int id)
+        public void Delete(DalTransactionType entity)
         {
-            throw new NotImplementedException();
+            _adapterHelper.Delete(entity.Id);
         }
 
         public IEnumerable<DalTransactionType> GetAll(string filter = "")
         {
-            throw new NotImplementedException();
+            var result = new List<DalTransactionType>();
+
+            var data = _adapterHelper.GetAll(filter);
+
+            for (var i = 0; i < data.Tables[0].Rows.Count; ++i)
+            {
+                var dataRow = data.Tables[0].Rows[i].ItemArray;
+                result.Add(new DalTransactionType(int.Parse(dataRow[0].ToString()), dataRow[1].ToString(), int.Parse(dataRow[2].ToString())));
+            }
+
+            return result;
         }
 
         public DalTransactionType GetById(int id)
         {
-            throw new NotImplementedException();
+            DalTransactionType result = null;
+
+            var data = _adapterHelper.GetById(id);
+
+            if (data.Tables.Count > 0)
+            {
+                var dataRow = data.Tables[0].Rows[0].ItemArray;
+                result = new DalTransactionType(int.Parse(dataRow[0].ToString()), dataRow[1].ToString(), int.Parse(dataRow[2].ToString()));
+            }
+
+            return result;
         }
 
         public void Insert(DalTransactionType entity)
         {
-            throw new NotImplementedException();
+            _adapterHelper.Insert(entity.Text, entity.LanguageId.ToString());
         }
 
-        public void Update(int id, DalTransactionType entity)
+        public void Update(DalTransactionType entity)
         {
-            throw new NotImplementedException();
-        }
-
-        private static class Queries
-        {
-            const string select = "";
-            const string insert = "";
-            const string delete = "";
-            const string update = "";
+            _adapterHelper.Update(entity.Id, entity.Text, entity.LanguageId.ToString());
         }
     }
 }

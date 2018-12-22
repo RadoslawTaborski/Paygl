@@ -88,7 +88,7 @@ DROP TABLE IF EXISTS `languages`;
 CREATE TABLE `languages`(
 `id` INT NOT NULL AUTO_INCREMENT
 , `short` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
-, `full` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `full` VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
 

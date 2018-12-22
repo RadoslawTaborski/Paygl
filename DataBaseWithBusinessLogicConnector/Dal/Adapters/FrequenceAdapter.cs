@@ -2,35 +2,33 @@
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class FrequenceAdapter : IAdapter<DalFrequence>
     {
-        private DbConnector _connection;
+        private readonly string TABLE = "frequencies";
+        private readonly string[] COLUMNS = { "text", "language_id" };
 
-        public FrequenceAdapter(DbConnector connection)
+        private AdapterHelper _adapterHelper;
+
+        public FrequenceAdapter(DbConnector connector)
         {
-            _connection = connection;
+            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.ToList());
         }
 
-        public void Delete(int id)
+        public void Delete(DalFrequence entity)
         {
-            throw new NotImplementedException();
+            _adapterHelper.Delete(entity.Id);
         }
 
-        public IEnumerable<DalFrequence> GetAll(string filter="")
+        public IEnumerable<DalFrequence> GetAll(string filter = "")
         {
             var result = new List<DalFrequence>();
-            var query = "SELECT * FROM `frequencies`";
-            if (filter != "")
-            {
-                query += " WHERE " + filter;
-            }
-            _connection.DataAccess.ConnectToDb();
-            var data = _connection.DataAccess.ExecuteSqlCommand(query);
-            _connection.DataAccess.Disconnect();
+
+            var data = _adapterHelper.GetAll(filter);
 
             for (var i = 0; i < data.Tables[0].Rows.Count; ++i)
             {
@@ -43,27 +41,27 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         public DalFrequence GetById(int id)
         {
-            throw new NotImplementedException();
+            DalFrequence result = null;
+
+            var data = _adapterHelper.GetById(id);
+
+            if (data.Tables.Count > 0)
+            {
+                var dataRow = data.Tables[0].Rows[0].ItemArray;
+                result = new DalFrequence(int.Parse(dataRow[0].ToString()), dataRow[1].ToString(), int.Parse(dataRow[2].ToString()));
+            }
+
+            return result;
         }
 
         public void Insert(DalFrequence entity)
         {
-            _connection.DataAccess.ConnectToDb();
-            _connection.DataAccess.ExecuteNonQueryDb($"INSERT INTO `frequencies` (`id`, `text`) VALUES(NULL, '{entity.Text}');");
-            _connection.DataAccess.Disconnect();    
+            _adapterHelper.Insert(entity.Text, entity.LanguageId.ToString());
         }
 
-        public void Update(int id, DalFrequence entity)
+        public void Update(DalFrequence entity)
         {
-            throw new NotImplementedException();
-        }
-
-        private static class Queries
-        {
-            const string select = "";
-            const string insert = "";
-            const string delete = "";
-            const string update = "";
+            _adapterHelper.Update(entity.Id, entity.Text, entity.LanguageId.ToString());
         }
     }
 }
