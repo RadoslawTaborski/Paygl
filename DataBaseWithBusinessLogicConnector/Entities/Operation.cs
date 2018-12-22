@@ -2,6 +2,7 @@
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {
@@ -35,6 +36,16 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             ReceiptPath = receiptPath;
             Tags = new List<RelTag>();
             DetailsList = new List<OperationDetails>();
+        }
+
+        public void SetDetailsList(IEnumerable<OperationDetails> detailsCollection)
+        {
+            DetailsList = detailsCollection.ToList();
+        }
+
+        public void SetTags(IEnumerable<RelTag> tags)
+        {
+            Tags = tags.ToList();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using DataBaseWithBusinessLogicConnector.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
@@ -17,6 +18,11 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Id = id;
             Text = text;
             Operations = new List<RelOperation>();
+        }
+
+        public void SetOperations(IEnumerable<RelOperation> operations)
+        {
+            Operations = operations.ToList();
         }
     }
 }
