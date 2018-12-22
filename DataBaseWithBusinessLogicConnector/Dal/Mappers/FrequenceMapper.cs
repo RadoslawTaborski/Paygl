@@ -8,19 +8,8 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
-    public class FrequenceMapper : IMapper<Frequence, DalFrequence>
+    public class FrequenceMapper
     {
-        private Language _language;
-        public FrequenceMapper(Language language)
-        {
-            _language=language;
-        }
-
-        public void Update(Language language)
-        {
-            _language = language;
-        }
-
         public IEnumerable<Frequence> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalFrequence> dataEntities)
         {
             var result = new List<Frequence>();
@@ -34,7 +23,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public Frequence ConvertToBusinessLogicEntity(DalFrequence dataEntity)
         {
-            var result = new Frequence(dataEntity.Id,dataEntity.Text, _language);
+            var result = new Frequence(dataEntity.Id,dataEntity.Text);
             return result;
         }
 

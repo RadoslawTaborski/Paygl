@@ -8,19 +8,8 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
-    public class ImportanceMapper : IMapper<Importance, DalImportance>
+    public class ImportanceMapper
     {
-        private Language _language;
-        public ImportanceMapper(Language language)
-        {
-            _language = language;
-        }
-
-        public void Update(Language language)
-        {
-            _language = language;
-        }
-
         public IEnumerable<Importance> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalImportance> dataEntities)
         {
             var result = new List<Importance>();
@@ -34,7 +23,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public Importance ConvertToBusinessLogicEntity(DalImportance dataEntity)
         {
-            var result = new Importance(dataEntity.Id, dataEntity.Text, _language);
+            var result = new Importance(dataEntity.Id, dataEntity.Text);
             return result;
         }
 

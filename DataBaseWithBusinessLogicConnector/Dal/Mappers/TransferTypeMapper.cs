@@ -8,19 +8,8 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
-    public class TransferTypeMapper : IMapper<TransferType, DalTransferType>
+    public class TransferTypeMapper
     {
-        private Language _language;
-        public TransferTypeMapper(Language language)
-        {
-            _language = language;
-        }
-
-        public void Update(Language language)
-        {
-            _language = language;
-        }
-
         public IEnumerable<TransferType> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalTransferType> dataEntities)
         {
             var result = new List<TransferType>();
@@ -34,7 +23,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public TransferType ConvertToBusinessLogicEntity(DalTransferType dataEntity)
         {
-            var result = new TransferType(dataEntity.Id, dataEntity.Text, _language);
+            var result = new TransferType(dataEntity.Id, dataEntity.Text);
             return result;
         }
 

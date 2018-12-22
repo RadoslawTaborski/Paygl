@@ -17,7 +17,8 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public Importance Importance { get; private set; }
         public DateTime Date { get; private set; }
         public string ReceiptPath { get; private set; }
-        public List<Tag> Tags { get; private set; }
+        public List<RelTag> Tags { get; private set; }
+        public List<OperationDetails> DetailsList { get; private set; }
         public bool IsDirty { get; private set; }
 
         public Operation(int id, Operation parent, User user, decimal amount, TransactionType transactionType, TransferType transferType, Frequence frequence, Importance importance, DateTime date, string receiptPath)
@@ -32,7 +33,8 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Importance = importance;
             Date = date;
             ReceiptPath = receiptPath;
-            Tags = new List<Tag>();
+            Tags = new List<RelTag>();
+            DetailsList = new List<OperationDetails>();
         }
     }
 }

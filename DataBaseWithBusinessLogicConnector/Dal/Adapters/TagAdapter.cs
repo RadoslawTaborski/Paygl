@@ -8,12 +8,19 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class TagAdapter : IAdapter<DalTag>
     {
+        private DbConnector _connection;
+
+        public TagAdapter(DbConnector connection)
+        {
+            _connection = connection;
+        }
+
         public void Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DalTag> GetAll(string filter)
+        public IEnumerable<DalTag> GetAll(string filter = "")
         {
             throw new NotImplementedException();
         }

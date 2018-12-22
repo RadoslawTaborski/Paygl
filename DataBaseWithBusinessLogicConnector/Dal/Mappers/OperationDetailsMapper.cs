@@ -5,26 +5,40 @@ using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
-    public class OperationDetailsMapper : IMapper<OperationDetails, DalOperationDetails>
+    public class OperationDetailsMapper
     {
         public IEnumerable<OperationDetails> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalOperationDetails> dataEntities)
         {
-            throw new System.NotImplementedException();
+            var result = new List<OperationDetails>();
+            foreach (var item in dataEntities)
+            {
+                result.Add(ConvertToBusinessLogicEntity(item));
+            }
+
+            return result;
         }
 
         public OperationDetails ConvertToBusinessLogicEntity(DalOperationDetails dataEntity)
         {
-            throw new System.NotImplementedException();
+            var result = new OperationDetails(dataEntity.Id, dataEntity.Name, dataEntity.Quantity,dataEntity.Amount);
+            return result;
         }
 
-        public IEnumerable<DalOperationDetails> ConvertToDALEntitiesCollection(IEnumerable<OperationDetails> dataEntities)
+        public IEnumerable<DalOperationDetails> ConvertToDALEntitiesCollection(IEnumerable<OperationDetails> dataEntities, int parentId)
         {
-            throw new System.NotImplementedException();
+            var result = new List<DalOperationDetails>();
+            foreach (var item in dataEntities)
+            {
+                result.Add(ConvertToDALEntity(item,parentId));
+            }
+
+            return result;
         }
 
-        public DalOperationDetails ConvertToDALEntity(OperationDetails businessEntity)
+        public DalOperationDetails ConvertToDALEntity(OperationDetails businessEntity, int parentId)
         {
-            throw new System.NotImplementedException();
+            var result = new DalOperationDetails(businessEntity.Id, parentId, businessEntity.Name, businessEntity.Quantity, businessEntity.Amount);
+            return result;
         }
     }
 }

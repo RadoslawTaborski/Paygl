@@ -7,19 +7,8 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
-    public class UserMapper : IMapper<User, DalUser>
+    public class UserMapper
     {
-        private UserDetails _details;
-        public UserMapper(UserDetails details)
-        {
-            _details = details;
-        }
-
-        public void Update(UserDetails details)
-        {
-            _details = details;
-        }
-
         public IEnumerable<User> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalUser> dataEntities)
         {
             var result = new List<User>();
@@ -33,7 +22,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public User ConvertToBusinessLogicEntity(DalUser dataEntity)
         {
-            var result = new User(dataEntity.Id, dataEntity.Login, dataEntity.Password, _details);
+            var result = new User(dataEntity.Id, dataEntity.Login, dataEntity.Password, null);
             return result;
         }
 
@@ -50,7 +39,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public DalUser ConvertToDALEntity(User businessEntity)
         {
-            var result = new DalUser(businessEntity.Id, businessEntity.Login, businessEntity.Password, businessEntity.Details.Id);
+            var result = new DalUser(businessEntity.Id, businessEntity.Login, businessEntity.Password, businessEntity.Details!=null? businessEntity.Details.Id:0);
             return result;
         }
     }

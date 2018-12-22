@@ -9,14 +9,12 @@ namespace DataBaseWithBusinessLogicConnector.Entities
     {
         public int Id { get; private set; }
         public string Text { get; private set; }
-        public Language Language { get; private set; }
         public bool IsDirty { get; private set; }
 
-        public TransactionType(int id, string text, Language language)
+        public TransactionType(int id, string text)
         {
             Id = id;
             Text = text;
-            Language = language;
         }
     }
 }

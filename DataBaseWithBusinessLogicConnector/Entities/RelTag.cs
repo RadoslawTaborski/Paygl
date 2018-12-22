@@ -5,18 +5,16 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {
-    public class Tag : IEntity
+    public class RelTag: IEntity
     {
         public int Id { get; private set; }
-        public string Text { get; private set; }
-        public List<RelOperation> Operations { get; private set; }
+        public Tag Tag { get; private set; }
         public bool IsDirty { get; private set; }
 
-        public Tag(int id, string text)
+        public RelTag(int id, Tag tag)
         {
             Id = id;
-            Text = text;
-            Operations = new List<RelOperation>();
+            Tag = tag;
         }
     }
 }

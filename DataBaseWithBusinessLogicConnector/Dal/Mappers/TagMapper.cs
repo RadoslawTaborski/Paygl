@@ -8,19 +8,8 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
-    public class TagMapper : IMapper<Tag, DalTag>
+    public class TagMapper
     {
-        private Language _language;
-        public TagMapper(Language language)
-        {
-            _language = language;
-        }
-
-        public void Update(Language language)
-        {
-            _language = language;
-        }
-
         public IEnumerable<Tag> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalTag> dataEntities)
         {
             var result = new List<Tag>();
@@ -34,7 +23,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public Tag ConvertToBusinessLogicEntity(DalTag dataEntity)
         {
-            var result = new Tag(dataEntity.Id, dataEntity.Text, _language);
+            var result = new Tag(dataEntity.Id, dataEntity.Text);
             return result;
         }
 

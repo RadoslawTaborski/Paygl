@@ -8,12 +8,19 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class ImportanceAdapter : IAdapter<DalImportance>
     {
+        private DbConnector _connection;
+
+        public ImportanceAdapter(DbConnector connection)
+        {
+            _connection = connection;
+        }
+
         public void Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DalImportance> GetAll(string filter)
+        public IEnumerable<DalImportance> GetAll(string filter = "")
         {
             throw new NotImplementedException();
         }

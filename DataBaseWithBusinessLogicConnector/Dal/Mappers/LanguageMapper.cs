@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
-    public class LanguageMapper : IMapper<Language, DalLanguage>
+    public class LanguageMapper
     {
         public IEnumerable<Language> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalLanguage> dataEntities)
         {

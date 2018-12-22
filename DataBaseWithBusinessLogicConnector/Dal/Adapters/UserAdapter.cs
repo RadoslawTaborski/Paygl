@@ -8,12 +8,19 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class UserAdapter : IAdapter<DalUser>
     {
+        private DbConnector _connection;
+
+        public UserAdapter(DbConnector connection)
+        {
+            _connection = connection;
+        }
+
         public void Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DalUser> GetAll(string filter)
+        public IEnumerable<DalUser> GetAll(string filter = "")
         {
             throw new NotImplementedException();
         }

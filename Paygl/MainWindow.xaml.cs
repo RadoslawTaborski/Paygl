@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using Paygl.Views;
 using DataAccess;
 using DataBaseWithBusinessLogicConnector;
-using DataBaseWithBusinessLogicConnector.Dal.Connectors;
+using DataBaseWithBusinessLogicConnector.Dal.Adapters;
 using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Dal.Mappers;
 using MySql.Data.MySqlClient;
@@ -67,11 +67,28 @@ namespace Paygl
         {
             var dbManager = new DatabaseManager(new MySqlConnectionFactory(), "localhost", "paygl", "root", "");
             var dbConnector = new DbConnector(dbManager);
-            var fc = new FrequenceConnector(dbConnector);
+            var languageAdapter = new LanguageAdapter(dbConnector);
+            var userAdapter = new UserAdapter(dbConnector);
+            var userDetailsAdapter = new UserDetailsAdapter(dbConnector);
+            var transactionTypeAdapter = new TransactionTypeAdapter(dbConnector);
+            var transferTypeAdapter = new TransferTypeAdapter(dbConnector);
+            var frequenceAdapter = new FrequenceAdapter(dbConnector);
+            var importanceAdapter = new ImportanceAdapter(dbConnector);
+            var tagAdapter = new TagAdapter(dbConnector);
 
-            var frequence = new Frequence(0, "często");
-            fc.Insert(new FrequenceMapper().ConvertToDALEntity(frequence));
-            var frequences = fc.GetAll();
+            var languages = new LanguageMapper().ConvertToBusinessLogicEntitiesCollection(languageAdapter.GetAll());
+            var language = languages.Where(l => l.ShortName == "pl-PL").First();
+
+            var dalUser = userAdapter.GetById(1);
+            var user = new UserMapper().ConvertToBusinessLogicEntity(dalUser);
+            user.SetDetails(new UserDetailsMapper().ConvertToBusinessLogicEntity(userDetailsAdapter.GetById(dalUser.DetailsId)));
+
+            var transactionTypes = new TransactionTypeMapper().ConvertToBusinessLogicEntitiesCollection(transactionTypeAdapter.GetAll($"id={language.Id}"));
+            var transferTypes = new TransferTypeMapper().ConvertToBusinessLogicEntitiesCollection(transferTypeAdapter.GetAll($"id={language.Id}"));
+            var frequences = new FrequenceMapper().ConvertToBusinessLogicEntitiesCollection(frequenceAdapter.GetAll($"id={language.Id}"));
+            var importances = new ImportanceMapper().ConvertToBusinessLogicEntitiesCollection(importanceAdapter.GetAll($"id={language.Id}"));
+
+            var tags = new TagMapper().ConvertToBusinessLogicEntitiesCollection(tagAdapter.GetAll($"id={language.Id}"));
         }
 
         #region EVENTS

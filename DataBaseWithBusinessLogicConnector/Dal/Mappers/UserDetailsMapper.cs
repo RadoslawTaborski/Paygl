@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
-    public class UserDetailsMapper : IMapper<UserDetails, DalUserDetails>
+    public class UserDetailsMapper
     {
         public IEnumerable<UserDetails> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalUserDetails> dataEntities)
         {

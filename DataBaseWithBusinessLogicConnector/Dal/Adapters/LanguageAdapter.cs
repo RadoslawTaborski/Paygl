@@ -8,12 +8,19 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class LanguageAdapter : IAdapter<DalLanguage>
     {
+        private DbConnector _connection;
+
+        public LanguageAdapter(DbConnector connection)
+        {
+            _connection = connection;
+        }
+
         public void Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<DalLanguage> GetAll(string filter)
+        public IEnumerable<DalLanguage> GetAll(string filter = "")
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using DataBaseWithBusinessLogicConnector;
-using DataBaseWithBusinessLogicConnector.Dal.Connectors;
+using DataBaseWithBusinessLogicConnector.Dal.Adapters;
 using DataBaseWithBusinessLogicConnector.Dal.Mappers;
 using DataBaseWithBusinessLogicConnector.Entities;
 using System;

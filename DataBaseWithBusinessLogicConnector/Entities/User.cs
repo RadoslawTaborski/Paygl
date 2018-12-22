@@ -20,5 +20,10 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Password = password;
             Details = details;
         }
+
+        public void SetDetails(UserDetails userDetails)
+        {
+            Details = userDetails;
+        }
     }
 }
