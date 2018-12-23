@@ -8,7 +8,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
 {
     public class Operation : IEntity
     {
-        public int Id { get; private set; }
+        public int? Id { get; private set; }
         public Operation Parent { get; private set; }
         public User User { get; private set; }
         public decimal Amount { get; private set; }
@@ -20,13 +20,15 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public string ReceiptPath { get; private set; }
         public List<RelTag> Tags { get; private set; }
         public List<OperationDetails> DetailsList { get; private set; }
-        public bool IsDirty { get; private set; }
+        public bool IsDirty { get; set; }
+        public string Description { get; private set; }
 
-        public Operation(int id, Operation parent, User user, decimal amount, TransactionType transactionType, TransferType transferType, Frequence frequence, Importance importance, DateTime date, string receiptPath)
+        public Operation(int? id, Operation parent, User user, string description, decimal amount, TransactionType transactionType, TransferType transferType, Frequence frequence, Importance importance, DateTime date, string receiptPath)
         {
             Id = id;
             Parent = parent;
             User = user;
+            Description = description;
             Amount = amount;
             TransactionType = transactionType;
             TransferType = transferType;
@@ -46,6 +48,21 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public void SetTags(IEnumerable<RelTag> tags)
         {
             Tags = tags.ToList();
+        }
+
+        public void SetFrequence(Frequence frequence)
+        {
+            Frequence = frequence;
+        }
+
+        public void SetImportance(Importance importance)
+        {
+            Importance = importance;
+        }
+
+        public void UpdateId(int? id)
+        {
+            Id = id;
         }
     }
 }

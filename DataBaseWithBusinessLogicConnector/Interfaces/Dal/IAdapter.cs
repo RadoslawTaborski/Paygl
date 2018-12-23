@@ -7,8 +7,8 @@ namespace DataBaseWithBusinessLogicConnector.Interfaces.Dal
     public interface IAdapter <DalEntity>
     {
         IEnumerable<DalEntity> GetAll(string filter);
-        DalEntity GetById(int id);
-        void Insert(DalEntity entity);
+        DalEntity GetById(int? id);
+        int Insert(DalEntity entity);
         void Update(DalEntity entity);
         void Delete(DalEntity entity);
     }

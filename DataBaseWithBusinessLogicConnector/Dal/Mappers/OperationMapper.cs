@@ -58,7 +58,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
             var frequence = _frequencies.Where(f => f.Id == dataEntity.FrequenceId).First();
             CultureInfo culture = new CultureInfo("en-US");
             DateTime tempDate = Convert.ToDateTime(dataEntity.Date, culture);
-            var result = new Operation(dataEntity.Id, operation, _user, dataEntity.Amount, transaction,transfer,frequence,importance,tempDate,dataEntity.ReceiptPath);
+            var result = new Operation(dataEntity.Id, operation, _user, dataEntity.Description, dataEntity.Amount, transaction,transfer,frequence,importance,tempDate,dataEntity.ReceiptPath);
             return result;
         }
 
@@ -75,7 +75,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public DalOperation ConvertToDALEntity(Operation businessEntity)
         {
-            var result = new DalOperation(businessEntity.Id,businessEntity.Parent.Id, businessEntity.User.Id, businessEntity.Amount, businessEntity.TransactionType.Id,businessEntity.TransferType.Id,businessEntity.Frequence.Id,businessEntity.Importance.Id,businessEntity.Date.ToShortDateString(),businessEntity.ReceiptPath);
+            var result = new DalOperation(businessEntity.Id,businessEntity.Parent?.Id, businessEntity.User.Id, businessEntity.Description, businessEntity.Amount, businessEntity.TransactionType.Id,businessEntity.TransferType.Id,businessEntity.Frequence.Id,businessEntity.Importance.Id,businessEntity.Date.ToString("yyyy-MM-dd"),businessEntity.ReceiptPath);
             return result;
         }
     }

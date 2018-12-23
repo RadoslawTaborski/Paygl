@@ -17,13 +17,16 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             queries = new Queries(tableName, columns);
         }
 
-        public void Delete(int id)
+        public void Delete(int? id)
         {
-            string query = queries.Update;
-            query += string.Format(queries.Where, $"id={id}");
-            _connection.DataAccess.ConnectToDb();
-            _connection.DataAccess.ExecuteNonQueryDb(query);
-            _connection.DataAccess.Disconnect();
+            if (!id.HasValue)
+            {
+                string query = queries.Update;
+                query += string.Format(queries.Where, $"id={id}");
+                _connection.DataAccess.ConnectToDb();
+                _connection.DataAccess.ExecuteNonQueryDb(query);
+                _connection.DataAccess.Disconnect();
+            }
         }
 
         public DataSet GetAll(string filter)
@@ -40,32 +43,62 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return data;
         }
 
-        public DataSet GetById(int id)
+        public DataSet GetById(int? id)
         {
-            string query = queries.Select;
-            query += string.Format(queries.Where, $"id={id}");
-            _connection.DataAccess.ConnectToDb();
-            var data = _connection.DataAccess.ExecuteSqlCommand(query);
-            _connection.DataAccess.Disconnect();
-
-            return data;
+            if (id.HasValue)
+            {
+                string query = queries.Select;
+                query += string.Format(queries.Where, $"id={id}");
+                _connection.DataAccess.ConnectToDb();
+                var data = _connection.DataAccess.ExecuteSqlCommand(query);
+                _connection.DataAccess.Disconnect();
+                return data;
+            }
+            return null;
         }
 
-        public void Insert(params string[] args)
+        public int Insert(params string[] args)
         {
             var query = string.Format(queries.Insert, args);
             _connection.DataAccess.ConnectToDb();
             _connection.DataAccess.ExecuteNonQueryDb(query);
+            var id = int.Parse(_connection.DataAccess.ExecuteSqlCommand("SELECT LAST_INSERT_ID()").Tables[0].Rows[0].ItemArray[0].ToString());
             _connection.DataAccess.Disconnect();
+
+            return id;
         }
 
-        public void Update(int id, params string[] args)
+        public void Update(string id, params string[] args)
         {
             string query = string.Format(queries.Update, args);
             query += string.Format(queries.Where, $"id={id}");
             _connection.DataAccess.ConnectToDb();
             _connection.DataAccess.ExecuteNonQueryDb(query);
             _connection.DataAccess.Disconnect();
+        }
+
+        public string ToStr(object obj, DataType dt)
+        {
+            switch (dt)
+            {
+                case DataType.INTEGER:
+                    return $"'{obj}'";
+                case DataType.INTEGER_NULLABLE:
+                    var nullable = obj as int?;
+                    if (nullable.HasValue)
+                    {
+                        return $"'{obj}'";
+                    }
+                    return "NULL";
+                case DataType.DECIMAL:
+                    return $"'{obj}'";
+                case DataType.DOUBLE:
+                    return $"'{obj}'";
+                case DataType.STRING:
+                    return $"'{obj}'";
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         private class Queries

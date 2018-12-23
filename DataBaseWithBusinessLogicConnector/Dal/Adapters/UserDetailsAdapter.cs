@@ -10,13 +10,18 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
     public class UserDetailsAdapter : IAdapter<DalUserDetails>
     {
         private readonly string TABLE = "user_details";
-        private readonly string[] COLUMNS = { "last_name", "first_name" };
+        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        {
+            ["id"] = DataType.INTEGER_NULLABLE,
+            ["last_name"] = DataType.STRING,
+            ["first_name"] = DataType.STRING,
+        };
 
         private AdapterHelper _adapterHelper;
 
         public UserDetailsAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.ToList());
+            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
         }
 
         public void Delete(DalUserDetails entity)
@@ -39,7 +44,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public DalUserDetails GetById(int id)
+        public DalUserDetails GetById(int? id)
         {
             DalUserDetails result = null;
 
@@ -54,14 +59,20 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public void Insert(DalUserDetails entity)
+        public int Insert(DalUserDetails entity)
         {
-            _adapterHelper.Insert(entity.LastName, entity.LastName);
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var lastName = _adapterHelper.ToStr(entity.LastName, COLUMNS["last_name"]);
+            var firstName = _adapterHelper.ToStr(entity.FirstName, COLUMNS["first_name"]);
+            return _adapterHelper.Insert(id, lastName, firstName);
         }
 
         public void Update(DalUserDetails entity)
         {
-            _adapterHelper.Update(entity.Id, entity.LastName, entity.LastName);
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var lastName = _adapterHelper.ToStr(entity.LastName, COLUMNS["last_name"]);
+            var firstName = _adapterHelper.ToStr(entity.FirstName, COLUMNS["first_name"]);
+            _adapterHelper.Update(id, lastName, firstName);
         }
     }
 }

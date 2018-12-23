@@ -10,13 +10,20 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
     public class OperationDetailsAdapter : IAdapter<DalOperationDetails>
     {
         private readonly string TABLE = "operation_details";
-        private readonly string[] COLUMNS = { "operation_id", "name", "quantity", "amount" };
+        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        {
+            ["id"] = DataType.INTEGER_NULLABLE,
+            ["operation_id"] = DataType.INTEGER_NULLABLE,
+            ["name"] = DataType.STRING,
+            ["quantity"] = DataType.DOUBLE,
+            ["amount"] = DataType.DECIMAL,
+        };
 
         private AdapterHelper _adapterHelper;
 
         public OperationDetailsAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.ToList());
+            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
         }
 
         public void Delete(DalOperationDetails entity)
@@ -39,7 +46,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public DalOperationDetails GetById(int id)
+        public DalOperationDetails GetById(int? id)
         {
             DalOperationDetails result = null;
 
@@ -54,14 +61,24 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public void Insert(DalOperationDetails entity)
+        public int Insert(DalOperationDetails entity)
         {
-            _adapterHelper.Insert(entity.OperationId.ToString(), entity.Name, entity.Quantity.ToString(), entity.Amount.ToString());
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var operationId = _adapterHelper.ToStr(entity.OperationId, COLUMNS["operation_id"]);
+            var name = _adapterHelper.ToStr(entity.Name, COLUMNS["name"]);
+            var quantity = _adapterHelper.ToStr(entity.Quantity, COLUMNS["quantity"]);
+            var amount = _adapterHelper.ToStr(entity.Amount, COLUMNS["amount"]);
+            return _adapterHelper.Insert(id, operationId, name, quantity, amount);
         }
 
         public void Update(DalOperationDetails entity)
         {
-            _adapterHelper.Update(entity.Id, entity.OperationId.ToString(), entity.Name, entity.Quantity.ToString(), entity.Amount.ToString());
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var operationId = _adapterHelper.ToStr(entity.OperationId, COLUMNS["operation_id"]);
+            var name = _adapterHelper.ToStr(entity.Name, COLUMNS["name"]);
+            var quantity = _adapterHelper.ToStr(entity.Quantity, COLUMNS["quantity"]);
+            var amount = _adapterHelper.ToStr(entity.Amount, COLUMNS["amount"]);
+            _adapterHelper.Update(id, operationId, name, quantity, amount);
         }
     }
 }

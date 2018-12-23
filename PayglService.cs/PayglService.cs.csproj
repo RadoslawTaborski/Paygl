@@ -2,18 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <ApplicationIcon />
-    <OutputType>Library</OutputType>
-    <StartupObject />
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="12.1.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\DataBaseWithBusinessLogicConnector\DataBaseWithBusinessLogicConnector.csproj" />
+    <ProjectReference Include="..\Importer\Importer.csproj" />
   </ItemGroup>
 
 </Project>

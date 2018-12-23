@@ -10,13 +10,18 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
     public class OperationTagAdapter : IAdapter<DalOperationTags>
     {
         private readonly string TABLE = "operation_tags";
-        private readonly string[] COLUMNS = { "operation_id", "tag_id" };
+        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        {
+            ["id"] = DataType.INTEGER_NULLABLE,
+            ["operation_id"] = DataType.INTEGER_NULLABLE,
+            ["tag_id"] = DataType.INTEGER_NULLABLE,
+        };
 
         private AdapterHelper _adapterHelper;
 
         public OperationTagAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.ToList());
+            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
         }
 
         public void Delete(DalOperationTags entity)
@@ -39,7 +44,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public DalOperationTags GetById(int id)
+        public DalOperationTags GetById(int? id)
         {
             DalOperationTags result = null;
 
@@ -54,14 +59,20 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public void Insert(DalOperationTags entity)
+        public int Insert(DalOperationTags entity)
         {
-            _adapterHelper.Insert(entity.OperationId.ToString(), entity.TagId.ToString());
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var operationId = _adapterHelper.ToStr(entity.OperationId, COLUMNS["operation_id"]);
+            var tagId = _adapterHelper.ToStr(entity.TagId, COLUMNS["tag_id"]);
+            return _adapterHelper.Insert(id, operationId, tagId);
         }
 
         public void Update(DalOperationTags entity)
         {
-            _adapterHelper.Update(entity.Id, entity.OperationId.ToString(), entity.TagId.ToString());
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var operationId = _adapterHelper.ToStr(entity.OperationId, COLUMNS["operation_id"]);
+            var tagId = _adapterHelper.ToStr(entity.TagId, COLUMNS["tag_id"]);
+            _adapterHelper.Update(id, operationId, tagId);
         }
     }
 }

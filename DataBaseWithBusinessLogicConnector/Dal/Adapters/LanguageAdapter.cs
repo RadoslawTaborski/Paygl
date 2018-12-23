@@ -10,13 +10,18 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
     public class LanguageAdapter : IAdapter<DalLanguage>
     {
         private readonly string TABLE = "languages";
-        private readonly string[] COLUMNS = { "short", "full" };
+        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        {
+            ["id"] = DataType.INTEGER_NULLABLE,
+            ["short"] = DataType.STRING,
+            ["full"] = DataType.STRING,
+        };
 
         private AdapterHelper _adapterHelper;
 
         public LanguageAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.ToList());
+            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
         }
 
         public void Delete(DalLanguage entity)
@@ -39,7 +44,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public DalLanguage GetById(int id)
+        public DalLanguage GetById(int? id)
         {
             DalLanguage result = null;
 
@@ -54,14 +59,20 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public void Insert(DalLanguage entity)
+        public int Insert(DalLanguage entity)
         {
-            _adapterHelper.Insert(entity.ShortName, entity.FullName);
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var shortName = _adapterHelper.ToStr(entity.ShortName, COLUMNS["short"]);
+            var fullName = _adapterHelper.ToStr(entity.FullName, COLUMNS["full"]);
+            return _adapterHelper.Insert(id, shortName, fullName);
         }
 
         public void Update(DalLanguage entity)
         {
-            _adapterHelper.Update(entity.Id, entity.ShortName, entity.FullName);
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var shortName = _adapterHelper.ToStr(entity.ShortName, COLUMNS["short"]);
+            var fullName = _adapterHelper.ToStr(entity.FullName, COLUMNS["full"]);
+            _adapterHelper.Update(id, shortName, fullName);
         }
     }
 }

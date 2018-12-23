@@ -8,12 +8,12 @@ namespace DataBaseWithBusinessLogicConnector.Entities
 {
     public class Tag : IEntity
     {
-        public int Id { get; private set; }
+        public int? Id { get; private set; }
         public string Text { get; private set; }
         public List<RelOperation> Operations { get; private set; }
-        public bool IsDirty { get; private set; }
+        public bool IsDirty { get; set; }
 
-        public Tag(int id, string text)
+        public Tag(int? id, string text)
         {
             Id = id;
             Text = text;
@@ -23,6 +23,11 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public void SetOperations(IEnumerable<RelOperation> operations)
         {
             Operations = operations.ToList();
+        }
+
+        public void UpdateId(int? id)
+        {
+            Id = id;
         }
     }
 }

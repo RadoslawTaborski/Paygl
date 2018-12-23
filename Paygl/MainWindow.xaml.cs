@@ -62,61 +62,6 @@ namespace Paygl
         }
         #endregion
 
-
-        private void test()
-        {
-            var dbManager = new DatabaseManager(new MySqlConnectionFactory(), "localhost", "paygl", "root", "");
-            var dbConnector = new DbConnector(dbManager);
-            var languageAdapter = new LanguageAdapter(dbConnector);
-            var userAdapter = new UserAdapter(dbConnector);
-            var userDetailsAdapter = new UserDetailsAdapter(dbConnector);
-            var transactionTypeAdapter = new TransactionTypeAdapter(dbConnector);
-            var transferTypeAdapter = new TransferTypeAdapter(dbConnector);
-            var frequenceAdapter = new FrequenceAdapter(dbConnector);
-            var importanceAdapter = new ImportanceAdapter(dbConnector);
-            var tagAdapter = new TagAdapter(dbConnector);
-            var operationAdapter = new OperationAdapter(dbConnector);
-            var operationDetailsAdapter = new OperationDetailsAdapter(dbConnector);
-            var operationTagRelationAdapter = new OperationTagAdapter(dbConnector);
-
-            var languages = new LanguageMapper().ConvertToBusinessLogicEntitiesCollection(languageAdapter.GetAll());
-            var language = languages.Where(l => l.ShortName == "pl-PL").First();
-
-            var dalUser = userAdapter.GetById(1);
-            var user = new UserMapper().ConvertToBusinessLogicEntity(dalUser);
-            user.SetDetails(new UserDetailsMapper().ConvertToBusinessLogicEntity(userDetailsAdapter.GetById(dalUser.DetailsId)));
-
-            var transactionTypes = new TransactionTypeMapper().ConvertToBusinessLogicEntitiesCollection(transactionTypeAdapter.GetAll($"language_id={language.Id}")).ToList();
-            var transferTypes = new TransferTypeMapper().ConvertToBusinessLogicEntitiesCollection(transferTypeAdapter.GetAll($"language_id={language.Id}")).ToList();
-            var frequencies = new FrequenceMapper().ConvertToBusinessLogicEntitiesCollection(frequenceAdapter.GetAll($"language_id={language.Id}")).ToList();
-            var importances = new ImportanceMapper().ConvertToBusinessLogicEntitiesCollection(importanceAdapter.GetAll($"language_id={language.Id}")).ToList();
-
-            var tags = new TagMapper().ConvertToBusinessLogicEntitiesCollection(tagAdapter.GetAll($"language_id={language.Id}")).ToList();
-            var operations = new OperationMapper(user, importances,frequencies,transactionTypes,transferTypes).ConvertToBusinessLogicEntitiesCollection(operationAdapter.GetAll($"user_id={user.Id}")).ToList();
-
-            var filter = "";
-            foreach(var operation in operations)
-            {
-                filter += $"operation_id={operation.Id} AND ";
-            }
-            filter = filter.Substring(0, filter.Length - 4);
-
-            var relations = new RelationMapper(operations, tags).ConvertToBusinessLogicEntitiesCollection(operationTagRelationAdapter.GetAll(filter));
-            var relTags = relations.Item1;
-            var relOperations = relations.Item2;
-
-            foreach(var operation in operations)
-            {
-                operation.SetDetailsList(new OperationDetailsMapper().ConvertToBusinessLogicEntitiesCollection(operationDetailsAdapter.GetAll($"operaiton_id={operation.Id}")));
-                operation.SetTags(relTags.Where(r => r.OperationId == operation.Id));
-            }
-
-            foreach(var tag in tags)
-            {
-                tag.SetOperations(relOperations.Where(r => r.TagId == tag.Id));
-            }
-        }
-
         #region EVENTS
 
         private void _b1_Click(object sender, RoutedEventArgs e)
@@ -133,7 +78,7 @@ namespace Paygl
 
         private void _b3_Click(object sender, RoutedEventArgs e)
         {
-            test();
+            Console.WriteLine(sender);
         }
 
         #region TITLE_BAR

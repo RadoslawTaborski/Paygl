@@ -7,6 +7,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="Orange">
-            
+        <Button x:Name="ImportOperations" Content="Import" Margin="10,10,10,0" VerticalAlignment="Top" Click="ImportOperations_Click"/>
     </Grid>
 </UserControl>

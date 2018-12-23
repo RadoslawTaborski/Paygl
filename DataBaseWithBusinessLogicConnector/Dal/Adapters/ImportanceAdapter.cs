@@ -10,13 +10,18 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
     public class ImportanceAdapter : IAdapter<DalImportance>
     {
         private readonly string TABLE = "importances";
-        private readonly string[] COLUMNS = { "text", "language_id" };
+        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        {
+            ["id"] = DataType.INTEGER_NULLABLE,
+            ["text"] = DataType.STRING,
+            ["language_id"] = DataType.INTEGER_NULLABLE,
+        };
 
         private AdapterHelper _adapterHelper;
 
         public ImportanceAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.ToList());
+            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
         }
 
         public void Delete(DalImportance entity)
@@ -39,7 +44,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public DalImportance GetById(int id)
+        public DalImportance GetById(int? id)
         {
             DalImportance result = null;
 
@@ -54,14 +59,20 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public void Insert(DalImportance entity)
+        public int Insert(DalImportance entity)
         {
-            _adapterHelper.Insert(entity.Text, entity.LanguageId.ToString());
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var text = _adapterHelper.ToStr(entity.Text, COLUMNS["text"]);
+            var language = _adapterHelper.ToStr(entity.LanguageId, COLUMNS["language_id"]);
+            return _adapterHelper.Insert(id, text, language);
         }
 
         public void Update(DalImportance entity)
         {
-            _adapterHelper.Update(entity.Id, entity.Text, entity.LanguageId.ToString());
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var text = _adapterHelper.ToStr(entity.Text, COLUMNS["text"]);
+            var language = _adapterHelper.ToStr(entity.LanguageId, COLUMNS["language_id"]);
+            _adapterHelper.Update(id, text, language);
         }
     }
 }

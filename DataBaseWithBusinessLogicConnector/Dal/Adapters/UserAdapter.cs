@@ -10,13 +10,19 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
     public class UserAdapter : IAdapter<DalUser>
     {
         private readonly string TABLE = "users";
-        private readonly string[] COLUMNS = { "login", "password", "details_id" };
+        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        {
+            ["id"] = DataType.INTEGER_NULLABLE,
+            ["login"] = DataType.STRING,
+            ["password"] = DataType.STRING,
+            ["details_id"] = DataType.INTEGER_NULLABLE,
+        };
 
         private AdapterHelper _adapterHelper;
 
         public UserAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.ToList());
+            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
         }
 
         public void Delete(DalUser entity)
@@ -39,7 +45,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public DalUser GetById(int id)
+        public DalUser GetById(int? id)
         {
             DalUser result = null;
 
@@ -54,14 +60,22 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             return result;
         }
 
-        public void Insert(DalUser entity)
+        public int Insert(DalUser entity)
         {
-            _adapterHelper.Insert(entity.Login, entity.Password, entity.DetailsId.ToString());
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var login = _adapterHelper.ToStr(entity.Login, COLUMNS["login"]);
+            var password = _adapterHelper.ToStr(entity.Password, COLUMNS["password"]);
+            var detailsId = _adapterHelper.ToStr(entity.DetailsId, COLUMNS["details_id"]);
+            return _adapterHelper.Insert(id, login, password, detailsId);
         }
 
         public void Update(DalUser entity)
         {
-            _adapterHelper.Update(entity.Id, entity.Login, entity.Password, entity.DetailsId.ToString());
+            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
+            var login = _adapterHelper.ToStr(entity.Login, COLUMNS["login"]);
+            var password = _adapterHelper.ToStr(entity.Password, COLUMNS["password"]);
+            var detailsId = _adapterHelper.ToStr(entity.DetailsId, COLUMNS["details_id"]);
+            _adapterHelper.Update(id, login, password,detailsId);
         }
     }
 }

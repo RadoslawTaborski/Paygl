@@ -1,4 +1,10 @@
-﻿using System;
+﻿using DataAccess;
+using DataBaseWithBusinessLogicConnector;
+using DataBaseWithBusinessLogicConnector.Dal.Adapters;
+using DataBaseWithBusinessLogicConnector.Dal.Mappers;
+using Importer;
+using PayglService.cs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +26,39 @@ namespace Paygl.Views
     /// </summary>
     public partial class ImportView : UserControl
     {
+        private Service _service;
+        public Service Service
+        {
+            get
+            {
+                if (_service == null)
+                {
+                    _service = new Service();
+                }
+
+                return _service;
+
+            }
+        }
         public ImportView()
         {
             InitializeComponent();
+            LoadAttributes();
+        }
+
+        private void LoadAttributes()
+        {
+            Service.LoadAttributes();
+        }
+
+        private void LoadOperations()
+        {
+            Service.LoadOperations();
+        }
+
+        private void ImportOperations_Click(object sender, RoutedEventArgs e)
+        {
+            Service.Import();
         }
     }
 }
