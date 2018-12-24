@@ -18,14 +18,9 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         public List<TransferType> _transferTypes;
         public User _user;
 
-        public OperationMapper(User user, List<Importance> importances, List<Frequence> frequencies, List<TransactionType> transactionTypes, List<TransferType> transferTypes)
+        public OperationMapper()
         {
-            _user = user;
             _operations = new List<Operation>();
-            _importances = importances;
-            _frequencies = frequencies;
-            _transactionTypes = transactionTypes;
-            _transferTypes = transferTypes;
         }
 
         public void Update(User user, List<Importance> importances, List<Frequence> frequencies, List<TransactionType> transactionTypes, List<TransferType> transferTypes)
@@ -59,6 +54,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
             CultureInfo culture = new CultureInfo("en-US");
             DateTime tempDate = Convert.ToDateTime(dataEntity.Date, culture);
             var result = new Operation(dataEntity.Id, operation, _user, dataEntity.Description, dataEntity.Amount, transaction,transfer,frequence,importance,tempDate,dataEntity.ReceiptPath);
+            result.IsDirty = false;
             return result;
         }
 

@@ -24,6 +24,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         public Importance ConvertToBusinessLogicEntity(DalImportance dataEntity)
         {
             var result = new Importance(dataEntity.Id, dataEntity.Text);
+            result.IsDirty = false;
             return result;
         }
 

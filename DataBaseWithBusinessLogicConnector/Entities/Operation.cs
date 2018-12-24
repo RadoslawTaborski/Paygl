@@ -38,6 +38,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             ReceiptPath = receiptPath;
             Tags = new List<RelTag>();
             DetailsList = new List<OperationDetails>();
+            IsDirty = true;
         }
 
         public void SetDetailsList(IEnumerable<OperationDetails> detailsCollection)
@@ -48,6 +49,22 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public void SetTags(IEnumerable<RelTag> tags)
         {
             Tags = tags.ToList();
+        }
+
+        public (RelTag, RelOperation) AddTag(Tag tag)
+        {
+            var relTag = new RelTag(null, tag, Id);
+            var relOperation = new RelOperation(null, this, tag.Id);
+            Tags.Add(relTag);
+            tag.AddOperation(relOperation);
+
+            return (relTag,relOperation);
+        }
+
+        public void RemoveTag(RelTag tag)
+        {
+            Tags.Remove(tag);
+            tag.Tag.RemoveOperation(tag.Tag.Operations.Where(o=>o.Operation==this).First());
         }
 
         public void SetFrequence(Frequence frequence)

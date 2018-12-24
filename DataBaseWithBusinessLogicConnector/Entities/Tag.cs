@@ -18,6 +18,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Id = id;
             Text = text;
             Operations = new List<RelOperation>();
+            IsDirty = true;
         }
 
         public void SetOperations(IEnumerable<RelOperation> operations)
@@ -28,6 +29,16 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public void UpdateId(int? id)
         {
             Id = id;
+        }
+
+        public void AddOperation(RelOperation relOperation)
+        {
+            Operations.Add(relOperation);
+        }
+
+        public void RemoveOperation(RelOperation relOperation)
+        {
+            Operations.Remove(relOperation);
         }
     }
 }

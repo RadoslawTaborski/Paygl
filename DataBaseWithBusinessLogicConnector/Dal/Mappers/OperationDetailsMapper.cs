@@ -21,6 +21,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         public OperationDetails ConvertToBusinessLogicEntity(DalOperationDetails dataEntity)
         {
             var result = new OperationDetails(dataEntity.Id, dataEntity.Name, dataEntity.Quantity,dataEntity.Amount);
+            result.IsDirty = false;
             return result;
         }
 

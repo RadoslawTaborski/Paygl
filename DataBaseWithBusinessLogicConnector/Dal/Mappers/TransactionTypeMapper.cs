@@ -24,6 +24,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         public TransactionType ConvertToBusinessLogicEntity(DalTransactionType dataEntity)
         {
             var result = new TransactionType(dataEntity.Id, dataEntity.Text);
+            result.IsDirty = false;
             return result;
         }
 

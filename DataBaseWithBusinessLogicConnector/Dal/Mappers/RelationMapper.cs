@@ -13,11 +13,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         public List<Operation> _operations;
         public List<Tag> _tags;
 
-        public RelationMapper(List<Operation> operations, List<Tag> tags)
-        {
-            _operations = operations;
-            _tags = tags;
-        }
+        public RelationMapper(){}
 
         public void Update(List<Operation> operations, List<Tag> tags)
         {
@@ -42,23 +38,42 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         {
             var result1 = new RelTag(dataEntity.Id, _tags.Where(t=>t.Id==dataEntity.TagId).First(), dataEntity.OperationId);
             var result2 = new RelOperation(dataEntity.Id, _operations.Where(o => o.Id == dataEntity.OperationId).First(), dataEntity.TagId);
+            result1.IsDirty = false;
+            result2.IsDirty = false;
             return (result1,result2);
         }
 
-        public IEnumerable<DalOperationTags> ConvertToDALEntitiesCollection(IEnumerable<RelTag> dataEntities1, IEnumerable<RelOperation> dataEntities2)
+        public IEnumerable<DalOperationTags> ConvertToDALEntitiesCollection(IEnumerable<RelTag> dataEntities1, Operation dataEntity2)
         {
             var result = new List<DalOperationTags>();
             for (var i = 0; i<dataEntities1.Count();++i)
             {
-                result.Add(ConvertToDALEntity(dataEntities1.ElementAt(i), dataEntities2.ElementAt(i)));
+                result.Add(ConvertToDALEntity(dataEntities1.ElementAt(i), dataEntity2));
             }
 
             return result;
         }
 
-        public DalOperationTags ConvertToDALEntity(RelTag businessEntity1, RelOperation businessEntity2)
+        public IEnumerable<DalOperationTags> ConvertToDALEntitiesCollection(IEnumerable<RelOperation> dataEntities1, Tag dataEntity2)
         {
-            var result = new DalOperationTags(businessEntity1.Id, businessEntity1.Tag.Id, businessEntity2.Operation.Id);
+            var result = new List<DalOperationTags>();
+            for (var i = 0; i < dataEntities1.Count(); ++i)
+            {
+                result.Add(ConvertToDALEntity(dataEntities1.ElementAt(i), dataEntity2));
+            }
+
+            return result;
+        }
+
+        public DalOperationTags ConvertToDALEntity(RelTag businessEntity1, Operation businessEntity2)
+        {
+            var result = new DalOperationTags(businessEntity1.Id, businessEntity2.Id, businessEntity1.Tag.Id);
+            return result;
+        }
+
+        public DalOperationTags ConvertToDALEntity(RelOperation businessEntity1, Tag businessEntity2)
+        {
+            var result = new DalOperationTags(businessEntity1.Id, businessEntity1.Operation.Id, businessEntity2.Id);
             return result;
         }
     }

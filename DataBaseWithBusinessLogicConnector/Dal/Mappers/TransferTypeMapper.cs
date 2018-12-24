@@ -24,6 +24,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         public TransferType ConvertToBusinessLogicEntity(DalTransferType dataEntity)
         {
             var result = new TransferType(dataEntity.Id, dataEntity.Text);
+            result.IsDirty = false;
             return result;
         }
 

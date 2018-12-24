@@ -17,6 +17,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Id = id;
             Tag = tag;
             OperationId = operationId;
+            IsDirty = true;
         }
 
         public void UpdateId(int? id)

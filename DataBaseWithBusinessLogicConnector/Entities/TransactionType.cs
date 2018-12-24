@@ -15,6 +15,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         {
             Id = id;
             Text = text;
+            IsDirty = true;
         }
 
         public void UpdateId(int? id)

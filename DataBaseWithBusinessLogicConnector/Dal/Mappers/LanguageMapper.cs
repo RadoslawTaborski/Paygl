@@ -23,6 +23,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         public Language ConvertToBusinessLogicEntity(DalLanguage dataEntity)
         {
             var result = new Language(dataEntity.Id, dataEntity.ShortName, dataEntity.FullName);
+            result.IsDirty = false;
             return result;
         }
 

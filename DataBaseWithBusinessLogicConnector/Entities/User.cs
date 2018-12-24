@@ -19,6 +19,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Login = login;
             Password = password;
             Details = details;
+            IsDirty = true;
         }
 
         public void SetDetails(UserDetails userDetails)

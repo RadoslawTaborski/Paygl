@@ -23,6 +23,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         public User ConvertToBusinessLogicEntity(DalUser dataEntity)
         {
             var result = new User(dataEntity.Id, dataEntity.Login, dataEntity.Password, null);
+            result.IsDirty = false;
             return result;
         }
 

@@ -24,6 +24,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         public Frequence ConvertToBusinessLogicEntity(DalFrequence dataEntity)
         {
             var result = new Frequence(dataEntity.Id,dataEntity.Text);
+            result.IsDirty = false;
             return result;
         }
 

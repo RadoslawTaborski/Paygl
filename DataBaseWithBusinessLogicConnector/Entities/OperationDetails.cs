@@ -19,6 +19,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Name = name;
             Quantity = quantity;
             Amount = amount;
+            IsDirty = true;
         }
 
         public void UpdateId(int? id)

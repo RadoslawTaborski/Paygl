@@ -24,6 +24,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         public Tag ConvertToBusinessLogicEntity(DalTag dataEntity)
         {
             var result = new Tag(dataEntity.Id, dataEntity.Text);
+            result.IsDirty = false;
             return result;
         }
 
