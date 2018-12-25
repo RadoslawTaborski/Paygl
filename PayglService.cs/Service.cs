@@ -15,55 +15,57 @@ using System.Text.RegularExpressions;
 
 namespace PayglService.cs
 {
-    public class Service
+    public static class Service
     {
         #region Entities
-        public User User { get; private set; }
-        public Language Language { get; private set; }
-        public List<TransactionType> TransactionTypes { get; private set; }
-        public List<TransferType> TransferTypes { get; private set; }
-        public List<Frequence> Frequencies { get; private set; }
-        public List<Importance> Importances { get; private set; }
-        public List<Tag> Tags { get; private set; }
-        public List<Operation> Operations { get; private set; }
+        public static User User { get; private set; }
+        public static Language Language { get; private set; }
+        public static List<TransactionType> TransactionTypes { get; private set; }
+        public static List<TransferType> TransferTypes { get; private set; }
+        public static List<Frequence> Frequencies { get; private set; }
+        public static List<Importance> Importances { get; private set; }
+        public static List<Tag> Tags { get; private set; }
+        public static List<Operation> Operations { get; private set; }
         #endregion
 
         #region DbAdapters
-        private DatabaseManager DbManager { get; set; }
-        private DbConnector DbConnector { get; set; }
-        private LanguageAdapter LanguageAdapter { get; set; }
-        private UserAdapter UserAdapter { get; set; }
-        private UserDetailsAdapter UserDetailsAdapter { get; set; }
-        private TransactionTypeAdapter TransactionTypeAdapter { get; set; }
-        private TransferTypeAdapter TransferTypeAdapter { get; set; }
-        private FrequenceAdapter FrequenceAdapter { get; set; }
-        private ImportanceAdapter ImportanceAdapter { get; set; }
-        private TagAdapter TagAdapter { get; set; }
-        private OperationAdapter OperationAdapter { get; set; }
-        private OperationDetailsAdapter OperationDetailsAdapter { get; set; }
-        private OperationTagAdapter OperationTagRelationAdapter { get; set; }
+        private static DatabaseManager DbManager { get; set; }
+        private static DbConnector DbConnector { get; set; }
+        private static LanguageAdapter LanguageAdapter { get; set; }
+        private static UserAdapter UserAdapter { get; set; }
+        private static UserDetailsAdapter UserDetailsAdapter { get; set; }
+        private static TransactionTypeAdapter TransactionTypeAdapter { get; set; }
+        private static TransferTypeAdapter TransferTypeAdapter { get; set; }
+        private static FrequenceAdapter FrequenceAdapter { get; set; }
+        private static ImportanceAdapter ImportanceAdapter { get; set; }
+        private static TagAdapter TagAdapter { get; set; }
+        private static OperationAdapter OperationAdapter { get; set; }
+        private static OperationDetailsAdapter OperationDetailsAdapter { get; set; }
+        private static OperationTagAdapter OperationTagRelationAdapter { get; set; }
         #endregion
 
         #region Mappers
-        private LanguageMapper LanguageMapper { get; set; }
-        private UserMapper UserMapper { get; set; }
-        private UserDetailsMapper UserDetailsMapper { get; set; }
-        private TransactionTypeMapper TransactionTypeMapper { get; set; }
-        private TransferTypeMapper TransferTypeMapper { get; set; }
-        private FrequenceMapper FrequenceMapper { get; set; }
-        private ImportanceMapper ImportanceMapper { get; set; }
-        private TagMapper TagMapper { get; set; }
-        private OperationMapper OperationMapper { get; set; }
-        private OperationDetailsMapper OperationDetailsMapper { get; set; }
-        private RelationMapper RelationMapper { get; set; }
+        private static LanguageMapper LanguageMapper { get; set; }
+        private static UserMapper UserMapper { get; set; }
+        private static UserDetailsMapper UserDetailsMapper { get; set; }
+        private static TransactionTypeMapper TransactionTypeMapper { get; set; }
+        private static TransferTypeMapper TransferTypeMapper { get; set; }
+        private static FrequenceMapper FrequenceMapper { get; set; }
+        private static ImportanceMapper ImportanceMapper { get; set; }
+        private static TagMapper TagMapper { get; set; }
+        private static OperationMapper OperationMapper { get; set; }
+        private static OperationDetailsMapper OperationDetailsMapper { get; set; }
+        private static RelationMapper RelationMapper { get; set; }
         #endregion
 
         public delegate IDalEntity Mapper(IEntity entity, int id);
 
-        public Service()
+        public static void SetService()
         {
-            DbManager = new DatabaseManager(new MySqlConnectionFactory(), "localhost", "paygl", "root", "");
+            var dataBaseData = ConfigurationManager.DataBaseData();
+            DbManager = new DatabaseManager(new MySqlConnectionFactory(), dataBaseData.Address, dataBaseData.Table, dataBaseData.Login, dataBaseData.Password);
             DbConnector = new DbConnector(DbManager);
+
             LanguageAdapter = new LanguageAdapter(DbConnector);
             UserAdapter = new UserAdapter(DbConnector);
             UserDetailsAdapter = new UserDetailsAdapter(DbConnector);
@@ -87,17 +89,38 @@ namespace PayglService.cs
             OperationMapper = new OperationMapper();
             OperationDetailsMapper = new OperationDetailsMapper();
             RelationMapper = new RelationMapper();
+
+            SetMainConfigurations();
         }
 
-        public void LoadAttributes()
+        private static void SetMainConfigurations()
         {
             var languages = LanguageMapper.ConvertToBusinessLogicEntitiesCollection(LanguageAdapter.GetAll());
-            Language = languages.Where(l => l.ShortName == "pl-PL").First();
+            Language = languages.Where(l => l.ShortName == ConfigurationManager.Language()).First();
 
-            var dalUser = UserAdapter.GetById(1);
+            DalUser dalUser;
+            var dalUsers = UserAdapter.GetAll($"login='{ConfigurationManager.User().Login}'");
+            if (dalUsers.Count() == 0)
+            {
+                throw new ArgumentException("User not exist");
+            }
+            else
+            {
+                if (dalUsers.ElementAt(0).Password == ConfigurationManager.User().Password)
+                {
+                    dalUser = dalUsers.ElementAt(0);
+                }
+                else
+                {
+                    throw new ArgumentException("Bad password");
+                }
+            }
             User = UserMapper.ConvertToBusinessLogicEntity(dalUser);
             User.SetDetails(UserDetailsMapper.ConvertToBusinessLogicEntity(UserDetailsAdapter.GetById(dalUser.DetailsId)));
+        }
 
+        public static void LoadAttributes()
+        {
             TransactionTypes = TransactionTypeMapper.ConvertToBusinessLogicEntitiesCollection(TransactionTypeAdapter.GetAll($"language_id={Language.Id}")).ToList();
             TransferTypes = TransferTypeMapper.ConvertToBusinessLogicEntitiesCollection(TransferTypeAdapter.GetAll($"language_id={Language.Id}")).ToList();
             Frequencies = FrequenceMapper.ConvertToBusinessLogicEntitiesCollection(FrequenceAdapter.GetAll($"language_id={Language.Id}")).ToList();
@@ -105,7 +128,7 @@ namespace PayglService.cs
             Tags = TagMapper.ConvertToBusinessLogicEntitiesCollection(TagAdapter.GetAll($"language_id={Language.Id}")).ToList();
         }
 
-        public void LoadOperations()
+        public static void LoadOperations()
         {
             OperationMapper.Update(User, Importances, Frequencies, TransactionTypes, TransferTypes);
             Operations = OperationMapper.ConvertToBusinessLogicEntitiesCollection(OperationAdapter.GetAll($"user_id={User.Id}")).ToList();
@@ -137,32 +160,34 @@ namespace PayglService.cs
             }
         }
 
-        public List<Operation> Import()
+        public static List<Operation> Import()
         {
-            var ignored = new List<string> {
-                " TABORSKI RADOSŁAW, MASŁOWICE 10, 98-300 MASŁOWICE "
-            };
+            var ignored = ConfigurationManager.IgnoredTransaction();
 
             var importFactory = ImportFactory.GetFactory("ING");
             IImporter importer = importFactory.CreateImporter();
 
             var transactions = importer.ReadTransactions();
+                
             foreach (var ignoredItem in ignored)
             {
-                transactions = transactions.Where(t => !Regex.Match(t.ContractorData, ignoredItem).Success);
+                if (ignoredItem.DescriptionRegex == "")
+                {
+                    ignoredItem.DescriptionRegex = ".*";
+                }
+
+                if (ignoredItem.TitleRegex == "")
+                {
+                    ignoredItem.TitleRegex = ".*";
+                }
+
+                transactions = transactions.Where(t => !Regex.Match(t.ContractorData, ignoredItem.DescriptionRegex).Success || !Regex.Match(t.Title, ignoredItem.TitleRegex).Success);
             }
 
-            return new TransactionToOperationMapper().ConvertToEntitiesCollection(transactions, User, TransactionTypes, TransferTypes).ToList();
-
-            //operations[0].SetFrequence(Frequencies[4]);
-            //operations[0].SetImportance(Importances[2]);
-            //operations[0].AddTag(Tags[4]);
-            //operations[0].IsDirty = true;
-
-            //UpdateOperationComplex(operations[0]);
+            return new TransactionToOperationMapper().ConvertToEntitiesCollection(transactions, User, Importances, Frequencies, Tags, TransactionTypes, TransferTypes).ToList();
         }
 
-        public void UpdateOperationComplex(Operation operation)
+        public static void UpdateOperationComplex(Operation operation)
         {
             if (operation.Parent != null)
             {
@@ -189,52 +214,52 @@ namespace PayglService.cs
 
         #region Updates
 
-        private int UpdateOperationDetails(OperationDetails details, int operationId)
+        private static int UpdateOperationDetails(OperationDetails details, int operationId)
         {
             return UpdateBusinessEntity(details, operationId, OperationDetailsAdapter, OperationDetailsMapper.ConvertToDALEntity);
         }
 
-        private int UpdateOperation(Operation operation)
+        private static int UpdateOperation(Operation operation)
         {
             return UpdateBusinessEntity(operation, OperationAdapter, OperationMapper.ConvertToDALEntity);
         }
 
-        private int UpdateUser(User user)
+        private static int UpdateUser(User user)
         {
             return UpdateBusinessEntity(user, UserAdapter, UserMapper.ConvertToDALEntity);
         }
 
-        private int UpdateUserDetails(UserDetails userDetails)
+        private static int UpdateUserDetails(UserDetails userDetails)
         {
             return UpdateBusinessEntity(userDetails, UserDetailsAdapter, UserDetailsMapper.ConvertToDALEntity);
         }
 
-        private int UpdateImportance(Importance importance)
+        private static int UpdateImportance(Importance importance)
         {
             return UpdateBusinessEntity(importance, ImportanceAdapter, ImportanceMapper.ConvertToDALEntity);
         }
 
-        private int UpdateFrequence(Frequence frequence)
+        private static int UpdateFrequence(Frequence frequence)
         {
             return UpdateBusinessEntity(frequence, FrequenceAdapter, FrequenceMapper.ConvertToDALEntity);
         }
 
-        private int UpdateTransactionType(TransactionType transactionType)
+        private static int UpdateTransactionType(TransactionType transactionType)
         {
             return UpdateBusinessEntity(transactionType, TransactionTypeAdapter, TransactionTypeMapper.ConvertToDALEntity);
         }
 
-        private int UpdateTransferType(TransferType transferType)
+        private static int UpdateTransferType(TransferType transferType)
         {
             return UpdateBusinessEntity(transferType, TransferTypeAdapter, TransferTypeMapper.ConvertToDALEntity);
         }
 
-        private int UpdateTag(Tag tag)
+        private static int UpdateTag(Tag tag)
         {
             return UpdateBusinessEntity(tag, TagAdapter, TagMapper.ConvertToDALEntity);
         }
 
-        private int InsertRelation(RelTag tag, Operation operation)
+        private static int InsertRelation(RelTag tag, Operation operation)
         {
             if (tag.IsDirty)
             {
@@ -249,7 +274,7 @@ namespace PayglService.cs
             return tag.Id.Value;
         }
 
-        private void DeleteRelation(RelTag tag, Operation operation)
+        private static void DeleteRelation(RelTag tag, Operation operation)
         {
             operation.RemoveTag(tag);
             OperationTagRelationAdapter.Delete(RelationMapper.ConvertToDALEntity(tag, operation));
@@ -258,7 +283,7 @@ namespace PayglService.cs
         #endregion
 
         #region UpdateBusinessEntity
-        private int UpdateBusinessEntity<Type, DalType>(Type entity, int id, IAdapter<DalType> adapter, Func<Type, int, DalType> convertToDALEntity)
+        private static int UpdateBusinessEntity<Type, DalType>(Type entity, int id, IAdapter<DalType> adapter, Func<Type, int, DalType> convertToDALEntity)
         where Type : IEntity where DalType : IDalEntity
         {
             if (entity.IsDirty)
@@ -277,7 +302,7 @@ namespace PayglService.cs
             return entity.Id.Value;
         }
 
-        private int UpdateBusinessEntity<Type, DalType>(Type entity, IAdapter<DalType> adapter, Func<Type, DalType> convertToDALEntity)
+        private static int UpdateBusinessEntity<Type, DalType>(Type entity, IAdapter<DalType> adapter, Func<Type, DalType> convertToDALEntity)
         where Type : IEntity where DalType : IDalEntity
         {
             if (entity.IsDirty)

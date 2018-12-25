@@ -22,6 +22,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public List<OperationDetails> DetailsList { get; private set; }
         public bool IsDirty { get; set; }
         public string Description { get; private set; }
+        public string ShortDescription { get; private set; }
 
         public Operation(int? id, Operation parent, User user, string description, decimal amount, TransactionType transactionType, TransferType transferType, Frequence frequence, Importance importance, DateTime date, string receiptPath)
         {
@@ -29,6 +30,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Parent = parent;
             User = user;
             Description = description;
+            ShortDescription = description;
             Amount = amount;
             TransactionType = transactionType;
             TransferType = transferType;
@@ -54,6 +56,11 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public void SetParent(Operation parent)
         {
             Parent = parent;
+        }
+
+        public void SetShortDescription(string newDescription)
+        {
+            ShortDescription = newDescription;
         }
 
         public (RelTag, RelOperation) AddTag(Tag tag)

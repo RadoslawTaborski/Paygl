@@ -39,25 +39,11 @@ namespace Paygl.Views
         private ObservableRangeCollection<Operation> _observableOperations;
         private ObservableRangeCollection<Tag> _observableTags;
 
-        private Service _service;
-        public Service Service
-        {
-            get
-            {
-                if (_service == null)
-                {
-                    _service = new Service();
-                }
-
-                return _service;
-
-            }
-        }
-
         public ImportView()
         {
             InitializeComponent();
             Background = Brushes.Azure;
+
             LoadAttributes();
             LoadOperations();
 
@@ -132,6 +118,7 @@ namespace Paygl.Views
             }
             _operation.SetParent(cbRelated.SelectedItem as Operation);
             _operation.ChangeDescription(tbNewDescription.Text);
+            _operation.SetShortDescription(tbNewDescription.Text);
 
             Service.UpdateOperationComplex(_operation);
             AddObservableOperation(_operation);
@@ -153,11 +140,17 @@ namespace Paygl.Views
                 ResetEditableControls();
 
                 tbDescription.Text = _operation.Description;
-                tbNewDescription.Text = _operation.Description;
+                tbNewDescription.Text = _operation.ShortDescription;
                 lDate.Content = _operation.Date.ToString("dd.MM.yyyy");
                 lAmount.Content = _operation.Amount;
+                cbFrequent.SelectedItem = _operation.Frequence;
+                cbImportance.SelectedItem = _operation.Importance;
                 lTransaction.Content = _operation.TransactionType.Text;
                 lTransfer.Content = _operation.TransferType.Text;
+                foreach(var tag in _operation.Tags)
+                {
+                    SetTagLabel(tag.Tag);
+                }
 
                 UserEditableControlsVisibility(Visibility.Visible);
             }
@@ -181,17 +174,7 @@ namespace Paygl.Views
 
             if (selected != null)
             {
-                if (!IsExistInSelectedTags(selected))
-                {
-                    _selectedTags.Add(selected);
-                    var newlabel = new Label
-                    {
-                        Content = selected.ToString()
-                    };
-                    newlabel.MouseDoubleClick += TagLabel_MouseDoubleClick;
-                    newlabel.Style = (Style)FindResource("MyLabel");
-                    TagStack.Children.Add(newlabel);
-                }
+                SetTagLabel(selected);
             }
         }
 
@@ -213,6 +196,21 @@ namespace Paygl.Views
                 }
             }
             return false;
+        }
+
+        private void SetTagLabel(Tag tag)
+        {
+            if (!IsExistInSelectedTags(tag))
+            {
+                _selectedTags.Add(tag);
+                var newlabel = new Label
+                {
+                    Content = tag.ToString()
+                };
+                newlabel.MouseDoubleClick += TagLabel_MouseDoubleClick;
+                newlabel.Style = (Style)FindResource("MyLabel");
+                TagStack.Children.Add(newlabel);
+            }
         }
     }
 }

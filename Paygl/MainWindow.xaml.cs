@@ -16,6 +16,7 @@ using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Dal.Mappers;
 using MySql.Data.MySqlClient;
 using System.Windows.Markup;
+using PayglService.cs;
 
 namespace Paygl
 {
@@ -47,6 +48,9 @@ namespace Paygl
         public MainWindow()
         {
             InitializeComponent();
+
+            ConfigurationManager.ReadConfig("./configuration.json");
+            Service.SetService();
 
             var menuButtons = new List<Button>();
             _b1 = CreateButton("btnOperations", "Operacje", MENU_BUTTON_HEIGHT, btnOperations_Click);
