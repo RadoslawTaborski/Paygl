@@ -75,7 +75,7 @@ namespace PayglService.cs
             ImportanceAdapter = new ImportanceAdapter(DbConnector);
             TagAdapter = new TagAdapter(DbConnector);
             OperationAdapter = new OperationAdapter(DbConnector);
-            OperationDetailsAdapter = new OperationDetailsAdapter(DbConnector);
+            OperationDetailsAdapter = new OperationDetailsAdapter(DbConnector); 
             OperationTagRelationAdapter = new OperationTagAdapter(DbConnector);
 
             LanguageMapper = new LanguageMapper();
