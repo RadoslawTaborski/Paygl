@@ -46,7 +46,9 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             for (var i = 0; i < data.Tables[0].Rows.Count; ++i)
             {
                 var dataRow = data.Tables[0].Rows[i].ItemArray;
-                result.Add(new DalOperation(int.Parse(dataRow[0].ToString()), int.Parse(dataRow[1].ToString()), int.Parse(dataRow[2].ToString()), dataRow[3].ToString(), decimal.Parse(dataRow[4].ToString()), int.Parse(dataRow[5].ToString()), int.Parse(dataRow[6].ToString()), int.Parse(dataRow[7].ToString()), int.Parse(dataRow[8].ToString()), dataRow[9].ToString(), dataRow[10].ToString()));
+                var parentId = int.TryParse(dataRow[1].ToString(), out var tempVal) ? tempVal : (int?)null;
+
+                result.Add(new DalOperation(int.Parse(dataRow[0].ToString()), parentId, int.Parse(dataRow[2].ToString()), dataRow[3].ToString(), decimal.Parse(dataRow[4].ToString()), int.Parse(dataRow[5].ToString()), int.Parse(dataRow[6].ToString()), int.Parse(dataRow[7].ToString()), int.Parse(dataRow[8].ToString()), dataRow[9].ToString(), dataRow[10].ToString()));
             }
 
             return result;
@@ -61,7 +63,9 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             if (data.Tables.Count > 0)
             {
                 var dataRow = data.Tables[0].Rows[0].ItemArray;
-                result = new DalOperation(int.Parse(dataRow[0].ToString()), int.Parse(dataRow[1].ToString()), int.Parse(dataRow[2].ToString()), dataRow[3].ToString(), decimal.Parse(dataRow[4].ToString()), int.Parse(dataRow[5].ToString()), int.Parse(dataRow[6].ToString()), int.Parse(dataRow[7].ToString()), int.Parse(dataRow[8].ToString()), dataRow[9].ToString(), dataRow[10].ToString());
+                var parentId = int.TryParse(dataRow[1].ToString(), out var tempVal) ? tempVal : (int?)null;
+
+                result = new DalOperation(int.Parse(dataRow[0].ToString()), parentId, int.Parse(dataRow[2].ToString()), dataRow[3].ToString(), decimal.Parse(dataRow[4].ToString()), int.Parse(dataRow[5].ToString()), int.Parse(dataRow[6].ToString()), int.Parse(dataRow[7].ToString()), int.Parse(dataRow[8].ToString()), dataRow[9].ToString(), dataRow[10].ToString());
             }
 
             return result;

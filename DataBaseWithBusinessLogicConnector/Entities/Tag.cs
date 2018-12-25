@@ -40,5 +40,10 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         {
             Operations.Remove(relOperation);
         }
+
+        public override string ToString()
+        {
+            return Text;
+        }
     }
 }

@@ -7,8 +7,8 @@
         xmlns:paygl="clr-namespace:Paygl"
         xmlns:views ="clr-namespace:Paygl.Views" 
         mc:Ignorable="d"
-        Title="Paygl" Height="600" Width="1200"
-        MinHeight="290" MinWidth="516"
+        Title="Paygl" Height="650" Width="1200"
+        MinHeight="650" MinWidth="1200"
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip"
         Icon="./img/logo.ico">
@@ -21,26 +21,32 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="250"/>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <Border Style="{StaticResource MyBorder}" BorderThickness="1" Margin="12,46,6,12" Grid.Row="0" Grid.Column="0">
+            <Border x:Name="MainMenu" Style="{StaticResource MyBorder}" BorderThickness="1" Margin="12,46,6,12" Grid.Row="0" Grid.Column="0">
                 <DockPanel>
                     <StackPanel>
-                        <ItemsControl x:Name="ic">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type Button}">
-                                    <Button Style="{StaticResource MyButton}" Content="{Binding Content}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
+                        <ItemsControl x:Name="_firstPanel">
                         </ItemsControl>
                     </StackPanel>
                 </DockPanel>
             </Border>
-            <Border Style="{StaticResource MyBorder}" BorderThickness="1" Margin="6,46,12,12" Grid.Row="0" Grid.Column="1" Name="brdMain">
+            <Border Style="{StaticResource MyBorder}" BorderThickness="1" Margin="6,46,12,12" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="brdMain">
                 <UserControl x:Name="MainControl"/>
             </Border>
-            <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Margin="12,0,12,0" >
+
+            <Border x:Name="SecondMenu" Style="{StaticResource MyBorder}" BorderThickness="1" Margin="-20,54,50,20" Grid.Row="0" Grid.Column="1" >
+                <DockPanel>
+                    <StackPanel x:Name="_secondStockPanel">
+                        <ItemsControl x:Name="_secondPanel">
+                        </ItemsControl>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Margin="12,0,12,0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -55,7 +61,7 @@
                 </Grid.ColumnDefinitions>
             </Grid>
 
-            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource MyPurple}" Margin="0,5,0,0">
+            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="{StaticResource MyPurple}" Margin="0,5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="168"/>
                     <ColumnDefinition Width="110"/>
@@ -69,7 +75,7 @@
             </Grid>
 
 
-            <DockPanel x:Name="Dock" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource MyDockPanel}" LastChildFill="False" Height="30" VerticalAlignment="Top">
+            <DockPanel x:Name="Dock" Grid.Row="0" Grid.ColumnSpan="3" Grid.Column="0" Style="{StaticResource MyDockPanel}" LastChildFill="False" Height="30" VerticalAlignment="Top">
                 <DockPanel x:Name="TitleBar" Style="{StaticResource MyDockPanel}" Width="{Binding ActualWidth, ElementName=Dock}" MouseDown="TitleBar_MouseDown">
                     <Image Source="Img/logo.png" DockPanel.Dock="Left" Width="26" Height="26" Margin="13,0,0,0"/>
                     <Button x:Name="CloseButton" Style="{StaticResource MyControlButton}" DockPanel.Dock="Right" HorizontalAlignment="Left" Margin="0,3,10,3" Click="CloseButton_Click" >

@@ -126,7 +126,7 @@ namespace PayglService.cs
 
                 foreach (var operation in Operations)
                 {
-                    operation.SetDetailsList(OperationDetailsMapper.ConvertToBusinessLogicEntitiesCollection(OperationDetailsAdapter.GetAll($"operaiton_id={operation.Id}")));
+                    operation.SetDetailsList(OperationDetailsMapper.ConvertToBusinessLogicEntitiesCollection(OperationDetailsAdapter.GetAll($"operation_id={operation.Id}")));
                     operation.SetTags(relTags.Where(r => r.OperationId == operation.Id));
                 }
 
@@ -137,10 +137,10 @@ namespace PayglService.cs
             }
         }
 
-        public void Import()
+        public List<Operation> Import()
         {
             var ignored = new List<string> {
-                " przelew Smart Saver Płatność kartą [0-9]{2}.[0-9]{2}.[0-9]{4} Nr karty 4246xx4642 Kwota: [0-9]+,[0-9]{2} [A-Z]{3}"
+                " TABORSKI RADOSŁAW, MASŁOWICE 10, 98-300 MASŁOWICE "
             };
 
             var importFactory = ImportFactory.GetFactory("ING");
@@ -149,22 +149,20 @@ namespace PayglService.cs
             var transactions = importer.ReadTransactions();
             foreach (var ignoredItem in ignored)
             {
-                transactions = transactions.Where(t => !Regex.Match(t.Title, ignoredItem).Success);
+                transactions = transactions.Where(t => !Regex.Match(t.ContractorData, ignoredItem).Success);
             }
 
-            var operations = new TransactionToOperationMapper().ConvertToEntitiesCollection(transactions, User, TransactionTypes, TransferTypes).ToList();
-            operations.ForEach(o => o.IsDirty = true);
+            return new TransactionToOperationMapper().ConvertToEntitiesCollection(transactions, User, TransactionTypes, TransferTypes).ToList();
 
-            operations[0].SetFrequence(Frequencies[4]);
-            operations[0].SetImportance(Importances[2]);
-            operations[0].AddTag(Tags[4]);
-            operations[0].IsDirty = true;
+            //operations[0].SetFrequence(Frequencies[4]);
+            //operations[0].SetImportance(Importances[2]);
+            //operations[0].AddTag(Tags[4]);
+            //operations[0].IsDirty = true;
 
-            UpdateOperationComplex(operations[0]);
+            //UpdateOperationComplex(operations[0]);
         }
 
-        #region private
-        private void UpdateOperationComplex(Operation operation)
+        public void UpdateOperationComplex(Operation operation)
         {
             if (operation.Parent != null)
             {
@@ -181,11 +179,13 @@ namespace PayglService.cs
 
             UpdateOperation(operation);
 
-            foreach(var tag in operation.Tags)
+            foreach (var tag in operation.Tags)
             {
-                InsertRelation(tag,operation);
+                InsertRelation(tag, operation);
             }
         }
+
+        #region private
 
         #region Updates
 

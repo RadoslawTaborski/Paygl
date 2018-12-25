@@ -23,11 +23,11 @@ namespace PayglService.cs.Helpers
         {
             if (transaction.Amount < 0)
             {
-                return new Operation(null, null, user, transaction.Title, -1* transaction.Amount, transactionsType[1], transfersType[1], null,null,transaction.DateTime,"");
+                return new Operation(null, null, user, transaction.ContractorData+Environment.NewLine+transaction.Title, -1* transaction.Amount, transactionsType[1], transfersType[1], null,null,transaction.DateTime,"");
             }
             else
             {
-                return new Operation(null, null, user, transaction.Title, transaction.Amount, transactionsType[0], transfersType[1], null, null, transaction.DateTime, "");
+                return new Operation(null, null, user, transaction.ContractorData + Environment.NewLine + transaction.Title, transaction.Amount, transactionsType[0], transfersType[1], null, null, transaction.DateTime, "");
             }
         }
     }

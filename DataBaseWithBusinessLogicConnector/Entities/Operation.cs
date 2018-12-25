@@ -51,6 +51,11 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Tags = tags.ToList();
         }
 
+        public void SetParent(Operation parent)
+        {
+            Parent = parent;
+        }
+
         public (RelTag, RelOperation) AddTag(Tag tag)
         {
             var relTag = new RelTag(null, tag, Id);
@@ -80,6 +85,16 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public void UpdateId(int? id)
         {
             Id = id;
+        }
+
+        public override string ToString()
+        {
+            return Date.ToString("dd.MM.yyyy") + " " + Description;
+        }
+
+        public void ChangeDescription(string text)
+        {
+            Description = text;
         }
     }
 }

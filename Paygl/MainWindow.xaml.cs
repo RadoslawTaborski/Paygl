@@ -15,6 +15,7 @@ using DataBaseWithBusinessLogicConnector.Dal.Adapters;
 using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Dal.Mappers;
 using MySql.Data.MySqlClient;
+using System.Windows.Markup;
 
 namespace Paygl
 {
@@ -24,16 +25,22 @@ namespace Paygl
     /// <summary>
     /// Interaction logic for Message.xaml
     /// </summary>
-    public partial class MainWindow: Window
+    public partial class MainWindow : Window
     {
         #region FIELDS
 
         public static readonly string Path = "settings.dat";
+        public const int MENU_BUTTON_HEIGHT = 50;
 
-        private static Button _b1 = new Button();
-        private static Button _b2 = new Button();
-        private static Button _b3 = new Button();
+        private static Button _b1;
+        private static Button _b2;
 
+        private static ItemsControl _b1Items;
+        private static Button _b1_1;
+        private static Button _b1_2;
+        private static Button _b1_3;
+
+        private static ItemsControl _b2Items;
         #endregion
 
         #region CONSTRUCTORS
@@ -41,45 +48,71 @@ namespace Paygl
         {
             InitializeComponent();
 
-            var buttons = new List<Button>();
+            var menuButtons = new List<Button>();
+            _b1 = CreateButton("btnOperations", "Operacje", MENU_BUTTON_HEIGHT, btnOperations_Click);
+            _b2 = CreateButton("btnAnalyse", "Analiza", MENU_BUTTON_HEIGHT, btnAnalyse_Click);
+            menuButtons.Add(_b1);
+            menuButtons.Add(_b2);
+            _firstPanel.ItemsSource = menuButtons;
 
-            _b1.Name = "btn1";
-            _b1.Content = "btn1";
-            _b1.Click += _b1_Click;
-            buttons.Add(_b1);
+            _b1Items = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
+            var b1Buttons = new List<Button>();
+            _b1_1 = CreateButton("btnImport", "Importuj", MENU_BUTTON_HEIGHT, btnImport_Click);
+            _b1_2 = CreateButton("btnAdd", "Dodaj", MENU_BUTTON_HEIGHT, btnAdd_Click);
+            _b1_3 = CreateButton("btnShow", "Przeglądaj", MENU_BUTTON_HEIGHT, btnShow_Click);
+            b1Buttons.Add(_b1_1);
+            b1Buttons.Add(_b1_2);
+            b1Buttons.Add(_b1_3);
+            _b1Items.ItemsSource = b1Buttons;
 
-            _b2.Name = "btn2";
-            _b2.Content = "btn2";
-            _b2.Click += _b2_Click;
-            buttons.Add(_b2);
+            _b2Items = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
+            var b2Buttons = new List<Button>();
+            _b2Items.ItemsSource = b2Buttons;
 
-            _b3.Name = "btn3";
-            _b3.Content = "btn3";
-            _b3.Click += _b3_Click;
-            buttons.Add(_b3);
-
-            ic.ItemsSource = buttons;
+            SecondMenu.Visibility = Visibility.Hidden;
         }
         #endregion
 
         #region EVENTS
 
-        private void _b1_Click(object sender, RoutedEventArgs e)
+        #region menuItems
+        private void btnOperations_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(sender);
-            brdMain.Child = new AnalysisView();
+            ShowOrHideSecondMenu(_b1Items);
+            SetSecondMenu(_b1Items);
         }
 
-        private void _b2_Click(object sender, RoutedEventArgs e)
+        private void btnAnalyse_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(sender);
+            ShowOrHideSecondMenu(_b2Items);
+            SetSecondMenu(_b2Items);
+        }
+        #endregion
+
+        #region OperationItems
+        private void btnImport_Click(object sender, RoutedEventArgs e)
+        {
+            if (SecondMenu.IsVisible)
+            {
+                SecondMenu.Visibility = Visibility.Hidden;
+            }
+
             brdMain.Child = new ImportView();
         }
 
-        private void _b3_Click(object sender, RoutedEventArgs e)
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(sender);
+            throw new NotImplementedException();
         }
+
+        private void btnShow_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region AnalyseItems
+        #endregion
 
         #region TITLE_BAR
         /// <summary>
@@ -181,6 +214,46 @@ namespace Paygl
         }
         #endregion
 
+        #endregion
+
+        #region private
+        private void SetSecondMenu(ItemsControl itemsControl)
+        {
+            _secondStockPanel.Children.Clear();
+            _secondStockPanel.Children.Add(itemsControl);
+        }
+
+        private void ShowOrHideSecondMenu(ItemsControl itemsControl)
+        {
+            if (_secondStockPanel.Children.Contains(itemsControl))
+            {
+                if (SecondMenu.Visibility == Visibility.Hidden)
+                {
+                    SecondMenu.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    SecondMenu.Visibility = Visibility.Hidden;
+                }
+
+            }
+            else
+            {
+               SecondMenu.Visibility = Visibility.Visible;
+            }
+        }
+
+        private Button CreateButton(string name, string content, int height, RoutedEventHandler operation)
+        {
+            var button = new Button();
+            button.Name = name;
+            button.Content = content;
+            button.Click += operation;
+            button.Height = height;
+            button.Style = (Style)FindResource("MyButton");
+
+            return button;
+        }
         #endregion
     }
 }

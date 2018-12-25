@@ -46,12 +46,12 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public Operation ConvertToBusinessLogicEntity(DalOperation dataEntity)
         {
-            var operation =_operations.Where(o => o.Id == dataEntity.ParentId).First();
+            var operation = dataEntity.ParentId != null?_operations.Where(o => o.Id == dataEntity.ParentId).First():null;
             var transaction = _transactionTypes.Where(t => t.Id == dataEntity.TransactionTypeId).First();
             var transfer = _transferTypes.Where(t => t.Id == dataEntity.TransferTypeId).First();
             var importance = _importances.Where(i => i.Id == dataEntity.ImportanceId).First();
             var frequence = _frequencies.Where(f => f.Id == dataEntity.FrequenceId).First();
-            CultureInfo culture = new CultureInfo("en-US");
+            CultureInfo culture = new CultureInfo("pl-PL");
             DateTime tempDate = Convert.ToDateTime(dataEntity.Date, culture);
             var result = new Operation(dataEntity.Id, operation, _user, dataEntity.Description, dataEntity.Amount, transaction,transfer,frequence,importance,tempDate,dataEntity.ReceiptPath);
             result.IsDirty = false;
@@ -70,7 +70,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         }
 
         public DalOperation ConvertToDALEntity(Operation businessEntity)
-        {
+        {//TODO: posprawdzać referencje czy nie null
             var result = new DalOperation(businessEntity.Id,businessEntity.Parent?.Id, businessEntity.User.Id, businessEntity.Description, businessEntity.Amount, businessEntity.TransactionType.Id,businessEntity.TransferType.Id,businessEntity.Frequence.Id,businessEntity.Importance.Id,businessEntity.Date.ToString("yyyy-MM-dd"),businessEntity.ReceiptPath);
             return result;
         }
