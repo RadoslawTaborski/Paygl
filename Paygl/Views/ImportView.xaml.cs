@@ -65,7 +65,7 @@ namespace Paygl.Views
             this.cbImportance.ItemsSource = _observableImportances;
             _observableOperations = new ObservableRangeCollection<Operation>();
             _observableOperations.Add(null);
-            _observableOperations.AddRange(Service.Operations);
+            _observableOperations.AddRange(Service.Operations.Where(o => o.Parent == null));
             this.cbRelated.ItemsSource = _observableOperations;
             _observableTags = new ObservableRangeCollection<Tag>(Service.Tags);
             this.cbTags.ItemsSource = _observableTags;
@@ -107,6 +107,7 @@ namespace Paygl.Views
 
         private void ImportAccept_Click(object sender, RoutedEventArgs e)
         {
+            var tmp = tbDescription.Text;
             _operation.SetImportance(cbImportance.SelectedItem as Importance);
             _operation.SetFrequence(cbFrequent.SelectedItem as Frequence);
             foreach (var item in _selectedTags)
@@ -117,20 +118,32 @@ namespace Paygl.Views
             _operation.ChangeDescription(tbNewDescription.Text);
             _operation.SetShortDescription(tbNewDescription.Text);
 
-            Service.UpdateOperationComplex(_operation);
-            AddObservableOperation(_operation);
-
-            ShowNext();
+            try
+            {
+                Service.UpdateOperationComplex(_operation);
+                if (_operation.Parent == null)
+                {
+                    AddObservableOperation(_operation);
+                }
+                _operations.Remove(_operation);
+            } catch (Exception ex)
+            {
+                var dialog = new MessageBox("Komunikat", ex.Message);
+                _operation.ChangeDescription(tmp);
+                dialog.ShowDialog();
+            }
+            Show(_index);
         }
 
         private void ImportIgnore_Click(object sender, RoutedEventArgs e)
         {
-            ShowNext();
+            _operations.Remove(_operation);
+            Show(_index);
         }
 
         private void Show(int index)
         {
-            if (index < _operations.Count)
+            if (index < _operations.Count && index >= 0)
             {
                 _operation = _operations[index];
 
@@ -144,7 +157,7 @@ namespace Paygl.Views
                 cbImportance.SelectedItem = _operation.Importance;
                 lTransaction.Content = _operation.TransactionType.Text;
                 lTransfer.Content = _operation.TransferType.Text;
-                foreach(var tag in _operation.Tags)
+                foreach (var tag in _operation.Tags)
                 {
                     SetTagLabel(tag.Tag);
                 }
@@ -155,14 +168,20 @@ namespace Paygl.Views
 
         private void ShowNext()
         {
-            _index++;
-            Show(_index);
+            if (_index < _operations.Count - 1)
+            {
+                _index++;
+                Show(_index);
+            }
         }
 
         private void ShowPrevious()
         {
-            _index--;
-            Show(_index);
+            if (_index > 0)
+            {
+                _index--;
+                Show(_index);
+            }
         }
 
         private void CbTags_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -193,7 +212,7 @@ namespace Paygl.Views
             {
                 _selectedTags.Add(tag);
                 var newborder = new Border();
-                newborder.Style=(Style)FindResource("MyBorder");
+                newborder.Style = (Style)FindResource("MyBorder");
 
                 var newstackpanel = new StackPanel
                 {
@@ -234,6 +253,16 @@ namespace Paygl.Views
             var tag = Service.Tags.Where(t => t.Text.Equals(label.Content)).First();
             TagStack.Children.Remove(border);
             _selectedTags.Remove(tag);
+        }
+
+        private void ImportBack_Click(object sender, RoutedEventArgs e)
+        {
+            ShowPrevious();
+        }
+
+        private void ImportNext_Click(object sender, RoutedEventArgs e)
+        {
+            ShowNext();
         }
     }
 }

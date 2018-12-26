@@ -4,6 +4,6 @@ namespace Importer
 {
     public interface IImporter
     {
-        IEnumerable<Transaction> ReadTransactions();
+        IEnumerable<Transaction> ReadTransactions(string path);
     }
 }

@@ -40,5 +40,10 @@ namespace PayglService.cs
         {
             return _config.Settings.DataBase;
         }
+
+        public static string PathToImportFiles()
+        {
+            return _config.Settings.System.PathToImportFiles;
+        }
     }
 }

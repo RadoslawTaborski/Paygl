@@ -6,12 +6,12 @@ namespace Importer
 {
     internal class INGImporter : IImporter
     {
-        public IEnumerable<Transaction> ReadTransactions()
+        public IEnumerable<Transaction> ReadTransactions(string path)
         {
             var result = new List<Transaction>();
             try
             {
-                using (StreamReader sr = new StreamReader(@"D:\Programowanie\C#\Paygl\Exports\Lista_transakcji_nr_0039364764_221218.csv", System.Text.Encoding.GetEncoding(1250)))
+                using (StreamReader sr = new StreamReader(path, System.Text.Encoding.GetEncoding(1250)))
                 {
                     string currentLine;
                     var index = 0;

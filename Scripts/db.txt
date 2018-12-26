@@ -48,8 +48,9 @@ CREATE TABLE `users` (
 , `password` VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL 
 , `details_id` INT NOT NULL 
 , PRIMARY KEY (`id`)
-, UNIQUE (`details_id`)) 
-ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+, UNIQUE (`details_id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `users` ADD INDEX (`login`);
 
 DROP TABLE IF EXISTS `user_details`;
 CREATE TABLE `user_details`(
@@ -74,6 +75,7 @@ CREATE TABLE `operations`(
 , `receipt_path` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `operations` ADD INDEX (`user_id`);
 
 DROP TABLE IF EXISTS `operation_details`;
 CREATE TABLE `operation_details`(
@@ -84,6 +86,7 @@ CREATE TABLE `operation_details`(
 , `amount` DECIMAL(10,2) NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `operation_details` ADD INDEX (`operation_id`);
 
 DROP TABLE IF EXISTS `languages`;
 CREATE TABLE `languages`(
@@ -92,6 +95,7 @@ CREATE TABLE `languages`(
 , `full` VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `languages` ADD INDEX (`short`);
 
 INSERT INTO `languages` (`id`, `short`, `full`) VALUES(NULL, 'pl-PL','polski');
 
@@ -102,11 +106,23 @@ CREATE TABLE `tags`(
 , `language_id` INT NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `tags` ADD INDEX (`language_id`);
 
 INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'spożywcze',1);
 INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'odzież',1);
 INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'chemia',1);
 INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'opłaty',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'transport',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'urządzenia',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'gadżety',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'rozrywka',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'podróże',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'sport',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'praca',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'dom',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'nauka',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'prezenty',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'zdrowie',1);
 
 DROP TABLE IF EXISTS `frequencies`;
 CREATE TABLE `frequencies`(
@@ -115,6 +131,7 @@ CREATE TABLE `frequencies`(
 , `language_id` INT NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `frequencies` ADD INDEX (`language_id`);
 
 INSERT INTO `frequencies` (`id`, `text`, `language_id`) VALUES(NULL, 'codzienne',1);
 INSERT INTO `frequencies` (`id`, `text`, `language_id`) VALUES(NULL, 'miesięczne',1);
@@ -132,6 +149,7 @@ CREATE TABLE `transfer_types`(
 , `language_id` INT NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `transfer_types` ADD INDEX (`language_id`);
 
 INSERT INTO `transfer_types` (`id`, `text`, `language_id`) VALUES(NULL, 'gotówka',1);
 INSERT INTO `transfer_types` (`id`, `text`, `language_id`) VALUES(NULL, 'przelew',1);
@@ -143,6 +161,7 @@ CREATE TABLE `transaction_types`(
 , `language_id` INT NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `transaction_types` ADD INDEX (`language_id`);
 
 INSERT INTO `transaction_types` (`id`, `text`, `language_id`) VALUES(NULL, 'przychód',1);
 INSERT INTO `transaction_types` (`id`, `text`, `language_id`) VALUES(NULL, 'wydatek',1);
@@ -154,6 +173,7 @@ CREATE TABLE `importances`(
 , `language_id` INT NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `importances` ADD INDEX (`language_id`);
 
 INSERT INTO `importances` (`id`, `text`, `language_id`) VALUES(NULL, 'konieczne',1);
 INSERT INTO `importances` (`id`, `text`, `language_id`) VALUES(NULL, 'oczekiwane',1);
@@ -167,6 +187,7 @@ CREATE TABLE `operation_tags`(
 , `tag_id` INT NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `operation_tags` ADD INDEX (`operation_id`);
 
 ALTER TABLE `users` ADD CONSTRAINT `fk__users__details_id`
 FOREIGN KEY (`details_id`) REFERENCES `user_details`(`id`);

@@ -43,26 +43,30 @@
                 <Label Style="{StaticResource MyLabel}" Content="Typ transferu:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="8" Margin="0,0,0,0"/>
                 <Label Style="{StaticResource MyLabel}" Content="Powiązany z:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="9" Margin="0,0,0,0"/>
 
-                <TextBlock Style="{StaticResource MyTextBlock}" x:Name="tbDescription" HorizontalAlignment="Stretch"  VerticalAlignment="Center" Margin="0,0,0,0" TextWrapping="Wrap" Text="" Grid.Column="1" Grid.Row="0"/>
+                <TextBlock Style="{StaticResource MyTextBlock}" x:Name="tbDescription" HorizontalAlignment="Stretch"  VerticalAlignment="Center" Margin="10,0,10,0" TextWrapping="Wrap" Text="" Grid.Column="1" Grid.Row="0"/>
                 <TextBox Style="{StaticResource MyTextBox}" x:Name="tbNewDescription" HorizontalAlignment="Left"  VerticalAlignment="Center" Width="500" Margin="10,0,0,0" TextWrapping="Wrap" Text="" Grid.Column="1" Grid.Row="1"/>
-                <Label Style="{StaticResource MyLabel}" x:Name="lAmount" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Content="" Grid.Column="1" Grid.Row="2"/>
-                <Label Style="{StaticResource MyLabel}" x:Name="lDate" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Content="" Grid.Column="1" Grid.Row="3"/>
+                <Label Style="{StaticResource MyLabel}" x:Name="lAmount" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="2"/>
+                <Label Style="{StaticResource MyLabel}" x:Name="lDate" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="3"/>
                 <ComboBox x:Name="cbFrequent" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Width="500"/>
                 <ComboBox x:Name="cbImportance" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Width="500"/>
                 <StackPanel x:Name="TagStack" Orientation="Horizontal" Margin="10,6,0,0" Grid.Row="6" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="600">
                 </StackPanel>
                 <ComboBox x:Name="cbTags" HorizontalAlignment="Left" Margin="10,0,0,6" Grid.Row="6" Grid.Column="1" VerticalAlignment="Bottom" Width="500" SelectionChanged="CbTags_SelectionChanged"/>
-                <Label Style="{StaticResource MyLabel}" x:Name="lTransaction" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Content="" Grid.Column="1" Grid.Row="7"/>
-                <Label Style="{StaticResource MyLabel}" x:Name="lTransfer" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" Content="" Grid.Column="1" Grid.Row="8"/>
+                <Label Style="{StaticResource MyLabel}" x:Name="lTransaction" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="7"/>
+                <Label Style="{StaticResource MyLabel}" x:Name="lTransfer" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="8"/>
                 <ComboBox x:Name="cbRelated" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="500" Height="40" Grid.Column="1" Grid.Row="9"/>
             </Grid>
             <Grid Margin="10,10,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
-                <Button Style="{StaticResource MyButton}" x:Name="ImportIgnore" Content="Ignoruj" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="0" Click="ImportIgnore_Click" />
-                <Button Style="{StaticResource MyButton}" x:Name="ImportAccept" Content="Akceptuj" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="ImportAccept_Click" />
+                <Button Style="{StaticResource MyButton}" x:Name="ImportBack" Content="Wstecz" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="0" Click="ImportBack_Click"/>
+                <Button Style="{StaticResource MyButton}" x:Name="ImportIgnore" Content="Ignoruj" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="ImportIgnore_Click" />
+                <Button Style="{StaticResource MyButton}" x:Name="ImportAccept" Content="Akceptuj" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2" Click="ImportAccept_Click" />
+                <Button Style="{StaticResource MyButton}" x:Name="ImportNext" Content="Dalej" Margin="5,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="3" Click="ImportNext_Click"/>
             </Grid>
         </Grid>
     </Grid>

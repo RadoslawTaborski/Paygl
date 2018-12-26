@@ -10,6 +10,11 @@ namespace PayglService.cs
         public string Password { get; set; }
     }
 
+    public class System
+    {
+        public string PathToImportFiles { get; set; }
+    }
+
     public class DataBase
     {
         public string Address { get; set; }
@@ -21,6 +26,7 @@ namespace PayglService.cs
     public class Settings
     {
         public string Language { get; set; }
+        public System System { get; set; }
         public UserData UserData { get; set; }
         public DataBase DataBase { get; set; }
     }

@@ -52,6 +52,41 @@ namespace Paygl
         #endregion
 
         #region EVENTS
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SecondMenu.Visibility = Visibility.Hidden;
+
+                ConfigurationManager.ReadConfig("./configuration.json");
+                Service.SetService();
+                var menuButtons = new List<Button>();
+                _b1 = CreateButton("btnOperations", "Operacje", MENU_BUTTON_HEIGHT, btnOperations_Click);
+                _b2 = CreateButton("btnAnalyse", "Analiza", MENU_BUTTON_HEIGHT, btnAnalyse_Click);
+                menuButtons.Add(_b1);
+                menuButtons.Add(_b2);
+                _firstPanel.ItemsSource = menuButtons;
+
+                _b1Items = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
+                var b1Buttons = new List<Button>();
+                _b1_1 = CreateButton("btnImport", "Importuj", MENU_BUTTON_HEIGHT, btnImport_Click);
+                _b1_2 = CreateButton("btnAdd", "Dodaj manualnie", MENU_BUTTON_HEIGHT, btnAdd_Click);
+                _b1_3 = CreateButton("btnShow", "Przeglądaj", MENU_BUTTON_HEIGHT, btnShow_Click);
+                b1Buttons.Add(_b1_1);
+                b1Buttons.Add(_b1_2);
+                b1Buttons.Add(_b1_3);
+                _b1Items.ItemsSource = b1Buttons;
+
+                _b2Items = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
+                var b2Buttons = new List<Button>();
+                _b2Items.ItemsSource = b2Buttons;
+            }
+            catch (Exception ex)
+            {
+                var dialog = new MessageBox("Komunikat", ex.Message);
+                dialog.ShowDialog();
+            }
+        }
 
         #region menuItems
         private void btnOperations_Click(object sender, RoutedEventArgs e)
@@ -200,42 +235,6 @@ namespace Paygl
         #endregion
 
         #region private
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                SecondMenu.Visibility = Visibility.Hidden;
-
-                ConfigurationManager.ReadConfig("./configuration.json");
-                Service.SetService();
-                var menuButtons = new List<Button>();
-                _b1 = CreateButton("btnOperations", "Operacje", MENU_BUTTON_HEIGHT, btnOperations_Click);
-                _b2 = CreateButton("btnAnalyse", "Analiza", MENU_BUTTON_HEIGHT, btnAnalyse_Click);
-                menuButtons.Add(_b1);
-                menuButtons.Add(_b2);
-                _firstPanel.ItemsSource = menuButtons;
-
-                _b1Items = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
-                var b1Buttons = new List<Button>();
-                _b1_1 = CreateButton("btnImport", "Importuj", MENU_BUTTON_HEIGHT, btnImport_Click);
-                _b1_2 = CreateButton("btnAdd", "Dodaj manualnie", MENU_BUTTON_HEIGHT, btnAdd_Click);
-                _b1_3 = CreateButton("btnShow", "Przeglądaj", MENU_BUTTON_HEIGHT, btnShow_Click);
-                b1Buttons.Add(_b1_1);
-                b1Buttons.Add(_b1_2);
-                b1Buttons.Add(_b1_3);
-                _b1Items.ItemsSource = b1Buttons;
-
-                _b2Items = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
-                var b2Buttons = new List<Button>();
-                _b2Items.ItemsSource = b2Buttons;
-            }
-            catch (Exception ex)
-            {
-                var dialog = new MessageBox("Komunikat", ex.Message);
-                dialog.ShowDialog();
-            }
-        }
-
         private void SetSecondMenu(ItemsControl itemsControl)
         {
             _secondStockPanel.Children.Clear();

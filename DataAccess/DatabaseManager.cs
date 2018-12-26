@@ -89,14 +89,14 @@ namespace DataAccess
         {
             var ds = new DataSet();
 
-            if (_cache.ContainsKey(query))
-                ds = _cache[query];
-            else
-            {
-                var adp = _connectionFactory.CreateDataAdapter(query);
-                adp.Fill(ds);
-                _cache.Add(query, ds);
-            }
+            //if (_cache.ContainsKey(query))
+            //    ds = _cache[query];
+            //else
+            //{
+            var adp = _connectionFactory.CreateDataAdapter(query);
+            adp.Fill(ds);
+            //_cache.Add(query, ds);
+            //}
 
             return ds;
         }

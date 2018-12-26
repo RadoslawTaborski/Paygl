@@ -62,7 +62,8 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             var query = string.Format(queries.Insert, args);
             _connection.DataAccess.ConnectToDb();
             _connection.DataAccess.ExecuteNonQueryDb(query);
-            var id = int.Parse(_connection.DataAccess.ExecuteSqlCommand("SELECT LAST_INSERT_ID()").Tables[0].Rows[0].ItemArray[0].ToString());
+            var queryResults = _connection.DataAccess.ExecuteSqlCommand(queries.LastInsert);
+            var id = int.Parse(queryResults.Tables[0].Rows[0].ItemArray[0].ToString());
             _connection.DataAccess.Disconnect();
 
             return id;
@@ -91,9 +92,10 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
                     }
                     return "NULL";
                 case DataType.DECIMAL:
-                    return $"'{obj}'";
+                    var dec = obj as decimal?;
+                    return $"'{dec.Value}'".Replace(",",".");
                 case DataType.DOUBLE:
-                    return $"'{obj}'";
+                    return $"'{obj}'".Replace(",", ".");
                 case DataType.STRING:
                     return $"'{obj}'";
                 default:
@@ -108,6 +110,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
             public string Select { get; private set; }
             public string Insert { get; private set; }
+            public string LastInsert { get; private set; }
             public string Delete { get; private set; }
             public string Update { get; private set; }
             public string Where { get; private set; }
@@ -145,6 +148,8 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
                 Update = string.Format(Update, _tableName, set);
 
                 Where = " WHERE {0}";
+
+                LastInsert = $"SELECT LAST_INSERT_ID(`id`) as ID FROM `{_tableName}` ORDER BY ID DESC";
             }
         }
     }

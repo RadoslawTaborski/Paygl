@@ -71,7 +71,11 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
         }
 
         public DalOperation ConvertToDALEntity(Operation businessEntity)
-        {//TODO: posprawdzać referencje czy nie null
+        {
+            if (businessEntity == null || businessEntity.User==null || businessEntity.TransactionType == null || businessEntity.TransferType == null || businessEntity.Frequence==null || businessEntity.Importance == null)
+            {
+                throw new ArgumentException("wrong parameters");
+            }
             var result = new DalOperation(businessEntity.Id,businessEntity.Parent?.Id, businessEntity.User.Id, businessEntity.Description, businessEntity.Amount, businessEntity.TransactionType.Id,businessEntity.TransferType.Id,businessEntity.Frequence.Id,businessEntity.Importance.Id,businessEntity.Date.ToString("yyyy-MM-dd"),businessEntity.ReceiptPath);
             return result;
         }

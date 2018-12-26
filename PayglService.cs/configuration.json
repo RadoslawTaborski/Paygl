@@ -1,175 +1,208 @@
-{  
-   "Settings":{  
-      "Language":"pl-PL",
-      "UserData":{  
-         "Login":"rado",
-         "Password":"1234"
-      },
-      "DataBase":{  
-         "Address":"localhost",
-         "Login":"root",
-         "Password":"",
-         "Table":"Paygl"
-      }
-   },
-   "Ignored":[  
-      {  
-         "DescriptionRegex":" TABORSKI RADOSŁAW, MASŁOWICE 10, 98-300 MASŁOWICE ",
-         "TitleRegex":""
-      }
-   ],
-   "Schematic":[  
-      {  
-         "DescriptionRegex":" MPK8408 4WRO URBANCARD WROCLAW PL ",
-         "TitleRegex":"",
-         "Description":"MPK: ",
-         "Frequence":"",
-         "Importance":"",
-         "Tags":[  
-            "transport"
-         ]
-      },
-      {  
-         "DescriptionRegex":" LIDL DLUGOSZA Wroclaw PL ",
-         "TitleRegex":"",
-         "Description":"Lidl-praca",
-         "Frequence":"codzienne",
-         "Importance":"",
-         "Tags":[  
-            "spożywcze"
-         ]
-      },
-      {  
-         "DescriptionRegex":" ROSSMANN 03 Wroclaw PL ",
-         "TitleRegex":"",
-         "Description":"Rossman-Bema",
-         "Frequence":"",
-         "Importance":"",
-         "Tags":[  
-            "chemia"
-         ]
-      },
-      {  
-         "DescriptionRegex":" emultisportpl Warszawa PL ",
-         "TitleRegex":"",
-         "Description":"Multisport",
-         "Frequence":"miesięczne",
-         "Importance":"przydatne",
-         "Tags":[  
-            "sport",
-            "opłaty"
-         ]
-      },
-      {  
-         "DescriptionRegex":" COMARCH SPÓŁKA AKCYJNA, AL. JANA PAWŁA II 39, 31-864 KRAKÓW ",
-         "TitleRegex":"",
-         "Description":"COMARCH wypłata",
-         "Frequence":"miesięczne",
-         "Importance":"konieczne",
-         "Tags":[  
-            "praca"
-         ]
-      },
-      {  
-         "DescriptionRegex":" Mateusz Małek, ul. Sucharskiego 8, 52-205 Wrocław ",
-         "TitleRegex":"",
-         "Description":"Opłata za mieszkanie",
-         "Frequence":"miesięczne",
-         "Importance":"konieczne",
-         "Tags":[  
-            "opłaty"
-         ]
-      },
-      {  
-         "DescriptionRegex":" Zabka.+",
-         "TitleRegex":"",
-         "Description":"Żabka: ",
-         "Frequence":"",
-         "Importance":"",
-         "Tags":[  
+{
+  "Settings": {
+    "Language": "pl-PL",
+    "UserData": {
+      "Login": "test",
+      "Password": "test"
+    },
+    "System": {
+      "PathToImportFiles": "D:\\Programowanie\\C#\\Paygl\\Exports\\"
+    },
+    "DataBase": {
+      "Address": "localhost",
+      "Login": "root",
+      "Password": "",
+      "Table": "paygl_test"
+    }
+  },
+  "Ignored": [
+    {
+      "DescriptionRegex": " TABORSKI RADOSŁAW, MASŁOWICE 10, 98-300 MASŁOWICE ",
+      "TitleRegex": ""
+    }
+  ],
+  "Schematic": [
+    {
+      "DescriptionRegex": " MPK[0-9]{4} [0-9]{1}WRO URBANCARD WROCLAW PL ",
+      "TitleRegex": "",
+      "Description": "MPK: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
+        "transport"
+      ]
+    },
+    {
+      "DescriptionRegex": " DotPay S.A. ",
+      "TitleRegex": " MENNICA POLSKA S.A..*",
+      "Description": "Urbancard: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
+        "transport"
+      ]
+    },
+    {
+      "DescriptionRegex": " LIDL DLUGOSZA Wroclaw PL ",
+      "TitleRegex": "",
+      "Description": "Lidl-praca",
+      "Frequence": "codzienne",
+      "Importance": "konieczne",
+      "Tags": [
+        "spożywcze"
+      ]
+    },
+    {
+      "DescriptionRegex": " ROSSMANN 03 Wroclaw PL ",
+      "TitleRegex": "",
+      "Description": "Rossman-Bema:",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
+        "chemia"
+      ]
+    },
+    {
+      "DescriptionRegex": " ROSSMANN [0-9]{2} Wroclaw PL ",
+      "TitleRegex": "",
+      "Description": "Rossman:",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
+        "chemia"
+      ]
+    },
+    {
+      "DescriptionRegex": " emultisportpl Warszawa PL ",
+      "TitleRegex": "",
+      "Description": "Multisport",
+      "Frequence": "miesięczne",
+      "Importance": "przydatne",
+      "Tags": [
+        "sport",
+        "opłaty"
+      ]
+    },
+    {
+      "DescriptionRegex": " COMARCH SPÓŁKA AKCYJNA, AL. JANA PAWŁA II 39, 31-864 KRAKÓW ",
+      "TitleRegex": "",
+      "Description": "COMARCH wypłata",
+      "Frequence": "miesięczne",
+      "Importance": "konieczne",
+      "Tags": [
+        "praca"
+      ]
+    },
+    {
+      "DescriptionRegex": " Mateusz Małek, ul. Sucharskiego 8, 52-205 Wrocław ",
+      "TitleRegex": "",
+      "Description": "Opłata za mieszkanie",
+      "Frequence": "miesięczne",
+      "Importance": "konieczne",
+      "Tags": [
+        "opłaty"
+      ]
+    },
+    {
+      "DescriptionRegex": " ZABKA.+",
+      "TitleRegex": "",
+      "Description": "Żabka: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
 
-         ]
-      },
-      {  
-         "DescriptionRegex":" ADAM  POKORA, OS. STARE SADY 3  M.3, 98-300 WIELUŃ ",
-         "TitleRegex":"",
-         "Description":"Adam Pokora: ",
-         "Frequence":"",
-         "Importance":"",
-         "Tags":[  
+      ]
+    },
+    {
+      "DescriptionRegex": " RADOSŁAW, TABORSKI, 4246xx4642 ",
+      "TitleRegex": " Wpłatomat - wpłata własna Nr transakcji .+",
+      "Description": "Wpłatomat: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
 
-         ]
-      },
-      {  
-         "DescriptionRegex":" Adam Pokora ",
-         "TitleRegex":"",
-         "Description":"Adam Pokora: ",
-         "Frequence":"",
-         "Importance":"",
-         "Tags":[  
+      ]
+    },
+    {
+      "DescriptionRegex": " ADAM  POKORA, OS. STARE SADY 3  M.3, 98-300 WIELUŃ ",
+      "TitleRegex": "",
+      "Description": "Adam Pokora: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
 
-         ]
-      },
-      {  
-         "DescriptionRegex":" ŁUKASZ  STEFANEK, UL. POLNA 2, 98-355 TRĘBACZEW ",
-         "TitleRegex":"",
-         "Description":"Łukasz Stefanek: ",
-         "Frequence":"",
-         "Importance":"",
-         "Tags":[  
+      ]
+    },
+    {
+      "DescriptionRegex": " Adam Pokora ",
+      "TitleRegex": "",
+      "Description": "Adam Pokora: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
 
-         ]
-      },
-      {  
-         "DescriptionRegex":" Łukasz Stefanek ",
-         "TitleRegex":"",
-         "Description":"Łukasz Stefanek: ",
-         "Frequence":"",
-         "Importance":"",
-         "Tags":[  
+      ]
+    },
+    {
+      "DescriptionRegex": " ŁUKASZ  STEFANEK, UL. POLNA 2, 98-355 TRĘBACZEW ",
+      "TitleRegex": "",
+      "Description": "Łukasz Stefanek: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
 
-         ]
-      },
-      {  
-         "DescriptionRegex":" SZYMON KONRAD KALEMBA, STARE SADY 4/6, 98-300    WIELUŃ, ŁÓDZKIE ",
-         "TitleRegex":"",
-         "Description":"Szymon Kalemba: ",
-         "Frequence":"",
-         "Importance":"",
-         "Tags":[  
+      ]
+    },
+    {
+      "DescriptionRegex": " Łukasz Stefanek ",
+      "TitleRegex": "",
+      "Description": "Łukasz Stefanek: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
 
-         ]
-      },
-      {  
-         "DescriptionRegex":" Szymon Kalemba ",
-         "TitleRegex":"",
-         "Description":"Szymon Kalemba: ",
-         "Frequence":"",
-         "Importance":"",
-         "Tags":[  
+      ]
+    },
+    {
+      "DescriptionRegex": " SZYMON KONRAD KALEMBA, STARE SADY 4/6, 98-300    WIELUŃ, ŁÓDZKIE ",
+      "TitleRegex": "",
+      "Description": "Szymon Kalemba: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
 
-         ]
-      },
-      {  
-         "DescriptionRegex":" SZYMON DAWIDZIAK, UL.PRUSA 9, 98-300 WIELUŃ ",
-         "TitleRegex":"eng.+",
-         "Description":"Szymon Dawidziak: ",
-         "Frequence":"miesięczne",
-         "Importance":"przydatne",
-         "Tags":[  
-            "opłaty"
-         ]
-      },
-      {  
-         "DescriptionRegex":" SZYMON DAWIDZIAK, UL.PRUSA 9, 98-300 WIELUŃ ",
-         "TitleRegex":"",
-         "Description":"Szymon Dawidziak: ",
-         "Frequence":"",
-         "Importance":"",
-         "Tags":[  
+      ]
+    },
+    {
+      "DescriptionRegex": " Szymon Kalemba ",
+      "TitleRegex": "",
+      "Description": "Szymon Kalemba: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
 
-         ]
-      },
+      ]
+    },
+    {
+      "DescriptionRegex": " SZYMON DAWIDZIAK, UL.PRUSA 9, 98-300 WIELUŃ ",
+      "TitleRegex": "eng.+",
+      "Description": "Szymon Dawidziak: ",
+      "Frequence": "miesięczne",
+      "Importance": "przydatne",
+      "Tags": [
+        "opłaty"
+      ]
+    },
+    {
+      "DescriptionRegex": " SZYMON DAWIDZIAK, UL.PRUSA 9, 98-300 WIELUŃ ",
+      "TitleRegex": "",
+      "Description": "Szymon Dawidziak: ",
+      "Frequence": "",
+      "Importance": "",
+      "Tags": [
+
+      ]
+    },
     {
       "DescriptionRegex": " Szymon Dawidziak ",
       "TitleRegex": "",
@@ -180,5 +213,5 @@
 
       ]
     }
-   ]
+  ]
 }

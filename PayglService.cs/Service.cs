@@ -10,6 +10,7 @@ using Importer;
 using PayglService.cs.Helpers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -166,22 +167,28 @@ namespace PayglService.cs
 
             var importFactory = ImportFactory.GetFactory("ING");
             IImporter importer = importFactory.CreateImporter();
+            var transactions = new List<Transaction>();
+            var path = ConfigurationManager.PathToImportFiles();
 
-            var transactions = importer.ReadTransactions();
-                
-            foreach (var ignoredItem in ignored)
+            foreach (string file in Directory.EnumerateFiles(path, "*.csv"))
             {
-                if (ignoredItem.DescriptionRegex == "")
-                {
-                    ignoredItem.DescriptionRegex = ".*";
-                }
+                transactions.AddRange(importer.ReadTransactions(file));
+                File.Move(file, file + ".taken");
 
-                if (ignoredItem.TitleRegex == "")
+                foreach (var ignoredItem in ignored)
                 {
-                    ignoredItem.TitleRegex = ".*";
-                }
+                    if (ignoredItem.DescriptionRegex == "")
+                    {
+                        ignoredItem.DescriptionRegex = ".*";
+                    }
 
-                transactions = transactions.Where(t => !Regex.Match(t.ContractorData, ignoredItem.DescriptionRegex).Success || !Regex.Match(t.Title, ignoredItem.TitleRegex).Success);
+                    if (ignoredItem.TitleRegex == "")
+                    {
+                        ignoredItem.TitleRegex = ".*";
+                    }
+
+                    transactions = transactions.Where(t => !Regex.Match(t.ContractorData, ignoredItem.DescriptionRegex).Success || !Regex.Match(t.Title, ignoredItem.TitleRegex).Success).ToList();
+                }
             }
 
             return new TransactionToOperationMapper().ConvertToEntitiesCollection(transactions, User, Importances, Frequencies, Tags, TransactionTypes, TransferTypes).ToList();

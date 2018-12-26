@@ -113,5 +113,13 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         {
             TransferType = transferType;
         }
+
+        public void SetAmount(decimal? value)
+        {
+            if (value.HasValue)
+            {
+                Amount = value.Value;
+            }
+        }
     }
 }

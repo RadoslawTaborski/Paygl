@@ -41,11 +41,12 @@ namespace Paygl.Views
             LoadOperations();
 
             SetEditableControls();
-            SetDefault();
+            SetOperationValues();
         }
 
         private void SetEditableControls()
         {
+            udAmount.Value = 0.00M;
             _observableFrequencies = new ObservableRangeCollection<Frequence>(Service.Frequencies);
             this.cbFrequent.ItemsSource = _observableFrequencies;
             _observableImportances = new ObservableRangeCollection<Importance>(Service.Importances);
@@ -62,7 +63,7 @@ namespace Paygl.Views
             this.cbTags.ItemsSource = _observableTags;
         }
 
-        private void SetDefault()
+        private void SetOperationValues()
         {
             CalendarBorder.Visibility = Visibility.Hidden;
             calDate.SelectedDate = DateTime.Now;
@@ -73,7 +74,7 @@ namespace Paygl.Views
 
             tbNewDescription.Text = "";
             lDate.Content = _operation.Date.ToString("dd.MM.yyyy");
-            lAmount.Content = _operation.Amount;
+            udAmount.Value = _operation.Amount;
             cbFrequent.SelectedItem = _operation.Frequence;
             cbImportance.SelectedItem = _operation.Importance;
             cbTransaction.SelectedItem = Service.TransactionTypes[1];
@@ -88,6 +89,8 @@ namespace Paygl.Views
 
         private void ResetEditableControls()
         {
+            tbNewDescription.Text = "";
+            udAmount.Value = 0.00M;
             _selectedTags = new List<Tag>();
             cbTransaction.SelectedItem = Service.TransactionTypes[1];
             cbTransfer.SelectedItem = Service.TransferTypes[0];
@@ -107,6 +110,7 @@ namespace Paygl.Views
             cbTransfer.Visibility = v;
             cbRelated.Visibility = v;
             tbNewDescription.Visibility = v;
+            udAmount.Visibility = v;
         }
 
         private void AddObservableOperation(Operation operation)
@@ -142,11 +146,18 @@ namespace Paygl.Views
             _operation.SetParent(cbRelated.SelectedItem as Operation);
             _operation.ChangeDescription(tbNewDescription.Text);
             _operation.SetShortDescription(tbNewDescription.Text);
+            _operation.SetAmount(udAmount.Value);
 
-            Service.UpdateOperationComplex(_operation);
-            AddObservableOperation(_operation);
-
-            ResetEditableControls();
+            try
+            {
+                Service.UpdateOperationComplex(_operation);
+                AddObservableOperation(_operation);
+                ResetEditableControls();
+            }catch(Exception ex)
+            {
+                var dialog = new MessageBox("Komunikat", ex.Message);
+                dialog.ShowDialog();
+            }
         }
 
         private void CbTags_SelectionChanged(object sender, SelectionChangedEventArgs e)
