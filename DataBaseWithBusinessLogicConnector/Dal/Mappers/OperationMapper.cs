@@ -54,6 +54,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
             CultureInfo culture = new CultureInfo("pl-PL");
             DateTime tempDate = Convert.ToDateTime(dataEntity.Date, culture);
             var result = new Operation(dataEntity.Id, operation, _user, dataEntity.Description, dataEntity.Amount, transaction,transfer,frequence,importance,tempDate,dataEntity.ReceiptPath);
+            _operations.Add(result);
             result.IsDirty = false;
             return result;
         }

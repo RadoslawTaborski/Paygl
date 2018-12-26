@@ -110,7 +110,7 @@
 
     <Style TargetType="TextBox" x:Key="MyTextBox">
         <Setter Property="BorderBrush" Value="{StaticResource MyLight}" />
-        <Setter Property="Background" Value="{StaticResource MyDarkGrey}" />
+        <Setter Property="Background" Value="{StaticResource MyAzure}" />
         <Setter Property="Foreground" Value="{StaticResource MyLight}" />
     </Style>
 

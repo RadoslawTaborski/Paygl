@@ -191,7 +191,7 @@ namespace PayglService.cs
         {
             if (operation.Parent != null)
             {
-                UpdateOperationComplex(operation);
+                UpdateOperationComplex(operation.Parent);
             }
 
             if (operation.DetailsList != null)

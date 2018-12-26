@@ -11,7 +11,7 @@
         MinHeight="650" MinWidth="1200"
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip"
-        Icon="./img/logo.ico">
+        Icon="./img/logo.ico" Loaded="Window_Loaded">
 
     <Border  Style="{StaticResource MyBorder2}" BorderThickness="1">
         <Grid Margin="0,0,0,0" Style="{StaticResource MyGrid}">

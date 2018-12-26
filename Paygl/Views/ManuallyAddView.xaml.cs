@@ -1,13 +1,7 @@
-﻿using DataAccess;
-using DataBaseWithBusinessLogicConnector;
-using DataBaseWithBusinessLogicConnector.Dal.Adapters;
-using DataBaseWithBusinessLogicConnector.Dal.Mappers;
-using DataBaseWithBusinessLogicConnector.Entities;
-using Importer;
+﻿using DataBaseWithBusinessLogicConnector.Entities;
 using PayglService.cs;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,22 +18,21 @@ using System.Windows.Shapes;
 namespace Paygl.Views
 {
     /// <summary>
-    /// Interaction logic for ImportView.xaml
+    /// Interaction logic for ManualyAddView.xaml
     /// </summary>
-    public partial class ImportView : UserControl
+    public partial class ManuallyAddView : UserControl
     {
-        private List<Operation> _operations;
         private Operation _operation;
-        private int _index;
-
         private List<Tag> _selectedTags;
 
         private ObservableRangeCollection<Frequence> _observableFrequencies;
         private ObservableRangeCollection<Importance> _observableImportances;
         private ObservableRangeCollection<Operation> _observableOperations;
         private ObservableRangeCollection<Tag> _observableTags;
+        private ObservableRangeCollection<TransactionType> _observableTransactionType;
+        private ObservableRangeCollection<TransferType> _observableTransferType;
 
-        public ImportView()
+        public ManuallyAddView()
         {
             InitializeComponent();
             Background = Brushes.Azure;
@@ -48,13 +41,7 @@ namespace Paygl.Views
             LoadOperations();
 
             SetEditableControls();
-            UserEditableControlsVisibility(Visibility.Hidden);
-
-            _operations = Service.Import();
-            if (_operations.Count > 0)
-            {
-                Show(0);
-            }
+            SetDefault();
         }
 
         private void SetEditableControls()
@@ -63,6 +50,10 @@ namespace Paygl.Views
             this.cbFrequent.ItemsSource = _observableFrequencies;
             _observableImportances = new ObservableRangeCollection<Importance>(Service.Importances);
             this.cbImportance.ItemsSource = _observableImportances;
+            _observableTransactionType = new ObservableRangeCollection<TransactionType>(Service.TransactionTypes);
+            this.cbTransaction.ItemsSource = _observableTransactionType;
+            _observableTransferType = new ObservableRangeCollection<TransferType>(Service.TransferTypes);
+            this.cbTransfer.ItemsSource = _observableTransferType;
             _observableOperations = new ObservableRangeCollection<Operation>();
             _observableOperations.Add(null);
             _observableOperations.AddRange(Service.Operations);
@@ -71,9 +62,35 @@ namespace Paygl.Views
             this.cbTags.ItemsSource = _observableTags;
         }
 
+        private void SetDefault()
+        {
+            CalendarBorder.Visibility = Visibility.Hidden;
+            calDate.SelectedDate = DateTime.Now;
+
+            _operation = new Operation(null, null, Service.User, "", 0M, null, null, null, null, DateTime.Now, "");
+
+            ResetEditableControls();
+
+            tbNewDescription.Text = "";
+            lDate.Content = _operation.Date.ToString("dd.MM.yyyy");
+            lAmount.Content = _operation.Amount;
+            cbFrequent.SelectedItem = _operation.Frequence;
+            cbImportance.SelectedItem = _operation.Importance;
+            cbTransaction.SelectedItem = Service.TransactionTypes[1];
+            cbTransfer.SelectedItem = Service.TransferTypes[0];
+            foreach (var tag in _operation.Tags)
+            {
+                SetTagLabel(tag.Tag);
+            }
+
+            UserEditableControlsVisibility(Visibility.Visible);
+        }
+
         private void ResetEditableControls()
         {
             _selectedTags = new List<Tag>();
+            cbTransaction.SelectedItem = Service.TransactionTypes[1];
+            cbTransfer.SelectedItem = Service.TransferTypes[0];
             cbRelated.SelectedItem = null;
             cbTags.SelectedItem = null;
             cbFrequent.SelectedItem = null;
@@ -86,6 +103,8 @@ namespace Paygl.Views
             cbFrequent.Visibility = v;
             cbImportance.Visibility = v;
             cbTags.Visibility = v;
+            cbTransaction.Visibility = v;
+            cbTransfer.Visibility = v;
             cbRelated.Visibility = v;
             tbNewDescription.Visibility = v;
         }
@@ -105,10 +124,17 @@ namespace Paygl.Views
             Service.LoadOperations();
         }
 
-        private void ImportAccept_Click(object sender, RoutedEventArgs e)
+        private void ManualClear_Click(object sender, RoutedEventArgs e)
+        {
+            ResetEditableControls();
+        }
+
+        private void ManualAccept_Click(object sender, RoutedEventArgs e)
         {
             _operation.SetImportance(cbImportance.SelectedItem as Importance);
             _operation.SetFrequence(cbFrequent.SelectedItem as Frequence);
+            _operation.SetTransaction(cbTransaction.SelectedItem as TransactionType);
+            _operation.SetTransfer(cbTransfer.SelectedItem as TransferType);
             foreach (var item in _selectedTags)
             {
                 _operation.AddTag(item);
@@ -120,49 +146,7 @@ namespace Paygl.Views
             Service.UpdateOperationComplex(_operation);
             AddObservableOperation(_operation);
 
-            ShowNext();
-        }
-
-        private void ImportIgnore_Click(object sender, RoutedEventArgs e)
-        {
-            ShowNext();
-        }
-
-        private void Show(int index)
-        {
-            if (index < _operations.Count)
-            {
-                _operation = _operations[index];
-
-                ResetEditableControls();
-
-                tbDescription.Text = _operation.Description;
-                tbNewDescription.Text = _operation.ShortDescription;
-                lDate.Content = _operation.Date.ToString("dd.MM.yyyy");
-                lAmount.Content = _operation.Amount;
-                cbFrequent.SelectedItem = _operation.Frequence;
-                cbImportance.SelectedItem = _operation.Importance;
-                lTransaction.Content = _operation.TransactionType.Text;
-                lTransfer.Content = _operation.TransferType.Text;
-                foreach(var tag in _operation.Tags)
-                {
-                    SetTagLabel(tag.Tag);
-                }
-
-                UserEditableControlsVisibility(Visibility.Visible);
-            }
-        }
-
-        private void ShowNext()
-        {
-            _index++;
-            Show(_index);
-        }
-
-        private void ShowPrevious()
-        {
-            _index--;
-            Show(_index);
+            ResetEditableControls();
         }
 
         private void CbTags_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -193,12 +177,10 @@ namespace Paygl.Views
             {
                 _selectedTags.Add(tag);
                 var newborder = new Border();
-                newborder.Style=(Style)FindResource("MyBorder");
+                newborder.Style = (Style)FindResource("MyBorder");
 
-                var newstackpanel = new StackPanel
-                {
-                    Orientation = Orientation.Horizontal
-                };
+                var newstackpanel = new StackPanel();
+                newstackpanel.Orientation = Orientation.Horizontal;
 
                 var newlabel = new Label
                 {
@@ -234,6 +216,21 @@ namespace Paygl.Views
             var tag = Service.Tags.Where(t => t.Text.Equals(label.Content)).First();
             TagStack.Children.Remove(border);
             _selectedTags.Remove(tag);
+        }
+
+        private void BtnCalendar_Click(object sender, RoutedEventArgs e)
+        {
+            CalendarBorder.Visibility = Visibility.Visible;
+        }
+
+        private void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CalendarBorder.Visibility = Visibility.Hidden;
+            if (calDate.SelectedDate.HasValue)
+            {
+                lDate.Content = calDate.SelectedDate.Value.ToString("dd.MM.yyyy");
+            }
+            CalendarBorder.Visibility = Visibility.Hidden;
         }
     }
 }

@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Ustawienia" Height="200" Width="300"
+        Title="Ustawienia" Height="150" Width="300"
         AllowsTransparency="True"
         Icon="./img/logo.ico">
     <Window.Resources>
@@ -18,7 +18,7 @@
                     <TextBlock x:Name="Name" Style="{StaticResource MyTextBlock}" Margin="15,7,10,0" DockPanel.Dock="Left" Height="23"></TextBlock>
                 </DockPanel>
             </DockPanel>
-            <Button x:Name="BtnOk" Content="OK" Style="{StaticResource MyButton}"  Margin="101,151,101,19" Click="BtnOK_Click" RenderTransformOrigin="0.5,0.5">
+            <Button x:Name="BtnOk" Content="OK" Style="{StaticResource MyButton}"  Margin="101,100,101,20" Click="BtnOK_Click" RenderTransformOrigin="0.5,0.5">
                 <Button.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleY="-1"/>

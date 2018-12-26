@@ -27,6 +27,13 @@ namespace Paygl
             if (mainWindow == null) return;
             Left = mainWindow.Left + (mainWindow.Width) / 2 - Width / 2;
             Top = mainWindow.Top + (mainWindow.Height) / 2 - Height / 2;
+
+            Name.Text = header;
+            RtbInfo.Document.Blocks.Clear();
+            RtbInfo.Document.Blocks.Add(new Paragraph(new Run(body)));
+            BlockCollection blocks = RtbInfo.Document.Blocks;
+            foreach (Block b in blocks)
+                b.TextAlignment = TextAlignment.Center;
         }
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)

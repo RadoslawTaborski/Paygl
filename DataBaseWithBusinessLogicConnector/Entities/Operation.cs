@@ -103,5 +103,15 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         {
             Description = text;
         }
+
+        public void SetTransaction(TransactionType transactionType)
+        {
+            TransactionType = transactionType;
+        }
+
+        public void SetTransfer(TransferType transferType)
+        {
+            TransferType = transferType;
+        }
     }
 }
