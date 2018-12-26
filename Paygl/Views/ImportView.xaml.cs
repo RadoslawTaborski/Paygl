@@ -38,6 +38,8 @@ namespace Paygl.Views
         private ObservableRangeCollection<Importance> _observableImportances;
         private ObservableRangeCollection<Operation> _observableOperations;
         private ObservableRangeCollection<Tag> _observableTags;
+        private ObservableRangeCollection<TransactionType> _observableTransactionType;
+        private ObservableRangeCollection<TransferType> _observableTransferType;
 
         public ImportView()
         {
@@ -47,17 +49,22 @@ namespace Paygl.Views
             LoadAttributes();
             LoadOperations();
 
-            SetEditableControls();
-            UserEditableControlsVisibility(Visibility.Hidden);
+            SetStandardEditableControls();
+            SetCloneEditableControls();
+
+            SetCloneOptions(Visibility.Hidden);
+            UserStandardEditableControlsVisibility(Visibility.Hidden);
+            SetNavigateButtonVisibility(Visibility.Hidden);
 
             _operations = Service.Import();
             if (_operations.Count > 0)
             {
+                SetNavigateButtonVisibility(Visibility.Visible);
                 Show(0);
             }
         }
 
-        private void SetEditableControls()
+        private void SetStandardEditableControls()
         {
             _observableFrequencies = new ObservableRangeCollection<Frequence>(Service.Frequencies);
             this.cbFrequent.ItemsSource = _observableFrequencies;
@@ -71,7 +78,14 @@ namespace Paygl.Views
             this.cbTags.ItemsSource = _observableTags;
         }
 
-        private void ResetEditableControls()
+        private void SetCloneEditableControls()
+        {
+            _observableTransactionType = new ObservableRangeCollection<TransactionType>(Service.TransactionTypes);
+            this.cbTransaction.ItemsSource = _observableTransactionType;
+            udClone.Value = 0.00m;
+        }
+
+        private void ResetStandardEditableControls()
         {
             _selectedTags = new List<Tag>();
             cbRelated.SelectedItem = null;
@@ -81,13 +95,45 @@ namespace Paygl.Views
             TagStack.Children.Clear();
         }
 
-        private void UserEditableControlsVisibility(Visibility v)
+        private void ResetCloneOptions()
+        {
+            udClone.Value = 0.00m;
+            cbTransaction.SelectedItem = null; ;
+        }
+
+        private void SetNavigateButtonVisibility(Visibility v)
+        {
+            ImportBack.Visibility = v;
+            ImportNext.Visibility = v;
+            ImportIgnore.Visibility = v;
+            ImportClone.Visibility = v;
+            ImportAccept.Visibility = v;
+        }
+
+        private void UserStandardEditableControlsVisibility(Visibility v)
         {
             cbFrequent.Visibility = v;
             cbImportance.Visibility = v;
             cbTags.Visibility = v;
             cbRelated.Visibility = v;
             tbNewDescription.Visibility = v;
+            TagStack.Visibility = v;
+        }
+
+        private void SetCloneOptions(Visibility v)
+        {
+            udClone.Visibility = v;
+            btnClone.Visibility = v;
+            btnCloneCancel.Visibility = v;
+            cbTransaction.Visibility = v;
+
+            var v2 = v == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden;
+            ImportBack.Visibility = v2;
+            ImportNext.Visibility = v2;
+            ImportIgnore.Visibility = v2;
+            TagStack.Visibility = v2;
+
+            UserStandardEditableControlsVisibility(v2);
         }
 
         private void AddObservableOperation(Operation operation)
@@ -147,12 +193,13 @@ namespace Paygl.Views
             {
                 _operation = _operations[index];
 
-                ResetEditableControls();
+                ResetStandardEditableControls();
 
                 tbDescription.Text = _operation.Description;
                 tbNewDescription.Text = _operation.ShortDescription;
                 lDate.Content = _operation.Date.ToString("dd.MM.yyyy");
                 lAmount.Content = _operation.Amount;
+                cbTransaction.SelectedItem = _operation.TransactionType;
                 cbFrequent.SelectedItem = _operation.Frequence;
                 cbImportance.SelectedItem = _operation.Importance;
                 lTransaction.Content = _operation.TransactionType.Text;
@@ -162,7 +209,8 @@ namespace Paygl.Views
                     SetTagLabel(tag.Tag);
                 }
 
-                UserEditableControlsVisibility(Visibility.Visible);
+                UserStandardEditableControlsVisibility(Visibility.Visible);
+                SetCloneOptions(Visibility.Hidden);
             }
         }
 
@@ -211,8 +259,10 @@ namespace Paygl.Views
             if (!IsExistInSelectedTags(tag))
             {
                 _selectedTags.Add(tag);
-                var newborder = new Border();
-                newborder.Style = (Style)FindResource("MyBorder");
+                var newborder = new Border
+                {
+                    Style = (Style)FindResource("MyBorder")
+                };
 
                 var newstackpanel = new StackPanel
                 {
@@ -263,6 +313,43 @@ namespace Paygl.Views
         private void ImportNext_Click(object sender, RoutedEventArgs e)
         {
             ShowNext();
+        }
+
+        private void ImportClone_Click(object sender, RoutedEventArgs e)
+        {
+            SetCloneOptions(Visibility.Visible);
+        }
+
+        private void BtnClone_Click(object sender, RoutedEventArgs e)
+        {
+            SetCloneOptions(Visibility.Hidden);
+            if (udClone.Value.HasValue && udClone.Value.Value > 0.0000001m && udClone.Value.Value<_operation.Amount)
+            {
+                var difference = _operation.Amount - udClone.Value.Value;
+                _operation.SetAmount(difference);
+                lAmount.Content = _operation.Amount.ToString();
+
+                var operation = new Operation(null, null, Service.User, "", 0M, null, null, null, null, DateTime.Now, "");
+                operation.ChangeDescription(_operation.Description);
+                operation.SetShortDescription(_operation.ShortDescription);
+                operation.SetTransaction(_operation.TransactionType);
+                operation.SetTransfer(_operation.TransferType);
+                operation.SetDate(_operation.Date);
+                operation.SetFrequence(_operation.Frequence);
+                operation.SetImportance(_operation.Importance);
+                operation.SetTags(_operation.Tags); 
+                operation.SetAmount(udClone.Value.Value);
+                operation.SetTransaction(cbTransaction.SelectedItem as TransactionType);
+                operation.SetTransfer(_operation.TransferType);
+
+                var index = _operations.IndexOf(_operation);
+                _operations.Insert(index+1, operation);
+            }
+        }
+
+        private void BtnCloneCancel_Click(object sender, RoutedEventArgs e)
+        {
+            SetCloneOptions(Visibility.Hidden);
         }
     }
 }

@@ -188,6 +188,7 @@ namespace PayglService.cs
                     }
 
                     transactions = transactions.Where(t => !Regex.Match(t.ContractorData, ignoredItem.DescriptionRegex).Success || !Regex.Match(t.Title, ignoredItem.TitleRegex).Success).ToList();
+                    transactions.Reverse();
                 }
             }
 

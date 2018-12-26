@@ -33,8 +33,8 @@
       ]
     },
     {
-      "DescriptionRegex": " DotPay S.A. ",
-      "TitleRegex": " MENNICA POLSKA S.A..*",
+      "DescriptionRegex": " DotPay S\\.A\\. ",
+      "TitleRegex": " MENNICA POLSKA S\\.A\\..*",
       "Description": "Urbancard: ",
       "Frequence": "",
       "Importance": "",
@@ -47,6 +47,16 @@
       "TitleRegex": "",
       "Description": "Lidl-praca",
       "Frequence": "codzienne",
+      "Importance": "konieczne",
+      "Tags": [
+        "spożywcze"
+      ]
+    },
+    {
+      "DescriptionRegex": " JMP SA BIEDRONKA [0-9]{4} WROCLAW PL ",
+      "TitleRegex": "",
+      "Description": "Biedronka",
+      "Frequence": "od czasu do czasu",
       "Importance": "konieczne",
       "Tags": [
         "spożywcze"
@@ -84,7 +94,18 @@
       ]
     },
     {
-      "DescriptionRegex": " COMARCH SPÓŁKA AKCYJNA, AL. JANA PAWŁA II 39, 31-864 KRAKÓW ",
+      "DescriptionRegex": " HASTA LA VISTA WROCLAW PL ",
+      "TitleRegex": "",
+      "Description": "Squash",
+      "Frequence": "od czasu do czasu",
+      "Importance": "przydatne",
+      "Tags": [
+        "sport",
+        "rozrywka"
+      ]
+    },
+    {
+      "DescriptionRegex": " COMARCH SPÓŁKA AKCYJNA, AL\\. JANA PAWŁA II 39, 31-864 KRAKÓW ",
       "TitleRegex": "",
       "Description": "COMARCH wypłata",
       "Frequence": "miesięczne",
@@ -94,7 +115,7 @@
       ]
     },
     {
-      "DescriptionRegex": " Mateusz Małek, ul. Sucharskiego 8, 52-205 Wrocław ",
+      "DescriptionRegex": " Mateusz Małek, ul\\. Sucharskiego 8, 52-205 Wrocław ",
       "TitleRegex": "",
       "Description": "Opłata za mieszkanie",
       "Frequence": "miesięczne",
@@ -124,7 +145,7 @@
       ]
     },
     {
-      "DescriptionRegex": " ADAM  POKORA, OS. STARE SADY 3  M.3, 98-300 WIELUŃ ",
+      "DescriptionRegex": " ADAM  POKORA, OS\\. STARE SADY 3  M\\.3, 98-300 WIELUŃ ",
       "TitleRegex": "",
       "Description": "Adam Pokora: ",
       "Frequence": "",
@@ -144,7 +165,7 @@
       ]
     },
     {
-      "DescriptionRegex": " ŁUKASZ  STEFANEK, UL. POLNA 2, 98-355 TRĘBACZEW ",
+      "DescriptionRegex": " ŁUKASZ  STEFANEK, UL\\. POLNA 2, 98-355 TRĘBACZEW ",
       "TitleRegex": "",
       "Description": "Łukasz Stefanek: ",
       "Frequence": "",
@@ -184,7 +205,7 @@
       ]
     },
     {
-      "DescriptionRegex": " SZYMON DAWIDZIAK, UL.PRUSA 9, 98-300 WIELUŃ ",
+      "DescriptionRegex": " SZYMON DAWIDZIAK, UL\\.PRUSA 9, 98-300 WIELUŃ ",
       "TitleRegex": "eng.+",
       "Description": "Szymon Dawidziak: ",
       "Frequence": "miesięczne",
@@ -194,7 +215,7 @@
       ]
     },
     {
-      "DescriptionRegex": " SZYMON DAWIDZIAK, UL.PRUSA 9, 98-300 WIELUŃ ",
+      "DescriptionRegex": " SZYMON DAWIDZIAK, UL\\.PRUSA 9, 98-300 WIELUŃ ",
       "TitleRegex": "",
       "Description": "Szymon Dawidziak: ",
       "Frequence": "",
@@ -206,7 +227,7 @@
     {
       "DescriptionRegex": " Szymon Dawidziak ",
       "TitleRegex": "",
-      "Description": "Szymon Dawidziak: ",
+      "Description": "Szymon Dawidziak: angielski",
       "Frequence": "",
       "Importance": "",
       "Tags": [

@@ -114,6 +114,11 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             TransferType = transferType;
         }
 
+        public void SetDate(DateTime date)
+        {
+            Date = date;
+        }
+
         public void SetAmount(decimal? value)
         {
             if (value.HasValue)

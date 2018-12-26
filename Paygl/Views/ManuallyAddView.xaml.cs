@@ -139,6 +139,7 @@ namespace Paygl.Views
             _operation.SetFrequence(cbFrequent.SelectedItem as Frequence);
             _operation.SetTransaction(cbTransaction.SelectedItem as TransactionType);
             _operation.SetTransfer(cbTransfer.SelectedItem as TransferType);
+            _operation.SetDate(DateTime.ParseExact(lDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
             foreach (var item in _selectedTags)
             {
                 _operation.AddTag(item);
