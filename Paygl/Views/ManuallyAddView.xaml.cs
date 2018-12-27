@@ -154,7 +154,10 @@ namespace Paygl.Views
                 Service.UpdateOperationComplex(_operation);
                 AddObservableOperation(_operation);
                 ResetEditableControls();
-            }catch(Exception ex)
+                SetEditableControls();
+                SetOperationValues();
+            }
+            catch(Exception ex)
             {
                 var dialog = new MessageBox("Komunikat", ex.Message);
                 dialog.ShowDialog();

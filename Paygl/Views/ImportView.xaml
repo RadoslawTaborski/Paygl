@@ -55,7 +55,6 @@
                 <ComboBox x:Name="cbTags" HorizontalAlignment="Left" Margin="10,0,0,6" Grid.Row="6" Grid.Column="1" VerticalAlignment="Bottom" Width="500" SelectionChanged="CbTags_SelectionChanged"/>
                 <Label Style="{StaticResource MyLabel}" x:Name="lTransaction" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="7"/>
                 <Label Style="{StaticResource MyLabel}" x:Name="lTransfer" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="8"/>
-                <ComboBox x:Name="cbTransaction" HorizontalAlignment="Left" Margin="10,0,0,6" Grid.Row="7" Grid.Column="1" VerticalAlignment="Bottom" Width="500"/>
                 <ComboBox x:Name="cbRelated" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="500" Height="40" Grid.Column="1" Grid.Row="9"/>
             </Grid>
             <Grid Margin="10,10,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">

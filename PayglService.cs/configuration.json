@@ -2,8 +2,8 @@
   "Settings": {
     "Language": "pl-PL",
     "UserData": {
-      "Login": "test",
-      "Password": "test"
+      "Login": "rado",
+      "Password": "1234"
     },
     "System": {
       "PathToImportFiles": "D:\\Programowanie\\C#\\Paygl\\Exports\\"
@@ -12,7 +12,7 @@
       "Address": "localhost",
       "Login": "root",
       "Password": "",
-      "Table": "paygl_test"
+      "Table": "paygl"
     }
   },
   "Ignored": [
@@ -66,8 +66,8 @@
       "DescriptionRegex": " ROSSMANN 03 Wroclaw PL ",
       "TitleRegex": "",
       "Description": "Rossman-Bema:",
-      "Frequence": "",
-      "Importance": "",
+      "Frequence": "od czasu do czasu",
+      "Importance": "konieczne",
       "Tags": [
         "chemia"
       ]
@@ -76,8 +76,8 @@
       "DescriptionRegex": " ROSSMANN [0-9]{2} Wroclaw PL ",
       "TitleRegex": "",
       "Description": "Rossman:",
-      "Frequence": "",
-      "Importance": "",
+      "Frequence": "od czasu do czasu",
+      "Importance": "konieczne",
       "Tags": [
         "chemia"
       ]
@@ -94,7 +94,7 @@
       ]
     },
     {
-      "DescriptionRegex": " HASTA LA VISTA WROCLAW PL ",
+      "DescriptionRegex": " HASTA LA VISTA (.*?)WROCLAW PL ",
       "TitleRegex": "",
       "Description": "Squash",
       "Frequence": "od czasu do czasu",
@@ -121,17 +121,19 @@
       "Frequence": "miesięczne",
       "Importance": "konieczne",
       "Tags": [
-        "opłaty"
+        "opłaty",
+        "dom"
       ]
     },
     {
       "DescriptionRegex": " ZABKA.+",
       "TitleRegex": "",
       "Description": "Żabka: ",
-      "Frequence": "",
-      "Importance": "",
+      "Frequence": "od czasu do czasu",
+      "Importance": "oczekiwane",
       "Tags": [
-
+        "spożywcze",
+        "rozrywka"
       ]
     },
     {
@@ -207,11 +209,12 @@
     {
       "DescriptionRegex": " SZYMON DAWIDZIAK, UL\\.PRUSA 9, 98-300 WIELUŃ ",
       "TitleRegex": "eng.+",
-      "Description": "Szymon Dawidziak: ",
+      "Description": "Szymon Dawidziak: angielski",
       "Frequence": "miesięczne",
       "Importance": "przydatne",
       "Tags": [
-        "opłaty"
+        "opłaty",
+        "nauka"
       ]
     },
     {
@@ -227,7 +230,7 @@
     {
       "DescriptionRegex": " Szymon Dawidziak ",
       "TitleRegex": "",
-      "Description": "Szymon Dawidziak: angielski",
+      "Description": "Szymon Dawidziak: ",
       "Frequence": "",
       "Importance": "",
       "Tags": [

@@ -68,15 +68,16 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             var relTag = new RelTag(null, tag, Id);
             var relOperation = new RelOperation(null, this, tag.Id);
             Tags.Add(relTag);
+
             tag.AddOperation(relOperation);
 
-            return (relTag,relOperation);
+            return (relTag, relOperation);
         }
 
         public void RemoveTag(RelTag tag)
         {
             Tags.Remove(tag);
-            tag.Tag.RemoveOperation(tag.Tag.Operations.Where(o=>o.Operation==this).First());
+            tag.Tag.RemoveOperation(tag.Tag.Operations.Where(o => o.Operation == this).First());
         }
 
         public void SetFrequence(Frequence frequence)
@@ -125,6 +126,11 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             {
                 Amount = value.Value;
             }
+        }
+
+        public void RemoveAllTags()
+        {
+            Tags.Clear();
         }
     }
 }

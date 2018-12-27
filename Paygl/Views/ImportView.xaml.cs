@@ -80,8 +80,6 @@ namespace Paygl.Views
 
         private void SetCloneEditableControls()
         {
-            _observableTransactionType = new ObservableRangeCollection<TransactionType>(Service.TransactionTypes);
-            this.cbTransaction.ItemsSource = _observableTransactionType;
             udClone.Value = 0.00m;
         }
 
@@ -98,7 +96,6 @@ namespace Paygl.Views
         private void ResetCloneOptions()
         {
             udClone.Value = 0.00m;
-            cbTransaction.SelectedItem = null; ;
         }
 
         private void SetNavigateButtonVisibility(Visibility v)
@@ -125,7 +122,6 @@ namespace Paygl.Views
             udClone.Visibility = v;
             btnClone.Visibility = v;
             btnCloneCancel.Visibility = v;
-            cbTransaction.Visibility = v;
 
             var v2 = v == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden;
             ImportBack.Visibility = v2;
@@ -156,6 +152,7 @@ namespace Paygl.Views
             var tmp = tbDescription.Text;
             _operation.SetImportance(cbImportance.SelectedItem as Importance);
             _operation.SetFrequence(cbFrequent.SelectedItem as Frequence);
+            _operation.RemoveAllTags();
             foreach (var item in _selectedTags)
             {
                 _operation.AddTag(item);
@@ -172,7 +169,8 @@ namespace Paygl.Views
                     AddObservableOperation(_operation);
                 }
                 _operations.Remove(_operation);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 var dialog = new MessageBox("Komunikat", ex.Message);
                 _operation.ChangeDescription(tmp);
@@ -199,7 +197,6 @@ namespace Paygl.Views
                 tbNewDescription.Text = _operation.ShortDescription;
                 lDate.Content = _operation.Date.ToString("dd.MM.yyyy");
                 lAmount.Content = _operation.Amount;
-                cbTransaction.SelectedItem = _operation.TransactionType;
                 cbFrequent.SelectedItem = _operation.Frequence;
                 cbImportance.SelectedItem = _operation.Importance;
                 lTransaction.Content = _operation.TransactionType.Text;
@@ -323,10 +320,10 @@ namespace Paygl.Views
         private void BtnClone_Click(object sender, RoutedEventArgs e)
         {
             SetCloneOptions(Visibility.Hidden);
-            if (udClone.Value.HasValue && udClone.Value.Value > 0.0000001m && udClone.Value.Value<_operation.Amount)
+            if (udClone.Value.HasValue && udClone.Value.Value >= decimal.Zero)
             {
                 var difference = _operation.Amount - udClone.Value.Value;
-                _operation.SetAmount(difference);
+                _operation.SetAmount(udClone.Value.Value);
                 lAmount.Content = _operation.Amount.ToString();
 
                 var operation = new Operation(null, null, Service.User, "", 0M, null, null, null, null, DateTime.Now, "");
@@ -337,13 +334,23 @@ namespace Paygl.Views
                 operation.SetDate(_operation.Date);
                 operation.SetFrequence(_operation.Frequence);
                 operation.SetImportance(_operation.Importance);
-                operation.SetTags(_operation.Tags); 
-                operation.SetAmount(udClone.Value.Value);
-                operation.SetTransaction(cbTransaction.SelectedItem as TransactionType);
+                operation.SetTags(_operation.Tags);
                 operation.SetTransfer(_operation.TransferType);
 
+                if (difference >= decimal.Zero)
+                {
+                    operation.SetAmount(difference);
+                    operation.SetTransaction(_operation.TransactionType);
+                }
+                else
+                {
+                    operation.SetAmount(-1 * difference);
+                    var anotherTransaction = _operation.TransactionType == Service.TransactionTypes[0] ? Service.TransactionTypes[1] : Service.TransactionTypes[0];
+                    operation.SetTransaction(anotherTransaction);
+                }
+
                 var index = _operations.IndexOf(_operation);
-                _operations.Insert(index+1, operation);
+                _operations.Insert(index + 1, operation);
             }
         }
 
