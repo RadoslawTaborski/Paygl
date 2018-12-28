@@ -38,7 +38,7 @@ namespace Paygl.Views
             Background = Brushes.Azure;
 
             LoadAttributes();
-            LoadOperations();
+            LoadOperationsGroup();
 
             SetEditableControls();
             SetOperationValues();
@@ -46,39 +46,39 @@ namespace Paygl.Views
 
         private void SetEditableControls()
         {
-            udAmount.Value = 0.00M;
+            _upDownAmount.Value = 0.00M;
             _observableFrequencies = new ObservableRangeCollection<Frequence>(Service.Frequencies);
-            this.cbFrequent.ItemsSource = _observableFrequencies;
+            _cbFrequent.ItemsSource = _observableFrequencies;
             _observableImportances = new ObservableRangeCollection<Importance>(Service.Importances);
-            this.cbImportance.ItemsSource = _observableImportances;
+            _cbImportance.ItemsSource = _observableImportances;
             _observableTransactionType = new ObservableRangeCollection<TransactionType>(Service.TransactionTypes);
-            this.cbTransaction.ItemsSource = _observableTransactionType;
+            _cbTransaction.ItemsSource = _observableTransactionType;
             _observableTransferType = new ObservableRangeCollection<TransferType>(Service.TransferTypes);
-            this.cbTransfer.ItemsSource = _observableTransferType;
+            _cbTransfer.ItemsSource = _observableTransferType;
             _observableGroups = new ObservableRangeCollection<OperationsGroup>();
             _observableGroups.Add(null);
             _observableGroups.AddRange(Service.OperationsGroups);
-            this.cbRelated.ItemsSource = _observableGroups;
+            _cbRelated.ItemsSource = _observableGroups;
             _observableTags = new ObservableRangeCollection<Tag>(Service.Tags);
-            this.cbTags.ItemsSource = _observableTags;
+            _cbTags.ItemsSource = _observableTags;
         }
 
         private void SetOperationValues()
         {
-            CalendarBorder.Visibility = Visibility.Hidden;
-            calDate.SelectedDate = DateTime.Now;
+            _borderCalendar.Visibility = Visibility.Hidden;
+            _calDate.SelectedDate = DateTime.Now;
 
             _operation = new Operation(null, null, Service.User, "", 0M, null, null, null, null, DateTime.Now, "");
 
             ResetEditableControls();
 
-            tbNewDescription.Text = "";
-            lDate.Content = _operation.Date.ToString("dd.MM.yyyy");
-            udAmount.Value = _operation.Amount;
-            cbFrequent.SelectedItem = _operation.Frequence;
-            cbImportance.SelectedItem = _operation.Importance;
-            cbTransaction.SelectedItem = Service.TransactionTypes[1];
-            cbTransfer.SelectedItem = Service.TransferTypes[0];
+            _tbNewDescription.Text = "";
+            _labDate.Content = _operation.Date.ToString("dd.MM.yyyy");
+            _upDownAmount.Value = _operation.Amount;
+            _cbFrequent.SelectedItem = _operation.Frequence;
+            _cbImportance.SelectedItem = _operation.Importance;
+            _cbTransaction.SelectedItem = Service.TransactionTypes[1];
+            _cbTransfer.SelectedItem = Service.TransferTypes[0];
             foreach (var tag in _operation.Tags)
             {
                 SetTagLabel(tag.Tag);
@@ -89,28 +89,28 @@ namespace Paygl.Views
 
         private void ResetEditableControls()
         {
-            tbNewDescription.Text = "";
-            udAmount.Value = 0.00M;
+            _tbNewDescription.Text = "";
+            _upDownAmount.Value = 0.00M;
             _selectedTags = new List<Tag>();
-            cbTransaction.SelectedItem = Service.TransactionTypes[1];
-            cbTransfer.SelectedItem = Service.TransferTypes[0];
-            cbRelated.SelectedItem = null;
-            cbTags.SelectedItem = null;
-            cbFrequent.SelectedItem = null;
-            cbImportance.SelectedItem = null;
-            TagStack.Children.Clear();
+            _cbTransaction.SelectedItem = Service.TransactionTypes[1];
+            _cbTransfer.SelectedItem = Service.TransferTypes[0];
+            _cbRelated.SelectedItem = null;
+            _cbTags.SelectedItem = null;
+            _cbFrequent.SelectedItem = null;
+            _cbImportance.SelectedItem = null;
+            _spTags.Children.Clear();
         }
 
         private void UserEditableControlsVisibility(Visibility v)
         {
-            cbFrequent.Visibility = v;
-            cbImportance.Visibility = v;
-            cbTags.Visibility = v;
-            cbTransaction.Visibility = v;
-            cbTransfer.Visibility = v;
-            cbRelated.Visibility = v;
-            tbNewDescription.Visibility = v;
-            udAmount.Visibility = v;
+            _cbFrequent.Visibility = v;
+            _cbImportance.Visibility = v;
+            _cbTags.Visibility = v;
+            _cbTransaction.Visibility = v;
+            _cbTransfer.Visibility = v;
+            _cbRelated.Visibility = v;
+            _tbNewDescription.Visibility = v;
+            _upDownAmount.Visibility = v;
         }
 
         private void AddObservableOperation(OperationsGroup group)
@@ -123,31 +123,31 @@ namespace Paygl.Views
             Service.LoadAttributes();
         }
 
-        private void LoadOperations()
+        private void LoadOperationsGroup()
         {
-            Service.LoadOperations();
+            Service.LoadOperationsGroups();
         }
 
-        private void ManualClear_Click(object sender, RoutedEventArgs e)
+        private void BtnManualClear_Click(object sender, RoutedEventArgs e)
         {
             ResetEditableControls();
         }
 
-        private void ManualAccept_Click(object sender, RoutedEventArgs e)
+        private void BtnManualAccept_Click(object sender, RoutedEventArgs e)
         {
-            _operation.SetImportance(cbImportance.SelectedItem as Importance);
-            _operation.SetFrequence(cbFrequent.SelectedItem as Frequence);
-            _operation.SetTransaction(cbTransaction.SelectedItem as TransactionType);
-            _operation.SetTransfer(cbTransfer.SelectedItem as TransferType);
-            _operation.SetDate(DateTime.ParseExact(lDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
+            _operation.SetImportance(_cbImportance.SelectedItem as Importance);
+            _operation.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+            _operation.SetTransaction(_cbTransaction.SelectedItem as TransactionType);
+            _operation.SetTransfer(_cbTransfer.SelectedItem as TransferType);
+            _operation.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
             foreach (var item in _selectedTags)
             {
                 _operation.AddTag(item);
             }
-            _operation.SetParent(cbRelated.SelectedItem as OperationsGroup);
-            _operation.SetDescription(tbNewDescription.Text);
-            _operation.SetShortDescription(tbNewDescription.Text);
-            _operation.SetAmount(udAmount.Value);
+            _operation.SetParent(_cbRelated.SelectedItem as OperationsGroup);
+            _operation.SetDescription(_tbNewDescription.Text);
+            _operation.SetShortDescription(_tbNewDescription.Text);
+            _operation.SetAmount(_upDownAmount.Value);
 
             try
             {
@@ -165,7 +165,7 @@ namespace Paygl.Views
 
         private void CbTags_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selected = cbTags.SelectedItem as Tag;
+            var selected = _cbTags.SelectedItem as Tag;
 
             if (selected != null)
             {
@@ -204,23 +204,27 @@ namespace Paygl.Views
 
                 var newbutton = new Button
                 {
-                    Content = "X",
+                    Content = new Image
+                    {
+                        Source = new BitmapImage(new Uri(@"..\img\x-icon.png", UriKind.Relative)),
+                        VerticalAlignment = VerticalAlignment.Center
+                    },
                     Width = 20,
                     Height = 20,
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Center,
                 };
                 newbutton.Style = (Style)FindResource("MyButton");
-                newbutton.Click += Close_Click;
+                newbutton.Click += BtnClose_Click;
 
                 newstackpanel.Children.Add(newlabel);
                 newstackpanel.Children.Add(newbutton);
                 newborder.Child = newstackpanel;
-                TagStack.Children.Add(newborder);
+                _spTags.Children.Add(newborder);
             }
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var panel = button.Parent as StackPanel;
@@ -228,23 +232,23 @@ namespace Paygl.Views
             var label = panel.Children[0] as Label;
 
             var tag = Service.Tags.Where(t => t.Text.Equals(label.Content)).First();
-            TagStack.Children.Remove(border);
+            _spTags.Children.Remove(border);
             _selectedTags.Remove(tag);
         }
 
         private void BtnCalendar_Click(object sender, RoutedEventArgs e)
         {
-            CalendarBorder.Visibility = Visibility.Visible;
+            _borderCalendar.Visibility = Visibility.Visible;
         }
 
-        private void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        private void CalDate_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
-            CalendarBorder.Visibility = Visibility.Hidden;
-            if (calDate.SelectedDate.HasValue)
+            _borderCalendar.Visibility = Visibility.Hidden;
+            if (_calDate.SelectedDate.HasValue)
             {
-                lDate.Content = calDate.SelectedDate.Value.ToString("dd.MM.yyyy");
+                _labDate.Content = _calDate.SelectedDate.Value.ToString("dd.MM.yyyy");
             }
-            CalendarBorder.Visibility = Visibility.Hidden;
+            _borderCalendar.Visibility = Visibility.Hidden;
         }
     }
 }

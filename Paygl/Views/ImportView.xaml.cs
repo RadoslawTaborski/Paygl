@@ -4,6 +4,7 @@ using DataBaseWithBusinessLogicConnector.Dal.Adapters;
 using DataBaseWithBusinessLogicConnector.Dal.Mappers;
 using DataBaseWithBusinessLogicConnector.Entities;
 using Importer;
+using Paygl.Models;
 using PayglService.cs;
 using System;
 using System.Collections.Generic;
@@ -28,10 +29,6 @@ namespace Paygl.Views
     /// </summary>
     public partial class ImportView : UserControl
     {
-        private List<Operation> _operations;
-        private Operation _operation;
-        private int _index;
-
         private List<Tag> _selectedTags;
 
         private ObservableRangeCollection<Frequence> _observableFrequencies;
@@ -45,92 +42,92 @@ namespace Paygl.Views
             Background = Brushes.Azure;
 
             LoadAttributes();
-            LoadOperations();
+            LoadOperationsGroup();
 
             SetStandardEditableControls();
             SetCloneEditableControls();
 
-            SetCloneOptions(Visibility.Hidden);
-            UserStandardEditableControlsVisibility(Visibility.Hidden);
+            SetCloneOptionsVisibility(Visibility.Hidden);
+            SetUserStandardEditableControlsVisibility(Visibility.Hidden);
             SetNavigateButtonVisibility(Visibility.Hidden);
 
-            _operations = Service.Import();
-            if (_operations.Count > 0)
+            ViewsMemory.AddImportingOperations(Service.Import());
+            if (ViewsMemory.CurrentOperation()!=null)
             {
                 SetNavigateButtonVisibility(Visibility.Visible);
-                Show(0);
+                Show(ViewsMemory.CurrentOperation());
             }
         }
 
         private void SetStandardEditableControls()
         {
             _observableFrequencies = new ObservableRangeCollection<Frequence>(Service.Frequencies);
-            this.cbFrequent.ItemsSource = _observableFrequencies;
+            _cbFrequent.ItemsSource = _observableFrequencies;
             _observableImportances = new ObservableRangeCollection<Importance>(Service.Importances);
-            this.cbImportance.ItemsSource = _observableImportances;
+            _cbImportance.ItemsSource = _observableImportances;
             _observableGroups = new ObservableRangeCollection<OperationsGroup>();
             _observableGroups.Add(null);
             _observableGroups.AddRange(Service.OperationsGroups);
-            this.cbRelated.ItemsSource = _observableGroups;
+            _cbRelated.ItemsSource = _observableGroups;
             _observableTags = new ObservableRangeCollection<Tag>(Service.Tags);
-            this.cbTags.ItemsSource = _observableTags;
+            _cbTags.ItemsSource = _observableTags;
         }
 
         private void SetCloneEditableControls()
         {
-            udClone.Value = 0.00m;
+            _upDownClone.Value = 0.00m;
         }
 
         private void ResetStandardEditableControls()
         {
             _selectedTags = new List<Tag>();
-            cbRelated.SelectedItem = null;
-            cbTags.SelectedItem = null;
-            cbFrequent.SelectedItem = null;
-            cbImportance.SelectedItem = null;
-            TagStack.Children.Clear();
+            _cbRelated.SelectedItem = null;
+            _cbTags.SelectedItem = null;
+            _cbFrequent.SelectedItem = null;
+            _cbImportance.SelectedItem = null;
+            _spTags.Children.Clear();
         }
 
         private void ResetCloneOptions()
         {
-            udClone.Value = 0.00m;
+            _upDownClone.Value = 0.00m;
         }
 
         private void SetNavigateButtonVisibility(Visibility v)
         {
-            ImportBack.Visibility = v;
-            ImportNext.Visibility = v;
-            ImportIgnore.Visibility = v;
-            ImportClone.Visibility = v;
-            ImportAccept.Visibility = v;
+            _btnBack.Visibility = v;
+            _btnNext.Visibility = v;
+            _btnImportIgnore.Visibility = v;
+            _btnImportClone.Visibility = v;
+            _btnImportAccept.Visibility = v;
         }
 
-        private void UserStandardEditableControlsVisibility(Visibility v)
+        private void SetUserStandardEditableControlsVisibility(Visibility v)
         {
-            cbFrequent.Visibility = v;
-            cbImportance.Visibility = v;
-            cbTags.Visibility = v;
-            cbRelated.Visibility = v;
-            tbNewDescription.Visibility = v;
-            TagStack.Visibility = v;
+            _cbFrequent.Visibility = v;
+            _cbImportance.Visibility = v;
+            _cbTags.Visibility = v;
+            _cbRelated.Visibility = v;
+            _tbNewDescription.Visibility = v;
+            _spTags.Visibility = v;
         }
 
-        private void SetCloneOptions(Visibility v)
+        private void SetCloneOptionsVisibility(Visibility v)
         {
-            udClone.Visibility = v;
+            _upDownClone.Visibility = v;
             btnClone.Visibility = v;
             btnCloneCancel.Visibility = v;
 
             var v2 = v == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden;
-            ImportBack.Visibility = v2;
-            ImportNext.Visibility = v2;
-            ImportIgnore.Visibility = v2;
-            TagStack.Visibility = v2;
+            _btnBack.Visibility = v2;
+            _btnNext.Visibility = v2;
+            _btnImportIgnore.Visibility = v2;
+            _spTags.Visibility = v2;
 
-            UserStandardEditableControlsVisibility(v2);
+            SetUserStandardEditableControlsVisibility(v2);
         }
 
-        private void AddObservableOperation(OperationsGroup group)
+        private void AddObservableGroup(OperationsGroup group)
         {
             _observableGroups.Add(group);
         }
@@ -140,97 +137,43 @@ namespace Paygl.Views
             Service.LoadAttributes();
         }
 
-        private void LoadOperations()
+        private void LoadOperationsGroup()
         {
-            Service.LoadOperations();
+            Service.LoadOperationsGroups();
         }
 
-        private void ImportAccept_Click(object sender, RoutedEventArgs e)
+        private void Show(Operation operation)
         {
-            var tmp = tbDescription.Text;
-            _operation.SetImportance(cbImportance.SelectedItem as Importance);
-            _operation.SetFrequence(cbFrequent.SelectedItem as Frequence);
-            _operation.RemoveAllTags();
-            foreach (var item in _selectedTags)
+            if (operation!=null)
             {
-                _operation.AddTag(item);
-            }
-            _operation.SetParent(cbRelated.SelectedItem as OperationsGroup);
-            _operation.SetDescription(tbNewDescription.Text);
-            _operation.SetShortDescription(tbNewDescription.Text);
-
-            try
-            {
-                Service.UpdateOperationComplex(_operation);
-                _operations.Remove(_operation);
-            }
-            catch (Exception ex)
-            {
-                var dialog = new MessageBox("Komunikat", ex.Message);
-                _operation.SetDescription(tmp);
-                dialog.ShowDialog();
-            }
-            Show(_index);
-        }
-
-        private void ImportIgnore_Click(object sender, RoutedEventArgs e)
-        {
-            _operations.Remove(_operation);
-            Show(_index);
-        }
-
-        private void Show(int index)
-        {
-            if (index < _operations.Count && index >= 0)
-            {
-                _operation = _operations[index];
-
                 ResetStandardEditableControls();
 
-                tbDescription.Text = _operation.Description;
-                tbNewDescription.Text = _operation.ShortDescription;
-                lDate.Content = _operation.Date.ToString("dd.MM.yyyy");
-                lAmount.Content = _operation.Amount;
-                cbFrequent.SelectedItem = _operation.Frequence;
-                cbImportance.SelectedItem = _operation.Importance;
-                lTransaction.Content = _operation.TransactionType.Text;
-                lTransfer.Content = _operation.TransferType.Text;
-                foreach (var tag in _operation.Tags)
+                _tbDescription.Text = operation.Description;
+                _tbNewDescription.Text = operation.ShortDescription;
+                _labDate.Content = operation.Date.ToString("dd.MM.yyyy");
+                _labAmount.Content = operation.Amount;
+                _cbFrequent.SelectedItem = operation.Frequence;
+                _cbImportance.SelectedItem = operation.Importance;
+                _labTransaction.Content = operation.TransactionType.Text;
+                _labTransfer.Content = operation.TransferType.Text;
+                foreach (var tag in operation.Tags)
                 {
                     SetTagLabel(tag.Tag);
                 }
 
-                UserStandardEditableControlsVisibility(Visibility.Visible);
-                SetCloneOptions(Visibility.Hidden);
+                SetUserStandardEditableControlsVisibility(Visibility.Visible);
+                SetCloneOptionsVisibility(Visibility.Hidden);
             }
         }
 
         private void ShowNext()
         {
-            if (_index < _operations.Count - 1)
-            {
-                _index++;
-                Show(_index);
-            }
+            Show(ViewsMemory.NextOperation());
         }
 
         private void ShowPrevious()
         {
-            if (_index > 0)
-            {
-                _index--;
-                Show(_index);
-            }
-        }
-
-        private void CbTags_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var selected = cbTags.SelectedItem as Tag;
-
-            if (selected != null)
-            {
-                SetTagLabel(selected);
-            }
+            Show(ViewsMemory.PreviousOperation());
         }
 
         private bool IsExistInSelectedTags(Tag newTag)
@@ -268,23 +211,73 @@ namespace Paygl.Views
 
                 var newbutton = new Button
                 {
-                    Content = "X",
+                    Content = new Image
+                    {
+                        Source = new BitmapImage(new Uri(@"..\img\x-icon.png", UriKind.Relative)),
+                        VerticalAlignment = VerticalAlignment.Center
+                    },
                     Width = 20,
                     Height = 20,
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Center,
                 };
                 newbutton.Style = (Style)FindResource("MyButton");
-                newbutton.Click += Close_Click;
+                newbutton.Click += BtnRemoveTag_Click;
 
                 newstackpanel.Children.Add(newlabel);
                 newstackpanel.Children.Add(newbutton);
                 newborder.Child = newstackpanel;
-                TagStack.Children.Add(newborder);
+                _spTags.Children.Add(newborder);
             }
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
+        #region events
+        private void BtnImportAccept_Click(object sender, RoutedEventArgs e)
+        {
+            var operation = ViewsMemory.CurrentOperation();
+            var tmp = _tbDescription.Text;
+            operation.SetImportance(_cbImportance.SelectedItem as Importance);
+            operation.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+            operation.RemoveAllTags();
+            foreach (var item in _selectedTags)
+            {
+                operation.AddTag(item);
+            }
+            operation.SetParent(_cbRelated.SelectedItem as OperationsGroup);
+            operation.SetDescription(_tbNewDescription.Text);
+            operation.SetShortDescription(_tbNewDescription.Text);
+
+            try
+            {
+                Service.UpdateOperationComplex(operation);
+                ViewsMemory.RemoveImportingOperation(operation);
+            }
+            catch (Exception ex)
+            {
+                var dialog = new MessageBox("Komunikat", ex.Message);
+                operation.SetDescription(tmp);
+                dialog.ShowDialog();
+            }
+            Show(ViewsMemory.CurrentOperation());
+        }
+
+        private void BtnImportIgnore_Click(object sender, RoutedEventArgs e)
+        {
+            ViewsMemory.RemoveImportingOperation(ViewsMemory.CurrentOperation());
+            Show(ViewsMemory.CurrentOperation());
+        }
+
+        private void CbTags_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selected = _cbTags.SelectedItem as Tag;
+
+            if (selected != null)
+            {
+                SetTagLabel(selected);
+            }
+        }
+
+        private void BtnRemoveTag_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var panel = button.Parent as StackPanel;
@@ -292,65 +285,66 @@ namespace Paygl.Views
             var label = panel.Children[0] as Label;
 
             var tag = Service.Tags.Where(t => t.Text.Equals(label.Content)).First();
-            TagStack.Children.Remove(border);
+            _spTags.Children.Remove(border);
             _selectedTags.Remove(tag);
         }
 
-        private void ImportBack_Click(object sender, RoutedEventArgs e)
+        private void BtnBack_Click(object sender, RoutedEventArgs e)
         {
             ShowPrevious();
         }
 
-        private void ImportNext_Click(object sender, RoutedEventArgs e)
+        private void BtnNext_Click(object sender, RoutedEventArgs e)
         {
             ShowNext();
         }
 
-        private void ImportClone_Click(object sender, RoutedEventArgs e)
+        private void BtnImportClone_Click(object sender, RoutedEventArgs e)
         {
-            SetCloneOptions(Visibility.Visible);
+            SetCloneOptionsVisibility(Visibility.Visible);
         }
 
-        private void BtnClone_Click(object sender, RoutedEventArgs e)
+        private void BtnImportCloneAccept_Click(object sender, RoutedEventArgs e)
         {
-            SetCloneOptions(Visibility.Hidden);
-            if (udClone.Value.HasValue && udClone.Value.Value >= decimal.Zero)
+            var currentOperation = ViewsMemory.CurrentOperation();
+            SetCloneOptionsVisibility(Visibility.Hidden);
+            if (_upDownClone.Value.HasValue && _upDownClone.Value.Value >= decimal.Zero)
             {
-                var difference = _operation.Amount - udClone.Value.Value;
-                _operation.SetAmount(udClone.Value.Value);
-                lAmount.Content = _operation.Amount.ToString();
+                var difference = currentOperation.Amount - _upDownClone.Value.Value;
+                currentOperation.SetAmount(_upDownClone.Value.Value);
+                _labAmount.Content = currentOperation.Amount.ToString();
 
                 var operation = new Operation(null, null, Service.User, "", 0M, null, null, null, null, DateTime.Now, "");
-                operation.SetDescription(_operation.Description);
-                operation.SetShortDescription(_operation.ShortDescription);
-                operation.SetTransaction(_operation.TransactionType);
-                operation.SetTransfer(_operation.TransferType);
-                operation.SetDate(_operation.Date);
-                operation.SetFrequence(_operation.Frequence);
-                operation.SetImportance(_operation.Importance);
-                operation.SetTags(_operation.Tags);
-                operation.SetTransfer(_operation.TransferType);
+                operation.SetDescription(currentOperation.Description);
+                operation.SetShortDescription(currentOperation.ShortDescription);
+                operation.SetTransaction(currentOperation.TransactionType);
+                operation.SetTransfer(currentOperation.TransferType);
+                operation.SetDate(currentOperation.Date);
+                operation.SetFrequence(currentOperation.Frequence);
+                operation.SetImportance(currentOperation.Importance);
+                operation.SetTags(currentOperation.Tags);
+                operation.SetTransfer(currentOperation.TransferType);
 
                 if (difference >= decimal.Zero)
                 {
                     operation.SetAmount(difference);
-                    operation.SetTransaction(_operation.TransactionType);
+                    operation.SetTransaction(currentOperation.TransactionType);
                 }
                 else
                 {
                     operation.SetAmount(-1 * difference);
-                    var anotherTransaction = _operation.TransactionType == Service.TransactionTypes[0] ? Service.TransactionTypes[1] : Service.TransactionTypes[0];
+                    var anotherTransaction = currentOperation.TransactionType == Service.TransactionTypes[0] ? Service.TransactionTypes[1] : Service.TransactionTypes[0];
                     operation.SetTransaction(anotherTransaction);
                 }
 
-                var index = _operations.IndexOf(_operation);
-                _operations.Insert(index + 1, operation);
+                ViewsMemory.InsertOperation(currentOperation, operation);
             }
         }
 
-        private void BtnCloneCancel_Click(object sender, RoutedEventArgs e)
+        private void BtnImportCloneCancel_Click(object sender, RoutedEventArgs e)
         {
-            SetCloneOptions(Visibility.Hidden);
+            SetCloneOptionsVisibility(Visibility.Hidden);
         }
+        #endregion
     }
 }

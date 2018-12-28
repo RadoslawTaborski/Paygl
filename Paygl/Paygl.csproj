@@ -102,6 +102,7 @@
     <Compile Include="MessageBox.xaml.cs">
       <DependentUpon>MessageBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ViewsMemory.cs" />
     <Compile Include="RounderProgressBarControl.xaml.cs">
       <DependentUpon>RounderProgressBarControl.xaml</DependentUpon>
     </Compile>
@@ -196,9 +197,6 @@
     <Resource Include="img\minimize.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj">
       <Project>{E1847C86-2E78-467D-91BB-AE8C457B5757}</Project>
       <Name>DataAccess</Name>
@@ -218,6 +216,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\cal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\x-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

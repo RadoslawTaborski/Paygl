@@ -140,9 +140,6 @@ namespace PayglService.cs
 
         public static void LoadOperations()
         {
-            OperationsGroupMapper.Update(User, Importances, Frequencies);
-            OperationsGroups = OperationsGroupMapper.ConvertToBusinessLogicEntitiesCollection(OperationsGroupAdapter.GetAll($"user_id={User.Id}")).ToList();
-
             OperationMapper.Update(User, OperationsGroups, Importances, Frequencies, TransactionTypes, TransferTypes);
             Operations = OperationMapper.ConvertToBusinessLogicEntitiesCollection(OperationAdapter.GetAll($"user_id={User.Id}")).ToList();
 
@@ -171,6 +168,12 @@ namespace PayglService.cs
                     tag.SetOperations(relOperations.Where(r => r.TagId == tag.Id));
                 }
             }
+        }
+
+        public static void LoadOperationsGroups()
+        {
+            OperationsGroupMapper.Update(User, Importances, Frequencies);
+            OperationsGroups = OperationsGroupMapper.ConvertToBusinessLogicEntitiesCollection(OperationsGroupAdapter.GetAll($"user_id={User.Id}")).ToList();
 
             if (OperationsGroups.Count > 0)
             {
@@ -225,11 +228,33 @@ namespace PayglService.cs
             return new TransactionToOperationMapper().ConvertToEntitiesCollection(transactions, User, Importances, Frequencies, Tags, TransactionTypes, TransferTypes).ToList();
         }
 
+        public static void UpdateOperationsGroupComplex(OperationsGroup operation)
+        {
+            UpdateOperationGroup(operation);
+
+            foreach (var tag in operation.Tags)
+            {
+                InsertGroupTags(tag, operation);
+            }
+        }
+
+        private static int InsertGroupTags(RelTag tag, OperationsGroup grupe)
+        {
+            if (tag.IsDirty)
+            {
+                var newId = OperationsGroupRelationAdapter.Insert(OperationsGroupRelationMapper.ConvertToDALEntity(tag, grupe));
+                tag.UpdateId(newId);
+                tag.IsDirty = false;
+            }
+
+            return tag.Id.Value;
+        }
+
         public static void UpdateOperationComplex(Operation operation)
         {
             if (operation.Parent != null)
             {
-                UpdateOperationGroup(operation.Parent);
+                UpdateOperationsGroupComplex(operation.Parent);
             }
 
             if (operation.DetailsList != null)
