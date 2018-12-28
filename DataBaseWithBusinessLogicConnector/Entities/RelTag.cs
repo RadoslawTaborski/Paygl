@@ -9,14 +9,14 @@ namespace DataBaseWithBusinessLogicConnector.Entities
     {
         public int? Id { get; private set; }
         public Tag Tag { get; private set; }
-        public int? OperationId { get; private set; }
+        public int? RelatedId { get; private set; }
         public bool IsDirty { get; set; }
 
         public RelTag(int? id, Tag tag, int? operationId)
         {
             Id = id;
             Tag = tag;
-            OperationId = operationId;
+            RelatedId = operationId;
             IsDirty = true;
         }
 

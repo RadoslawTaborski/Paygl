@@ -27,7 +27,7 @@ namespace Paygl.Views
 
         private ObservableRangeCollection<Frequence> _observableFrequencies;
         private ObservableRangeCollection<Importance> _observableImportances;
-        private ObservableRangeCollection<Operation> _observableOperations;
+        private ObservableRangeCollection<OperationsGroup> _observableGroups;
         private ObservableRangeCollection<Tag> _observableTags;
         private ObservableRangeCollection<TransactionType> _observableTransactionType;
         private ObservableRangeCollection<TransferType> _observableTransferType;
@@ -55,10 +55,10 @@ namespace Paygl.Views
             this.cbTransaction.ItemsSource = _observableTransactionType;
             _observableTransferType = new ObservableRangeCollection<TransferType>(Service.TransferTypes);
             this.cbTransfer.ItemsSource = _observableTransferType;
-            _observableOperations = new ObservableRangeCollection<Operation>();
-            _observableOperations.Add(null);
-            _observableOperations.AddRange(Service.Operations);
-            this.cbRelated.ItemsSource = _observableOperations;
+            _observableGroups = new ObservableRangeCollection<OperationsGroup>();
+            _observableGroups.Add(null);
+            _observableGroups.AddRange(Service.OperationsGroups);
+            this.cbRelated.ItemsSource = _observableGroups;
             _observableTags = new ObservableRangeCollection<Tag>(Service.Tags);
             this.cbTags.ItemsSource = _observableTags;
         }
@@ -113,9 +113,9 @@ namespace Paygl.Views
             udAmount.Visibility = v;
         }
 
-        private void AddObservableOperation(Operation operation)
+        private void AddObservableOperation(OperationsGroup group)
         {
-            _observableOperations.Add(operation);
+            _observableGroups.Add(group);
         }
 
         private void LoadAttributes()
@@ -144,15 +144,14 @@ namespace Paygl.Views
             {
                 _operation.AddTag(item);
             }
-            _operation.SetParent(cbRelated.SelectedItem as Operation);
-            _operation.ChangeDescription(tbNewDescription.Text);
+            _operation.SetParent(cbRelated.SelectedItem as OperationsGroup);
+            _operation.SetDescription(tbNewDescription.Text);
             _operation.SetShortDescription(tbNewDescription.Text);
             _operation.SetAmount(udAmount.Value);
 
             try
             {
                 Service.UpdateOperationComplex(_operation);
-                AddObservableOperation(_operation);
                 ResetEditableControls();
                 SetEditableControls();
                 SetOperationValues();

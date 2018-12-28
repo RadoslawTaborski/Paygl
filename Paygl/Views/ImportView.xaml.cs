@@ -36,10 +36,8 @@ namespace Paygl.Views
 
         private ObservableRangeCollection<Frequence> _observableFrequencies;
         private ObservableRangeCollection<Importance> _observableImportances;
-        private ObservableRangeCollection<Operation> _observableOperations;
+        private ObservableRangeCollection<OperationsGroup> _observableGroups;
         private ObservableRangeCollection<Tag> _observableTags;
-        private ObservableRangeCollection<TransactionType> _observableTransactionType;
-        private ObservableRangeCollection<TransferType> _observableTransferType;
 
         public ImportView()
         {
@@ -70,10 +68,10 @@ namespace Paygl.Views
             this.cbFrequent.ItemsSource = _observableFrequencies;
             _observableImportances = new ObservableRangeCollection<Importance>(Service.Importances);
             this.cbImportance.ItemsSource = _observableImportances;
-            _observableOperations = new ObservableRangeCollection<Operation>();
-            _observableOperations.Add(null);
-            _observableOperations.AddRange(Service.Operations.Where(o => o.Parent == null));
-            this.cbRelated.ItemsSource = _observableOperations;
+            _observableGroups = new ObservableRangeCollection<OperationsGroup>();
+            _observableGroups.Add(null);
+            _observableGroups.AddRange(Service.OperationsGroups);
+            this.cbRelated.ItemsSource = _observableGroups;
             _observableTags = new ObservableRangeCollection<Tag>(Service.Tags);
             this.cbTags.ItemsSource = _observableTags;
         }
@@ -132,9 +130,9 @@ namespace Paygl.Views
             UserStandardEditableControlsVisibility(v2);
         }
 
-        private void AddObservableOperation(Operation operation)
+        private void AddObservableOperation(OperationsGroup group)
         {
-            _observableOperations.Add(operation);
+            _observableGroups.Add(group);
         }
 
         private void LoadAttributes()
@@ -157,23 +155,19 @@ namespace Paygl.Views
             {
                 _operation.AddTag(item);
             }
-            _operation.SetParent(cbRelated.SelectedItem as Operation);
-            _operation.ChangeDescription(tbNewDescription.Text);
+            _operation.SetParent(cbRelated.SelectedItem as OperationsGroup);
+            _operation.SetDescription(tbNewDescription.Text);
             _operation.SetShortDescription(tbNewDescription.Text);
 
             try
             {
                 Service.UpdateOperationComplex(_operation);
-                if (_operation.Parent == null)
-                {
-                    AddObservableOperation(_operation);
-                }
                 _operations.Remove(_operation);
             }
             catch (Exception ex)
             {
                 var dialog = new MessageBox("Komunikat", ex.Message);
-                _operation.ChangeDescription(tmp);
+                _operation.SetDescription(tmp);
                 dialog.ShowDialog();
             }
             Show(_index);
@@ -327,7 +321,7 @@ namespace Paygl.Views
                 lAmount.Content = _operation.Amount.ToString();
 
                 var operation = new Operation(null, null, Service.User, "", 0M, null, null, null, null, DateTime.Now, "");
-                operation.ChangeDescription(_operation.Description);
+                operation.SetDescription(_operation.Description);
                 operation.SetShortDescription(_operation.ShortDescription);
                 operation.SetTransaction(_operation.TransactionType);
                 operation.SetTransfer(_operation.TransferType);

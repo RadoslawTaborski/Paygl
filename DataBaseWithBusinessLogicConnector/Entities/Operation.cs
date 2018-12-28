@@ -9,7 +9,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
     public class Operation : IEntity
     {
         public int? Id { get; private set; }
-        public Operation Parent { get; private set; }
+        public OperationsGroup Parent { get; private set; }
         public User User { get; private set; }
         public decimal Amount { get; private set; }
         public TransactionType TransactionType { get; private set; }
@@ -24,7 +24,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public string Description { get; private set; }
         public string ShortDescription { get; private set; }
 
-        public Operation(int? id, Operation parent, User user, string description, decimal amount, TransactionType transactionType, TransferType transferType, Frequence frequence, Importance importance, DateTime date, string receiptPath)
+        public Operation(int? id, OperationsGroup parent, User user, string description, decimal amount, TransactionType transactionType, TransferType transferType, Frequence frequence, Importance importance, DateTime date, string receiptPath)
         {
             Id = id;
             Parent = parent;
@@ -41,6 +41,11 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Tags = new List<RelTag>();
             DetailsList = new List<OperationDetails>();
             IsDirty = true;
+
+            if (parent != null)
+            {
+                parent.AddOperation(this);
+            }
         }
 
         public void SetDetailsList(IEnumerable<OperationDetails> detailsCollection)
@@ -53,9 +58,14 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Tags = tags.ToList();
         }
 
-        public void SetParent(Operation parent)
+        public void SetParent(OperationsGroup parent)
         {
+            if (Parent != null)
+            {
+                Parent.RemoveOperation(this);
+            }
             Parent = parent;
+            Parent.AddOperation(this);
         }
 
         public void SetShortDescription(string newDescription)
@@ -100,7 +110,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             return Date.ToString("dd.MM.yyyy") + " " + Description;
         }
 
-        public void ChangeDescription(string text)
+        public void SetDescription(string text)
         {
             Description = text;
         }

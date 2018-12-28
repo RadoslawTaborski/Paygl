@@ -26,11 +26,16 @@ END$$
 DELIMITER ;
 
 CALL PROC_DROP_FOREIGN_KEY('users', 'fk__users__details_id');
+CALL PROC_DROP_FOREIGN_KEY('operations_groups', 'fk__operations_groups__parent_id');
+CALL PROC_DROP_FOREIGN_KEY('operations_groups', 'fk__operations_groups__frequent_id');
+CALL PROC_DROP_FOREIGN_KEY('operations_groups', 'fk__operations_groups__importance_id');
 CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__user_id');
 CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__parent_id');
 CALL PROC_DROP_FOREIGN_KEY('operation_details', 'fk__operation_details__operation_id');
 CALL PROC_DROP_FOREIGN_KEY('operation_tags', 'fk__operation_tags__operation_id');
 CALL PROC_DROP_FOREIGN_KEY('operation_tags', 'fk__operation_tags__tag_id');
+CALL PROC_DROP_FOREIGN_KEY('operations_group_tags', 'fk__operations_group_tags_tags__operation_id');
+CALL PROC_DROP_FOREIGN_KEY('operations_group_tags', 'fk__operations_group_tags__tag_id');
 CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__frequent_id');
 CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__importance_id');
 CALL PROC_DROP_FOREIGN_KEY('operations', 'fk__operations__transfer_type_id');
@@ -73,6 +78,18 @@ CREATE TABLE `operations`(
 , `importance_id` INT
 , `date` datetime NOT NULL
 , `receipt_path` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `operations` ADD INDEX (`user_id`);
+
+DROP TABLE IF EXISTS `operations_groups`;
+CREATE TABLE `operations_groups`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `user_id` INT
+, `description` VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
+, `frequent_id` INT
+, `importance_id` INT
+, `date` datetime NOT NULL
 , PRIMARY KEY (`id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
 ALTER TABLE `operations` ADD INDEX (`user_id`);
@@ -189,14 +206,32 @@ CREATE TABLE `operation_tags`(
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
 ALTER TABLE `operation_tags` ADD INDEX (`operation_id`);
 
+DROP TABLE IF EXISTS `operations_group_tags`;
+CREATE TABLE `operations_group_tags`(
+`id` INT NOT NULL AUTO_INCREMENT
+, `operation_group_id` INT NOT NULL
+, `tag_id` INT NOT NULL
+, PRIMARY KEY (`id`)
+)ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
+ALTER TABLE `operations_group_tags` ADD INDEX (`operation_group_id`);
+
 ALTER TABLE `users` ADD CONSTRAINT `fk__users__details_id`
 FOREIGN KEY (`details_id`) REFERENCES `user_details`(`id`);
+
+ALTER TABLE `operations_groups` ADD CONSTRAINT `fk__operations_groups__user_id`
+FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
+
+ALTER TABLE `operations_groups` ADD CONSTRAINT `fk__operations_groups__frequent_id`
+FOREIGN KEY (`frequent_id`) REFERENCES `frequencies`(`id`);
+
+ALTER TABLE `operations_groups` ADD CONSTRAINT `fk__operations_groups__importance_id`
+FOREIGN KEY (`importance_id`) REFERENCES `importances`(`id`);
 
 ALTER TABLE `operations` ADD CONSTRAINT `fk__operations__user_id`
 FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
 ALTER TABLE `operations` ADD CONSTRAINT `fk__operations__parent_id`
-FOREIGN KEY (`parent_id`) REFERENCES `operations`(`id`);
+FOREIGN KEY (`parent_id`) REFERENCES `operations_groups`(`id`);
 
 ALTER TABLE `operation_details` ADD CONSTRAINT `fk__operation_details__operation_id`
 FOREIGN KEY (`operation_id`) REFERENCES `operations`(`id`);
@@ -205,6 +240,12 @@ ALTER TABLE `operation_tags` ADD CONSTRAINT `fk__operation_tags__operation_id`
 FOREIGN KEY (`operation_id`) REFERENCES `operations`(`id`);
 
 ALTER TABLE `operation_tags` ADD CONSTRAINT `fk__operation_tags__tag_id`
+FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`);
+
+ALTER TABLE `operations_group_tags` ADD CONSTRAINT `fk__operations_group_tags_tags__operation_id`
+FOREIGN KEY (`operation_group_id`) REFERENCES `operations_groups`(`id`);
+
+ALTER TABLE `operations_group_tags` ADD CONSTRAINT `fk__operations_group_tags__tag_id`
 FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`);
 
 ALTER TABLE `operations` ADD CONSTRAINT `fk__operations__frequent_id`

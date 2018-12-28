@@ -27,6 +27,7 @@ namespace PayglService.cs
         public static List<Importance> Importances { get; private set; }
         public static List<Tag> Tags { get; private set; }
         public static List<Operation> Operations { get; private set; }
+        public static List<OperationsGroup> OperationsGroups { get; private set; }
         #endregion
 
         #region DbAdapters
@@ -43,6 +44,8 @@ namespace PayglService.cs
         private static OperationAdapter OperationAdapter { get; set; }
         private static OperationDetailsAdapter OperationDetailsAdapter { get; set; }
         private static OperationTagAdapter OperationTagRelationAdapter { get; set; }
+        private static OperationsGroupAdapter OperationsGroupAdapter { get; set; }
+        private static OperationsGroupTagAdapter OperationsGroupRelationAdapter { get; set; }
         #endregion
 
         #region Mappers
@@ -57,6 +60,8 @@ namespace PayglService.cs
         private static OperationMapper OperationMapper { get; set; }
         private static OperationDetailsMapper OperationDetailsMapper { get; set; }
         private static RelationMapper RelationMapper { get; set; }
+        private static OperationsGroupMapper OperationsGroupMapper { get; set; }
+        private static OperationsGroupRelationMapper OperationsGroupRelationMapper { get; set; }
         #endregion
 
         public delegate IDalEntity Mapper(IEntity entity, int id);
@@ -78,6 +83,8 @@ namespace PayglService.cs
             OperationAdapter = new OperationAdapter(DbConnector);
             OperationDetailsAdapter = new OperationDetailsAdapter(DbConnector); 
             OperationTagRelationAdapter = new OperationTagAdapter(DbConnector);
+            OperationsGroupAdapter = new OperationsGroupAdapter(DbConnector);
+            OperationsGroupRelationAdapter = new OperationsGroupTagAdapter(DbConnector);
 
             LanguageMapper = new LanguageMapper();
             UserMapper = new UserMapper();
@@ -90,6 +97,8 @@ namespace PayglService.cs
             OperationMapper = new OperationMapper();
             OperationDetailsMapper = new OperationDetailsMapper();
             RelationMapper = new RelationMapper();
+            OperationsGroupMapper = new OperationsGroupMapper();
+            OperationsGroupRelationMapper = new OperationsGroupRelationMapper();
 
             SetMainConfigurations();
         }
@@ -131,7 +140,10 @@ namespace PayglService.cs
 
         public static void LoadOperations()
         {
-            OperationMapper.Update(User, Importances, Frequencies, TransactionTypes, TransferTypes);
+            OperationsGroupMapper.Update(User, Importances, Frequencies);
+            OperationsGroups = OperationsGroupMapper.ConvertToBusinessLogicEntitiesCollection(OperationsGroupAdapter.GetAll($"user_id={User.Id}")).ToList();
+
+            OperationMapper.Update(User, OperationsGroups, Importances, Frequencies, TransactionTypes, TransferTypes);
             Operations = OperationMapper.ConvertToBusinessLogicEntitiesCollection(OperationAdapter.GetAll($"user_id={User.Id}")).ToList();
 
             if (Operations.Count > 0)
@@ -151,12 +163,30 @@ namespace PayglService.cs
                 foreach (var operation in Operations)
                 {
                     operation.SetDetailsList(OperationDetailsMapper.ConvertToBusinessLogicEntitiesCollection(OperationDetailsAdapter.GetAll($"operation_id={operation.Id}")));
-                    operation.SetTags(relTags.Where(r => r.OperationId == operation.Id));
+                    operation.SetTags(relTags.Where(r => r.RelatedId == operation.Id));
                 }
 
                 foreach (var tag in Tags)
                 {
                     tag.SetOperations(relOperations.Where(r => r.TagId == tag.Id));
+                }
+            }
+
+            if (OperationsGroups.Count > 0)
+            {
+                var filter = "";
+                foreach (var group in OperationsGroups)
+                {
+                    filter += $"operation_group_id={group.Id} AND ";
+                }
+                filter = filter.Substring(0, filter.Length - 4);
+
+                OperationsGroupRelationMapper.Update(Tags);
+                var relations = OperationsGroupRelationMapper.ConvertToBusinessLogicEntitiesCollection(OperationsGroupRelationAdapter.GetAll(filter));
+
+                foreach (var group in OperationsGroups)
+                {
+                    group.SetTags(relations.Where(r => r.RelatedId == group.Id));
                 }
             }
         }
@@ -199,7 +229,7 @@ namespace PayglService.cs
         {
             if (operation.Parent != null)
             {
-                UpdateOperationComplex(operation.Parent);
+                UpdateOperationGroup(operation.Parent);
             }
 
             if (operation.DetailsList != null)
@@ -230,6 +260,11 @@ namespace PayglService.cs
         private static int UpdateOperation(Operation operation)
         {
             return UpdateBusinessEntity(operation, OperationAdapter, OperationMapper.ConvertToDALEntity);
+        }
+
+        private static int UpdateOperationGroup(OperationsGroup group)
+        {
+            return UpdateBusinessEntity(group, OperationsGroupAdapter, OperationsGroupMapper.ConvertToDALEntity);
         }
 
         private static int UpdateUser(User user)

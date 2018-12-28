@@ -11,22 +11,17 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
     public class OperationMapper : IMapper<Operation, DalOperation>
     {
-        public List<Operation> _operations;
+        public List<OperationsGroup> _groups;
         public List<Importance> _importances;
         public List<Frequence> _frequencies;
         public List<TransactionType> _transactionTypes;
         public List<TransferType> _transferTypes;
         public User _user;
 
-        public OperationMapper()
-        {
-            _operations = new List<Operation>();
-        }
-
-        public void Update(User user, List<Importance> importances, List<Frequence> frequencies, List<TransactionType> transactionTypes, List<TransferType> transferTypes)
+        public void Update(User user, List<OperationsGroup> groups, List<Importance> importances, List<Frequence> frequencies, List<TransactionType> transactionTypes, List<TransferType> transferTypes)
         {
             _user = user;
-            _operations = new List<Operation>();
+            _groups = groups;
             _importances = importances;
             _frequencies = frequencies;
             _transactionTypes = transactionTypes;
@@ -46,15 +41,14 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public Operation ConvertToBusinessLogicEntity(DalOperation dataEntity)
         {
-            var operation = dataEntity.ParentId != null?_operations.Where(o => o.Id == dataEntity.ParentId).First():null;
+            var group = dataEntity.ParentId != null?_groups.Where(o => o.Id == dataEntity.ParentId).First():null;
             var transaction = _transactionTypes.Where(t => t.Id == dataEntity.TransactionTypeId).First();
             var transfer = _transferTypes.Where(t => t.Id == dataEntity.TransferTypeId).First();
             var importance = _importances.Where(i => i.Id == dataEntity.ImportanceId).First();
             var frequence = _frequencies.Where(f => f.Id == dataEntity.FrequenceId).First();
             CultureInfo culture = new CultureInfo("pl-PL");
             DateTime tempDate = Convert.ToDateTime(dataEntity.Date, culture);
-            var result = new Operation(dataEntity.Id, operation, _user, dataEntity.Description, dataEntity.Amount, transaction,transfer,frequence,importance,tempDate,dataEntity.ReceiptPath);
-            _operations.Add(result);
+            var result = new Operation(dataEntity.Id, group, _user, dataEntity.Description, dataEntity.Amount, transaction,transfer,frequence,importance,tempDate,dataEntity.ReceiptPath);
             result.IsDirty = false;
             return result;
         }
