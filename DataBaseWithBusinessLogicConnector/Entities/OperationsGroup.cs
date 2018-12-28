@@ -58,9 +58,10 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Tags = tags.ToList();
         }
 
-        public void AddTag(RelTag tag)
+        public void AddTag(Tag tag)
         {
-            Tags.Add(tag);
+            var relTag = new RelTag(null, tag, Id);
+            Tags.Add(relTag);
         }
 
         public void RemoveTag(RelTag tag)

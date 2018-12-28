@@ -109,14 +109,17 @@
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AddGroupsView.xaml.cs">
+      <DependentUpon>AddGroupsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AnalysisView.xaml.cs">
       <DependentUpon>AnalysisView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ImportView.xaml.cs">
-      <DependentUpon>ImportView.xaml</DependentUpon>
+    <Compile Include="Views\ImportOperationsView.xaml.cs">
+      <DependentUpon>ImportOperationsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ManuallyAddView.xaml.cs">
-      <DependentUpon>ManuallyAddView.xaml</DependentUpon>
+    <Compile Include="Views\ManuallyOperationsView.xaml.cs">
+      <DependentUpon>ManuallyOperationsView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -147,15 +150,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\AddGroupsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AnalysisView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ImportView.xaml">
+    <Page Include="Views\ImportOperationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ManuallyAddView.xaml">
+    <Page Include="Views\ManuallyOperationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

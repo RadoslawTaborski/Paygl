@@ -20,7 +20,7 @@ namespace Paygl.Views
     /// <summary>
     /// Interaction logic for ManualyAddView.xaml
     /// </summary>
-    public partial class ManuallyAddView : UserControl
+    public partial class ManuallyOperationsView : UserControl
     {
         private Operation _operation;
         private List<Tag> _selectedTags;
@@ -32,7 +32,7 @@ namespace Paygl.Views
         private ObservableRangeCollection<TransactionType> _observableTransactionType;
         private ObservableRangeCollection<TransferType> _observableTransferType;
 
-        public ManuallyAddView()
+        public ManuallyOperationsView()
         {
             InitializeComponent();
             Background = Brushes.Azure;

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Paygl.Views"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="Paygl.Views.ManuallyAddView"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="Paygl.Views.ManuallyOperationsView"
              mc:Ignorable="d" 
              d:DesignHeight="564" d:DesignWidth="928">
     <Grid Style="{StaticResource MyGrid}">

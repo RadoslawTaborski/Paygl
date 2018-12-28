@@ -27,7 +27,7 @@ namespace Paygl.Views
     /// <summary>
     /// Interaction logic for ImportView.xaml
     /// </summary>
-    public partial class ImportView : UserControl
+    public partial class ImportOperationsView : UserControl
     {
         private List<Tag> _selectedTags;
 
@@ -36,7 +36,7 @@ namespace Paygl.Views
         private ObservableRangeCollection<OperationsGroup> _observableGroups;
         private ObservableRangeCollection<Tag> _observableTags;
 
-        public ImportView()
+        public ImportOperationsView()
         {
             InitializeComponent();
             Background = Brushes.Azure;

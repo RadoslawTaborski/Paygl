@@ -33,13 +33,13 @@ namespace Paygl
         public static readonly string Path = "settings.dat";
         public const int MENU_BUTTON_HEIGHT = 50;
 
-        private static Button _b1;
-        private static Button _b2;
+        private static Button _btnOperations;
+        private static Button _btnAnalyse;
 
-        private static ItemsControl _b1Items;
-        private static Button _b1_1;
-        private static Button _b1_2;
-        private static Button _b1_3;
+        private static ItemsControl _icOperationsButtons;
+        private static Button _btnImport;
+        private static Button _btnAddManually;
+        private static Button _btnAddGroups;
 
         private static ItemsControl _b2Items;
         #endregion
@@ -61,21 +61,21 @@ namespace Paygl
                 ConfigurationManager.ReadConfig("./configuration.json");
                 Service.SetService();
                 var menuButtons = new List<Button>();
-                _b1 = CreateButton("btnOperations", "Operacje", MENU_BUTTON_HEIGHT, btnOperations_Click);
-                _b2 = CreateButton("btnAnalyse", "Analiza", MENU_BUTTON_HEIGHT, btnAnalyse_Click);
-                menuButtons.Add(_b1);
-                menuButtons.Add(_b2);
+                _btnOperations = CreateButton("btnOperations", "Operacje", MENU_BUTTON_HEIGHT, btnOperations_Click);
+                _btnAnalyse = CreateButton("btnAnalyse", "Analiza", MENU_BUTTON_HEIGHT, btnAnalyse_Click);
+                menuButtons.Add(_btnOperations);
+                menuButtons.Add(_btnAnalyse);
                 _firstPanel.ItemsSource = menuButtons;
 
-                _b1Items = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
+                _icOperationsButtons = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
                 var b1Buttons = new List<Button>();
-                _b1_1 = CreateButton("btnImport", "Importuj", MENU_BUTTON_HEIGHT, btnImport_Click);
-                _b1_2 = CreateButton("btnAdd", "Dodaj manualnie", MENU_BUTTON_HEIGHT, btnAdd_Click);
-                _b1_3 = CreateButton("btnShow", "Przeglądaj", MENU_BUTTON_HEIGHT, btnShow_Click);
-                b1Buttons.Add(_b1_1);
-                b1Buttons.Add(_b1_2);
-                b1Buttons.Add(_b1_3);
-                _b1Items.ItemsSource = b1Buttons;
+                _btnImport = CreateButton("btnImport", "Importuj", MENU_BUTTON_HEIGHT, btnImport_Click);
+                _btnAddManually = CreateButton("btnAddManually", "Dodaj manualnie", MENU_BUTTON_HEIGHT, BtnAddManually_Click);
+                _btnAddGroups = CreateButton("btnAddGroups", "Dodaj grupę", MENU_BUTTON_HEIGHT, BtnAddGroups_Click);
+                b1Buttons.Add(_btnImport);
+                b1Buttons.Add(_btnAddManually);
+                b1Buttons.Add(_btnAddGroups);
+                _icOperationsButtons.ItemsSource = b1Buttons;
 
                 _b2Items = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
                 var b2Buttons = new List<Button>();
@@ -91,8 +91,8 @@ namespace Paygl
         #region menuItems
         private void btnOperations_Click(object sender, RoutedEventArgs e)
         {
-            ShowOrHideSecondMenu(_b1Items);
-            SetSecondMenu(_b1Items);
+            ShowOrHideSecondMenu(_icOperationsButtons);
+            SetSecondMenu(_icOperationsButtons);
         }
 
         private void btnAnalyse_Click(object sender, RoutedEventArgs e)
@@ -110,22 +110,27 @@ namespace Paygl
                 SecondMenu.Visibility = Visibility.Hidden;
             }
 
-            brdMain.Child = new ImportView();
+            brdMain.Child = new ImportOperationsView();
         }
 
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        private void BtnAddManually_Click(object sender, RoutedEventArgs e)
         {
             if (SecondMenu.IsVisible)
             {
                 SecondMenu.Visibility = Visibility.Hidden;
             }
 
-            brdMain.Child = new ManuallyAddView();
+            brdMain.Child = new ManuallyOperationsView();
         }
 
-        private void btnShow_Click(object sender, RoutedEventArgs e)
+        private void BtnAddGroups_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            if (SecondMenu.IsVisible)
+            {
+                SecondMenu.Visibility = Visibility.Hidden;
+            }
+
+            brdMain.Child = new AddGroupsView();
         }
         #endregion
 

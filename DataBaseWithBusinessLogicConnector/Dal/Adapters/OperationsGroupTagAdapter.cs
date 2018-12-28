@@ -61,7 +61,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
         public int Insert(DalOperationsGroupTag entity)
         {
             var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var operationId = _adapterHelper.ToStr(entity.OperationsGroupId, COLUMNS["operations_group_id"]);
+            var operationId = _adapterHelper.ToStr(entity.OperationsGroupId, COLUMNS["operation_group_id"]);
             var tagId = _adapterHelper.ToStr(entity.TagId, COLUMNS["tag_id"]);
             return _adapterHelper.Insert(id, operationId, tagId);
         }
@@ -69,7 +69,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
         public void Update(DalOperationsGroupTag entity)
         {
             var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var operationId = _adapterHelper.ToStr(entity.OperationsGroupId, COLUMNS["operations_group_id"]);
+            var operationId = _adapterHelper.ToStr(entity.OperationsGroupId, COLUMNS["operation_group_id"]);
             var tagId = _adapterHelper.ToStr(entity.TagId, COLUMNS["tag_id"]);
             _adapterHelper.Update(id, operationId, tagId);
         }
