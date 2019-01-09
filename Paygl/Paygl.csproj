@@ -121,6 +121,9 @@
     <Compile Include="Views\ManuallyOperationsView.xaml.cs">
       <DependentUpon>ManuallyOperationsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ShowOperations.xaml.cs">
+      <DependentUpon>ShowOperations.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -166,6 +169,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ShowOperations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -204,6 +211,10 @@
     <Resource Include="img\minimize.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Analyzer\Analyzer.csproj">
+      <Project>{c4a52b98-cb49-41b7-b19d-cdfacf53e683}</Project>
+      <Name>Analyzer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj">
       <Project>{E1847C86-2E78-467D-91BB-AE8C457B5757}</Project>
       <Name>DataAccess</Name>

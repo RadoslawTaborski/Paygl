@@ -1,4 +1,5 @@
-﻿using DataAccess;
+﻿using Analyzer;
+using DataAccess;
 using DataBaseWithBusinessLogicConnector;
 using DataBaseWithBusinessLogicConnector.Dal.Adapters;
 using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
@@ -148,7 +149,7 @@ namespace PayglService.cs
                 var filter = "";
                 foreach (var operation in Operations)
                 {
-                    filter += $"operation_id={operation.Id} AND ";
+                    filter += $"operation_id={operation.Id} OR ";
                 }
                 filter = filter.Substring(0, filter.Length - 4);
 
@@ -180,7 +181,7 @@ namespace PayglService.cs
                 var filter = "";
                 foreach (var group in OperationsGroups)
                 {
-                    filter += $"operation_group_id={group.Id} AND ";
+                    filter += $"operation_group_id={group.Id} OR ";
                 }
                 filter = filter.Substring(0, filter.Length - 4);
 
@@ -271,6 +272,24 @@ namespace PayglService.cs
             {
                 InsertRelation(tag, operation);
             }
+        }
+
+        public static List<KeyValuePair<string,Query>> ReadQuery()
+        {
+            var result = new List<KeyValuePair<string, Query>>();
+            string line;
+            var file = new StreamReader(@"D:\Programowanie\C#\Paygl\Queries\queries.txt");
+            while ((line = file.ReadLine()) != null)
+            {
+                var substrings = line.Split(':');
+                if (substrings.Count() != 2)
+                {
+                    throw new Exception("File with queries has wrong data");
+                }
+                result.Add(new KeyValuePair<string, Query>(substrings[0], Analyzer.Analyzer.StringToQuery(substrings[1])));
+            }
+
+            return result;
         }
 
         #region private

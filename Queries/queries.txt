@@ -1,0 +1,4 @@
+﻿Opłaty:Tags ONE IN ("opłaty")
+Wypłaty:Tags ONE IN ("praca") AND TransactionType IN ("przychód")
+Inne przychody:Tags NOT IN ("praca","opłaty") AND TransactionType IN ("przychód")
+Inne wydatki:Tags NOT IN ("opłaty") AND TransactionType IN ("wydatek")

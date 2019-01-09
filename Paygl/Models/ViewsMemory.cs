@@ -61,22 +61,24 @@ namespace Paygl.Models
                 return _currentOperation;
             }
 
-            throw new IndexOutOfRangeException();
+            return null;
         }
 
         internal static void RemoveImportingOperation(Operation operation)
         {
             _importingOperations.Remove(operation);
+            if (_importingOperations.Count == 0)
+            {
+                _index = 0;
+                _currentOperation = null;
+                return;
+            }
             if (_index >= _importingOperations.Count)
             {
                 _index = _importingOperations.Count - 1;
                 _currentOperation = _importingOperations[_index];
             }
-            if (_importingOperations.Count == 0)
-            {
-                _index = 0;
-                _currentOperation = null;
-            }
+
         }
     }
 }

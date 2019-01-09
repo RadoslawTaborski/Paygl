@@ -24,5 +24,10 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         {
             Id = id;
         }
+
+        public override string ToString()
+        {
+            return Tag.Text;
+        }
     }
 }

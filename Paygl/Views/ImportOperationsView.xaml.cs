@@ -48,6 +48,7 @@ namespace Paygl.Views
             SetCloneEditableControls();
 
             SetCloneOptionsVisibility(Visibility.Hidden);
+            SetRelatedControlsAttributesVisibility(Visibility.Hidden);
             SetUserStandardEditableControlsVisibility(Visibility.Hidden);
             SetNavigateButtonVisibility(Visibility.Hidden);
 
@@ -75,7 +76,19 @@ namespace Paygl.Views
 
         private void SetCloneEditableControls()
         {
-            _upDownClone.Value = 0.00m;
+            _upDownClone.Value = decimal.Zero;
+        }
+
+        private void SetRelatedAttributes()
+        {
+            var group = _cbRelated.SelectedItem as OperationsGroup;
+
+            _labFrequence.Content = group.Frequence;
+            _labImportance.Content = group.Importance;
+            foreach(var item in group.Tags)
+            {
+                _labTags.Content += item.Tag + "; ";
+            }
         }
 
         private void ResetStandardEditableControls()
@@ -88,9 +101,29 @@ namespace Paygl.Views
             _spTags.Children.Clear();
         }
 
+        private void ResetAllControls()
+        {
+            ResetStandardEditableControls();
+            ResetRelatedAttributes();
+            ResetCloneOptions();
+            _tbDescription.Text = "";
+            _tbNewDescription.Text = "";
+            _labAmount.Content = "";
+            _labDate.Content = "";
+            _labTransaction.Content = "";
+            _labTransfer.Content = "";
+        }
+
         private void ResetCloneOptions()
         {
             _upDownClone.Value = 0.00m;
+        }
+
+        private void ResetRelatedAttributes()
+        {
+            _labFrequence.Content = "";
+            _labImportance.Content = "";
+            _labTags.Content = "";
         }
 
         private void SetNavigateButtonVisibility(Visibility v)
@@ -127,6 +160,20 @@ namespace Paygl.Views
             SetUserStandardEditableControlsVisibility(v2);
         }
 
+        private void SetRelatedControlsAttributesVisibility(Visibility v)
+        {
+            _labFrequence.Visibility = v;
+            _labImportance.Visibility = v;
+            _labTags.Visibility = v;
+
+            var v2 = v == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden;
+
+            _cbFrequent.Visibility = v2;
+            _cbImportance.Visibility = v2;
+            _spTags.Visibility = v2;
+            _cbTags.Visibility = v2;            
+        }
+
         private void AddObservableGroup(OperationsGroup group)
         {
             _observableGroups.Add(group);
@@ -152,8 +199,18 @@ namespace Paygl.Views
                 _tbNewDescription.Text = operation.ShortDescription;
                 _labDate.Content = operation.Date.ToString("dd.MM.yyyy");
                 _labAmount.Content = operation.Amount;
-                _cbFrequent.SelectedItem = operation.Frequence;
-                _cbImportance.SelectedItem = operation.Importance;
+                Frequence frequence = null;
+                if (operation.Frequence != null)
+                {
+                    frequence = _observableFrequencies.Where(f => f.Text == operation.Frequence.Text).First();
+                }
+                Importance importance = null;
+                if (operation.Frequence != null)
+                {
+                    importance = _observableImportances.Where(i => i.Text == operation.Importance.Text).First();
+                }
+                _cbFrequent.SelectedItem =  frequence;
+                _cbImportance.SelectedItem = importance;
                 _labTransaction.Content = operation.TransactionType.Text;
                 _labTransfer.Content = operation.TransferType.Text;
                 foreach (var tag in operation.Tags)
@@ -163,6 +220,13 @@ namespace Paygl.Views
 
                 SetUserStandardEditableControlsVisibility(Visibility.Visible);
                 SetCloneOptionsVisibility(Visibility.Hidden);
+            }
+            else
+            {
+                ResetAllControls();
+                SetCloneOptionsVisibility(Visibility.Hidden);
+                SetNavigateButtonVisibility(Visibility.Hidden);
+                SetUserStandardEditableControlsVisibility(Visibility.Hidden);
             }
         }
 
@@ -236,16 +300,30 @@ namespace Paygl.Views
         {
             var operation = ViewsMemory.CurrentOperation();
             var tmp = _tbDescription.Text;
-            operation.SetImportance(_cbImportance.SelectedItem as Importance);
-            operation.SetFrequence(_cbFrequent.SelectedItem as Frequence);
-            operation.RemoveAllTags();
-            foreach (var item in _selectedTags)
-            {
-                operation.AddTag(item);
-            }
             operation.SetParent(_cbRelated.SelectedItem as OperationsGroup);
             operation.SetDescription(_tbNewDescription.Text);
             operation.SetShortDescription(_tbNewDescription.Text);
+
+            if (operation.Parent != null)
+            {
+                operation.SetImportance(operation.Parent.Importance);
+                operation.SetFrequence(operation.Parent.Frequence);
+                operation.RemoveAllTags();
+                foreach (var item in operation.Parent.Tags)
+                {
+                    operation.AddTag(item.Tag);
+                }
+            }
+            else
+            {
+                operation.SetImportance(_cbImportance.SelectedItem as Importance);
+                operation.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+                operation.RemoveAllTags();
+                foreach (var item in _selectedTags)
+                {
+                    operation.AddTag(item);
+                }
+            }
 
             try
             {
@@ -286,7 +364,8 @@ namespace Paygl.Views
 
             var tag = Service.Tags.Where(t => t.Text.Equals(label.Content)).First();
             _spTags.Children.Remove(border);
-            _selectedTags.Remove(tag);
+            var tag2 = _selectedTags.Where(t => t.Text == tag.Text).First();
+            _selectedTags.Remove(tag2);
         }
 
         private void BtnBack_Click(object sender, RoutedEventArgs e)
@@ -333,7 +412,7 @@ namespace Paygl.Views
                 else
                 {
                     operation.SetAmount(-1 * difference);
-                    var anotherTransaction = currentOperation.TransactionType == Service.TransactionTypes[0] ? Service.TransactionTypes[1] : Service.TransactionTypes[0];
+                    var anotherTransaction = currentOperation.TransactionType.Text == Service.TransactionTypes[0].Text ? Service.TransactionTypes[1] : Service.TransactionTypes[0];
                     operation.SetTransaction(anotherTransaction);
                 }
 
@@ -344,6 +423,20 @@ namespace Paygl.Views
         private void BtnImportCloneCancel_Click(object sender, RoutedEventArgs e)
         {
             SetCloneOptionsVisibility(Visibility.Hidden);
+        }
+
+        private void CbRelated_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_cbRelated.SelectedItem != null)
+            {
+                ResetRelatedAttributes();
+                SetRelatedAttributes();
+                SetRelatedControlsAttributesVisibility(Visibility.Visible);
+            } else
+            {
+                ResetRelatedAttributes();
+                SetRelatedControlsAttributesVisibility(Visibility.Hidden);
+            }
         }
         #endregion
     }

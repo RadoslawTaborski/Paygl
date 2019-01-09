@@ -40,8 +40,9 @@ namespace Paygl
         private static Button _btnImport;
         private static Button _btnAddManually;
         private static Button _btnAddGroups;
+        private static Button _btnShowOperations;
 
-        private static ItemsControl _b2Items;
+        private static ItemsControl _icAnalyseButtons;
         #endregion
 
         #region CONSTRUCTORS
@@ -72,14 +73,16 @@ namespace Paygl
                 _btnImport = CreateButton("btnImport", "Importuj", MENU_BUTTON_HEIGHT, btnImport_Click);
                 _btnAddManually = CreateButton("btnAddManually", "Dodaj manualnie", MENU_BUTTON_HEIGHT, BtnAddManually_Click);
                 _btnAddGroups = CreateButton("btnAddGroups", "Dodaj grupę", MENU_BUTTON_HEIGHT, BtnAddGroups_Click);
+                _btnShowOperations = CreateButton("btnShowOperations", "Pokaż", MENU_BUTTON_HEIGHT, BtnShowOperations_Click);
                 b1Buttons.Add(_btnImport);
                 b1Buttons.Add(_btnAddManually);
                 b1Buttons.Add(_btnAddGroups);
+                b1Buttons.Add(_btnShowOperations);
                 _icOperationsButtons.ItemsSource = b1Buttons;
 
-                _b2Items = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
+                _icAnalyseButtons = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
                 var b2Buttons = new List<Button>();
-                _b2Items.ItemsSource = b2Buttons;
+                _icAnalyseButtons.ItemsSource = b2Buttons;
             }
             catch (Exception ex)
             {
@@ -97,8 +100,8 @@ namespace Paygl
 
         private void btnAnalyse_Click(object sender, RoutedEventArgs e)
         {
-            ShowOrHideSecondMenu(_b2Items);
-            SetSecondMenu(_b2Items);
+            ShowOrHideSecondMenu(_icAnalyseButtons);
+            SetSecondMenu(_icAnalyseButtons);
         }
         #endregion
 
@@ -131,6 +134,16 @@ namespace Paygl
             }
 
             brdMain.Child = new AddGroupsView();
+        }
+
+        private void BtnShowOperations_Click(object sender, RoutedEventArgs e)
+        {
+            if (SecondMenu.IsVisible)
+            {
+                SecondMenu.Visibility = Visibility.Hidden;
+            }
+
+            brdMain.Child = new ShowOperations();
         }
         #endregion
 
@@ -268,9 +281,11 @@ namespace Paygl
 
         private Button CreateButton(string name, string content, int height, RoutedEventHandler operation)
         {
-            var button = new Button();
-            button.Name = name;
-            button.Content = content;
+            var button = new Button
+            {
+                Name = name,
+                Content = content
+            };
             button.Click += operation;
             button.Height = height;
             button.Style = (Style)FindResource("MyButton");

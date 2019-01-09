@@ -65,7 +65,10 @@ namespace DataBaseWithBusinessLogicConnector.Entities
                 Parent.RemoveOperation(this);
             }
             Parent = parent;
-            Parent.AddOperation(this);
+            if (Parent != null)
+            {
+                Parent.AddOperation(this);
+            }
         }
 
         public void SetShortDescription(string newDescription)

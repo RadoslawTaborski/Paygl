@@ -42,6 +42,8 @@ namespace Paygl.Views
 
             SetEditableControls();
             SetOperationValues();
+            SetRelatedControlsAttributesVisibility(Visibility.Hidden);
+            SetUserEditableControlsVisibility(Visibility.Visible);
         }
 
         private void SetEditableControls()
@@ -84,7 +86,7 @@ namespace Paygl.Views
                 SetTagLabel(tag.Tag);
             }
 
-            UserEditableControlsVisibility(Visibility.Visible);
+            SetUserEditableControlsVisibility(Visibility.Visible);
         }
 
         private void ResetEditableControls()
@@ -101,7 +103,14 @@ namespace Paygl.Views
             _spTags.Children.Clear();
         }
 
-        private void UserEditableControlsVisibility(Visibility v)
+        private void ResetRelatedAttributes()
+        {
+            _labFrequence.Content = "";
+            _labImportance.Content = "";
+            _labTags.Content = "";
+        }
+
+        private void SetUserEditableControlsVisibility(Visibility v)
         {
             _cbFrequent.Visibility = v;
             _cbImportance.Visibility = v;
@@ -111,6 +120,32 @@ namespace Paygl.Views
             _cbRelated.Visibility = v;
             _tbNewDescription.Visibility = v;
             _upDownAmount.Visibility = v;
+        }
+
+        private void SetRelatedControlsAttributesVisibility(Visibility v)
+        {
+            _labFrequence.Visibility = v;
+            _labImportance.Visibility = v;
+            _labTags.Visibility = v;
+
+            var v2 = v == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden;
+
+            _cbFrequent.Visibility = v2;
+            _cbImportance.Visibility = v2;
+            _spTags.Visibility = v2;
+            _cbTags.Visibility = v2;
+        }
+
+        private void SetRelatedAttributes()
+        {
+            var group = _cbRelated.SelectedItem as OperationsGroup;
+
+            _labFrequence.Content = group.Frequence;
+            _labImportance.Content = group.Importance;
+            foreach (var item in group.Tags)
+            {
+                _labTags.Content += item.Tag + "; ";
+            }
         }
 
         private void AddObservableOperation(OperationsGroup group)
@@ -135,19 +170,34 @@ namespace Paygl.Views
 
         private void BtnManualAccept_Click(object sender, RoutedEventArgs e)
         {
-            _operation.SetImportance(_cbImportance.SelectedItem as Importance);
-            _operation.SetFrequence(_cbFrequent.SelectedItem as Frequence);
             _operation.SetTransaction(_cbTransaction.SelectedItem as TransactionType);
             _operation.SetTransfer(_cbTransfer.SelectedItem as TransferType);
             _operation.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
-            foreach (var item in _selectedTags)
-            {
-                _operation.AddTag(item);
-            }
             _operation.SetParent(_cbRelated.SelectedItem as OperationsGroup);
             _operation.SetDescription(_tbNewDescription.Text);
             _operation.SetShortDescription(_tbNewDescription.Text);
             _operation.SetAmount(_upDownAmount.Value);
+
+            if (_operation.Parent != null)
+            {
+                _operation.SetImportance(_operation.Parent.Importance);
+                _operation.SetFrequence(_operation.Parent.Frequence);
+                _operation.RemoveAllTags();
+                foreach (var item in _operation.Parent.Tags)
+                {
+                    _operation.AddTag(item.Tag);
+                }
+            }
+            else
+            {
+                _operation.SetImportance(_cbImportance.SelectedItem as Importance);
+                _operation.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+                _operation.RemoveAllTags();
+                foreach (var item in _selectedTags)
+                {
+                    _operation.AddTag(item);
+                }
+            }
 
             try
             {
@@ -249,6 +299,21 @@ namespace Paygl.Views
                 _labDate.Content = _calDate.SelectedDate.Value.ToString("dd.MM.yyyy");
             }
             _borderCalendar.Visibility = Visibility.Hidden;
+        }
+
+        private void CbRelated_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_cbRelated.SelectedItem != null)
+            {
+                ResetRelatedAttributes();
+                SetRelatedAttributes();
+                SetRelatedControlsAttributesVisibility(Visibility.Visible);
+            }
+            else
+            {
+                ResetRelatedAttributes();
+                SetRelatedControlsAttributesVisibility(Visibility.Hidden);
+            }
         }
     }
 }

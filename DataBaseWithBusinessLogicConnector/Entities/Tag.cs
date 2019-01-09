@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {
-    public class Tag : IEntity
+    public class Tag : IEntity, IParameter
     {
         public int? Id { get; private set; }
         public string Text { get; private set; }

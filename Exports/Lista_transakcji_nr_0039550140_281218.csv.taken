@@ -1,0 +1,25 @@
+"Lista transakcji";;;;;"ING Bank Œl¹ski S.A. ul. Sokolska 34, 40-086 Katowice www.ingbank.pl";;;;;;;;;;;;;;;
+"Dokument nr 0039550140_281218";
+"Wygenerowany dnia: 2018-12-28, 19:08";;;;;;;;;;;;;;;;;;;;
+
+"Dane U¿ytkownika:";
+"TABORSKI RADOS£AW, MAS£OWICE 10 98-300 MAS£OWICE";
+
+"Wybrane rachunki:";
+"KONTO Direct (PLN)";;"46 1050 1937 1000 0091 3840 6419";
+
+"Zastosowane kryteria wyboru";;;;;"Podsumowanie";;
+
+"Zakres dat:";"2018-10-01 - 2018-12-28";"Typy transakcji:";"wszystkie";;"Liczba transakcji:";317;
+
+;;;;;"Suma uznañ (25):";29084,57;PLN;;;;;;;;;;;;;
+
+;;;;;"Suma obci¹¿eñ (292):";27544,19;PLN;;;;;;;;;;;;;
+
+"Data transakcji";"Data ksiêgowania";"Dane kontrahenta";"Tytu³";"Nr rachunku";"Nazwa banku";"Szczegó³y";"Nr transakcji";"Kwota transakcji (waluta rachunku)";"Waluta";"Kwota blokady/zwolnienie blokady";"Waluta";"Kwota p³atnoœci w walucie";"Waluta";"Saldo po transakcji";"Waluta";;;;;
+"2018-12-24";"2018-12-24";" TABORSKI RADOS£AW, MAS£OWICE 10, 98-300 MAS£OWICE ";" przelew Smart Saver P³atnoœæ kart¹ 21.12.2018 Nr karty 4246xx4642 Kwota: 2,40 PLN";'57105019371000009180171317 ';"ING Bank Œl¹ski S.A.";" ";'201835864008244451';-2,60;PLN;;;;;2014,94;PLN;;;;;
+"2018-12-24";"2018-12-24";" TABORSKI RADOS£AW, MAS£OWICE 10, 98-300 MAS£OWICE ";" przelew Smart Saver P³atnoœæ kart¹ 21.12.2018 Nr karty 4246xx4642 Kwota: 20,00 PLN";'57105019371000009180171317 ';"ING Bank Œl¹ski S.A.";" ";'201835864008099459';-5,00;PLN;;;;;2017,54;PLN;;;;;
+"2018-12-24";"2018-12-24";" TABORSKI RADOS£AW, MAS£OWICE 10, 98-300 MAS£OWICE ";" przelew Smart Saver eng-january + trans Kwota: 168,00 PLN";'57105019371000009180171317 ';"ING Bank Œl¹ski S.A.";" ";'201835864008034052';-2,00;PLN;;;;;2022,54;PLN;;;;;
+"2018-12-24";"2018-12-24";" SZYMON DAWIDZIAK, UL.PRUSA 9, 98-300 WIELUÑ ";" eng-january + trans";'60102045640000520201404060 ';"PKOBP Oddzia³ 1 w Wieluniu";"PRZELEW  ";'201835897201417671';-168,00;PLN;;;;;2024,54;PLN;;;;;
+
+"Dokument ma charakter informacyjny, nie stanowi dowodu ksiêgowego";

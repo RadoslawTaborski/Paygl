@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {
-    public class Importance : IEntity
+    public class Importance : IEntity, IParameter
     {
         public int? Id { get; private set; }
         public string Text { get; private set; }

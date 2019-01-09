@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Analyzer\Analyzer.csproj" />
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\DataBaseWithBusinessLogicConnector\DataBaseWithBusinessLogicConnector.csproj" />
     <ProjectReference Include="..\Importer\Importer.csproj" />

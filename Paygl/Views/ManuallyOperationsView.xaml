@@ -55,12 +55,15 @@
                     </Button>
                 </StackPanel>
                 <ComboBox x:Name="_cbFrequent" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Width="500"/>
+                <Label Style="{StaticResource MyLabel}" x:Name="_labFrequence" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="4"/>
                 <ComboBox x:Name="_cbImportance" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Width="500"/>
+                <Label Style="{StaticResource MyLabel}" x:Name="_labImportance" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="5"/>
                 <StackPanel x:Name="_spTags" Orientation="Horizontal" Margin="10,6,0,0" Grid.Row="6" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="600"/>
                 <ComboBox x:Name="_cbTags" HorizontalAlignment="Left" Margin="10,0,0,6" Grid.Row="6" Grid.Column="1" VerticalAlignment="Bottom" Width="500" SelectionChanged="CbTags_SelectionChanged"/>
+                <Label Style="{StaticResource MyLabel}" x:Name="_labTags" VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="30" Margin="10,6,0,0" Content="" Grid.Column="1" Grid.Row="6"/>
                 <ComboBox x:Name="_cbTransaction" HorizontalAlignment="Left" Margin="10,0,0,6" Grid.Row="7" Grid.Column="1" VerticalAlignment="Bottom" Width="500"/>
                 <ComboBox x:Name="_cbTransfer" HorizontalAlignment="Left" Margin="10,0,0,6" Grid.Row="8" Grid.Column="1" VerticalAlignment="Bottom" Width="500"/>
-                <ComboBox x:Name="_cbRelated" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="500" Height="40" Grid.Column="1" Grid.Row="9"/>
+                <ComboBox x:Name="_cbRelated" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="500" Height="40" Grid.Column="1" Grid.Row="9" SelectionChanged="CbRelated_SelectionChanged"/>
             </Grid>
             <Grid Margin="10,10,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
                 <Grid.ColumnDefinitions>

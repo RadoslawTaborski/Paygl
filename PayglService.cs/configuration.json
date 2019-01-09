@@ -26,18 +26,19 @@
       "DescriptionRegex": " MPK[0-9]{4} [0-9]{1}WRO URBANCARD WROCLAW PL ",
       "TitleRegex": "",
       "Description": "MPK: ",
-      "Frequence": "",
-      "Importance": "",
+      "Frequence": "od czasu do czasu",
+      "Importance": "konieczne",
       "Tags": [
-        "transport"
+        "transport",
+        "opłaty"
       ]
     },
     {
       "DescriptionRegex": " DotPay S\\.A\\. ",
       "TitleRegex": " MENNICA POLSKA S\\.A\\..*",
       "Description": "Urbancard: ",
-      "Frequence": "",
-      "Importance": "",
+      "Frequence": "miesięczne",
+      "Importance": "konieczne",
       "Tags": [
         "transport"
       ]

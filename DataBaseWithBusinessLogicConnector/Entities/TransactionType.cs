@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {
-    public class TransactionType : IEntity
+    public class TransactionType : IEntity, IParameter
     {
         public int? Id { get; private set; }
         public string Text { get; private set; }
