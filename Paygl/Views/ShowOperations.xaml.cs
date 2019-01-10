@@ -1,4 +1,6 @@
 ﻿using DataBaseWithBusinessLogicConnector.Entities;
+using DataBaseWithBusinessLogicConnector.Interfaces;
+using Paygl.Models;
 using PayglService.cs;
 using System;
 using System.Collections.Generic;
@@ -22,6 +24,7 @@ namespace Paygl.Views
     /// </summary>
     public partial class ShowOperations : UserControl
     {
+        private List<Operation> _operations;
         public ShowOperations()
         {
             InitializeComponent();
@@ -29,16 +32,29 @@ namespace Paygl.Views
             Service.LoadAttributes();
             Service.LoadOperationsGroups();
             Service.LoadOperations();
+            DateTime dt1 = DateTime.Parse("01/12/2018");
+            DateTime dt2 = DateTime.Parse("30/12/2018");
+            _operations = Service.Operations.Where(o => o.Parent == null && o.Date.Date<=dt2.Date && o.Date.Date >= dt1.Date).ToList();
+
             var queries = Service.ReadQuery();
 
             //var groups = new List<OperationsGroup>(Service.OperationsGroups);
-            var groups = new List<OperationsGroup>();
+            var groups = new List<Group>();
 
-            foreach(var item in queries)
+            foreach (var elem in Service.OperationsGroups)
             {
-                var operations = Analyzer.Analyzer.FilterOperations(Service.Operations, item.Value);
-                var newGroup = new OperationsGroup(null, Service.User, item.Key, null, null, DateTime.Now);
-                newGroup.SetOperations(operations);
+                elem.UpdateAmount(Service.TransactionTypes);
+            }
+
+            foreach (var item in queries)
+            {
+                var operations = Analyzer.Analyzer.FilterOperations(_operations.OfType<IOperation>().ToList<IOperation>(), item.Value);
+                var operationsGroups= Analyzer.Analyzer.FilterOperations(Service.OperationsGroups.OfType<IOperation>().ToList<IOperation>().Where(o=> o.Date.Date <= dt2.Date && o.Date.Date >= dt1.Date).ToList(), item.Value);
+
+                var newGroup = new Group(item.Key);
+                newGroup.AddRange(operations);
+                newGroup.AddRange(operationsGroups);
+
                 groups.Add(newGroup);
             }
 
@@ -51,18 +67,37 @@ namespace Paygl.Views
             }
         }
 
+        private string DisplayGroup(Group group)
+        {
+            var text = "";
+            text = $"{group.Description}: {group.Amount}";
+            text += Environment.NewLine;
+            foreach (var item in group.Operations)
+            {
+                if (item is Operation){
+                    text += DisplayOperation(item as Operation);
+                }
+                if (item is OperationsGroup)
+                {
+                    text += DisplayGroup(item as OperationsGroup);
+                }
+            }
+
+            return text;
+        }
+
         private string DisplayGroup(OperationsGroup group)
         {
             var text = "";
-            text = $"{group.Date.ToString("dd.MM.yyyy")} - {group.Amount} - {group.Description}: {group.Importance} | {group.Frequence} | ";
+            text = $"->{group.Date.ToString("dd.MM.yyyy")}: {group.Amount} - {group.Description}: {group.TransactionType} | {group.Importance} | {group.Frequence} | ";
             foreach (var item in group.Tags)
             {
                 text += $"{item}; ";
             }
-            text += System.Environment.NewLine;
+            text += Environment.NewLine;
             foreach (var item in group.Operations)
             {
-                text += "->";
+                text += "----";
                 text += DisplayOperation(item);
             }
 
@@ -71,7 +106,7 @@ namespace Paygl.Views
 
         private string DisplayOperation(Operation operation)
         {
-            var result = $"{operation.Date.ToString("dd.MM.yyyy")} - {operation.Amount} - {operation.Description}: {operation.TransactionType} | {operation.TransferType} | {operation.Importance} | {operation.Frequence} | ";
+            var result = $"->{operation.Date.ToString("dd.MM.yyyy")}: {operation.Amount} - {operation.Description}: {operation.TransactionType} | {operation.TransferType} | {operation.Importance} | {operation.Frequence} | ";
             foreach (var item in operation.Tags)
             {
                 result += $"{item}; ";

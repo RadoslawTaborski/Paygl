@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {
-    public class OperationsGroup : IEntity
+    public class OperationsGroup : IEntity, IOperation
     {
         public int? Id { get; private set; }
         public User User { get; private set; }
@@ -14,6 +14,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public string Description { get; private set; }
         public Frequence Frequence { get; private set; }
         public Importance Importance { get; private set; }
+        public TransactionType TransactionType { get; private set; }
         public DateTime Date { get; private set; }
         public List<RelTag> Tags { get; private set; }
         public List<Operation> Operations { get; private set; }
@@ -104,7 +105,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Date = date;
         }
 
-        public void UpdateAmount()
+        public void UpdateAmount(List<TransactionType> types)
         {
             foreach(var item in Operations)
             {
@@ -115,6 +116,15 @@ namespace DataBaseWithBusinessLogicConnector.Entities
                 {
                     Amount -= item.Amount;
                 }
+            }
+            if (Amount < 0)
+            {
+                TransactionType = types.Where(t => t.Text == "wydatek").First();
+                Amount = Math.Abs(Amount);
+            }
+            else
+            {
+                TransactionType = types.Where(t => t.Text == "przychód").First();
             }
         }
     }

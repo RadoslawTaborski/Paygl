@@ -62,9 +62,9 @@ namespace Analyzer
             return result;
         }
 
-        public static List<Operation> FilterOperations(List<Operation> operations, Query query)
+        public static List<IOperation> FilterOperations(List<IOperation> operations, Query query)
         {
-            var result = new List<Operation>(operations);
+            var result = new List<IOperation>(operations);
             result = FilterOperations(result, query.queries[0]);
             for (int i = 1; i < query.queries.Count; i++)
             {
@@ -90,9 +90,9 @@ namespace Analyzer
             return src.GetType().GetProperty(propName).GetValue(src, null);
         }
 
-        private static List<Operation> FilterOperations(List<Operation> operations, QueryItem query)
+        private static List<IOperation> FilterOperations(List<IOperation> operations, QueryItem query)
         {
-            var result = new List<Operation>(operations);
+            var result = new List<IOperation>(operations);
             foreach (var key in KeyWords.List)
             {
                 if (!query.Left.Equals(key))

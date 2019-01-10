@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {
-    public class Operation : IEntity
+    public class Operation : IEntity, IOperation
     {
         public int? Id { get; private set; }
         public OperationsGroup Parent { get; private set; }

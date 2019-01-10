@@ -8,10 +8,11 @@
              d:DesignHeight="564" d:DesignWidth="928">
     <Grid Style="{StaticResource MyGrid}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
             <RowDefinition Height="12*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="0"/>
-        <xctk:RichTextBox x:Name="rtbText" Style="{StaticResource MyRichTextBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Grid.Row="0">
+        <xctk:RichTextBox x:Name="rtbText" Style="{StaticResource MyRichTextBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Grid.Row="1">
             <FlowDocument>
                 <Paragraph>
                     <Run Text=""/>

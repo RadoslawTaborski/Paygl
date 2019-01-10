@@ -20,14 +20,13 @@ namespace Analyzer
 
     public static class KeyWords
     {
-        public static List<string> List = new List<string> { "Frequence", "Importance", "Tags", "TransactionType", "TransferType" };
+        public static List<string> List = new List<string> { "Frequence", "Importance", "Tags", "TransactionType" };
         public static Dictionary<string, string> OperationProperty = new Dictionary<string, string>
         {
             ["Frequence"] = "Frequence",
             ["Importance"] = "Importance",
             ["Tags"] = "Tags",
             ["TransactionType"] = "TransactionType",
-            ["TransferType"] = "TransferType"
         };
     }
 }
