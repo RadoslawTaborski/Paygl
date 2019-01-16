@@ -107,6 +107,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
 
         public void UpdateAmount(List<TransactionType> types)
         {
+            Amount = decimal.Zero;
             foreach(var item in Operations)
             {
                 if (item.TransactionType.Text == "przychód")

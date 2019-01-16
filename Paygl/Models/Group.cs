@@ -31,6 +31,7 @@ namespace Paygl.Models
 
         public void UpdateAmount()
         {
+            Amount = decimal.Zero;
             foreach(var item in Operations)
             {
                 if (item.TransactionType.Text =="przychód")

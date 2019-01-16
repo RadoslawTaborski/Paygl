@@ -29,8 +29,7 @@
       "Frequence": "od czasu do czasu",
       "Importance": "konieczne",
       "Tags": [
-        "transport",
-        "opłaty"
+        "transport"
       ]
     },
     {
@@ -40,7 +39,8 @@
       "Frequence": "miesięczne",
       "Importance": "konieczne",
       "Tags": [
-        "transport"
+        "transport",
+        "opłaty"
       ]
     },
     {

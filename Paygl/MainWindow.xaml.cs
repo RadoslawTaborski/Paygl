@@ -284,7 +284,7 @@ namespace Paygl
             var button = new Button
             {
                 Name = name,
-                Content = content
+                Content = content,
             };
             button.Click += operation;
             button.Height = height;
