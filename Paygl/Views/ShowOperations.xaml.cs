@@ -14,10 +14,13 @@ namespace Paygl.Views
     /// <summary>
     /// Interaction logic for ShowOperations.xaml
     /// </summary>
-    public partial class ShowOperations : UserControl
+    public partial class ShowOperations : UserControl, IRepresentative
     {
         private List<Operation> _operations;
         private const int HEIGHT = 25;
+
+        public string RepresentativeName { get; set; } = "Pokaż";
+
         public ShowOperations()
         {
             InitializeComponent();
@@ -381,6 +384,11 @@ namespace Paygl.Views
             }
 
             return result;
+        }
+
+        public override string ToString()
+        {
+            return "ShowOperationsView";
         }
     }
 }

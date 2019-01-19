@@ -109,6 +109,56 @@
         </Style.Triggers>
     </Style>
 
+    <Style TargetType="Button" x:Key="MyButtonBarView">
+        <Setter Property="BorderBrush" Value="{StaticResource MyLight}" />
+        <Setter Property="Background" Value="{StaticResource MyPurple}"/>
+        <Setter Property="Foreground" Value="{StaticResource MyWhite}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource MyLight}" BorderThickness="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource MyPurple}"/>
+                <Setter Property="Foreground" Value="{StaticResource MyWhite}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{StaticResource MyAzure}"/>
+                <Setter Property="Foreground" Value="{StaticResource MyLight}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style TargetType="Button" x:Key="MyButtonLight">
+        <Setter Property="BorderBrush" Value="{StaticResource MyLight}" />
+        <Setter Property="Background" Value="{StaticResource MyAzure}"/>
+        <Setter Property="Foreground" Value="{StaticResource MyDarkGrey}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource MyLight}" BorderThickness="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource MyAzure}"/>
+                <Setter Property="Foreground" Value="{StaticResource MyDarkGrey}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{StaticResource MyAzure}"/>
+                <Setter Property="Foreground" Value="{StaticResource MyLight}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style TargetType="Button" x:Key="MyButtonLeft">
         <Setter Property="BorderBrush" Value="{StaticResource MyLight}" />
         <Setter Property="Background" Value="{StaticResource MyMediumGrey}" />

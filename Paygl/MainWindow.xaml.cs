@@ -32,8 +32,10 @@ namespace Paygl
 
         public static readonly string Path = "settings.dat";
         public const int MENU_BUTTON_HEIGHT = 50;
+        public const int VIEWBAR_BUTTON_WIDTH = 120;
 
-        private static Button _btnOperations;
+        private static Button _btnView;
+        private static UserControl _selectedView;
         private static Button _btnAnalyse;
 
         private static ItemsControl _icOperationsButtons;
@@ -43,6 +45,8 @@ namespace Paygl
         private static Button _btnShowOperations;
 
         private static ItemsControl _icAnalyseButtons;
+
+        private List<UserControl> _views;
         #endregion
 
         #region CONSTRUCTORS
@@ -57,14 +61,15 @@ namespace Paygl
         {
             try
             {
+                _views = new List<UserControl>();
                 SecondMenu.Visibility = Visibility.Hidden;
 
                 ConfigurationManager.ReadConfig("./configuration.json");
                 Service.SetService();
                 var menuButtons = new List<Button>();
-                _btnOperations = CreateButton("btnOperations", "Operacje", MENU_BUTTON_HEIGHT, btnOperations_Click);
+                _btnView = CreateButton("btnOperations", "Operacje", MENU_BUTTON_HEIGHT, btnOperations_Click);
                 _btnAnalyse = CreateButton("btnAnalyse", "Analiza", MENU_BUTTON_HEIGHT, btnAnalyse_Click);
-                menuButtons.Add(_btnOperations);
+                menuButtons.Add(_btnView);
                 menuButtons.Add(_btnAnalyse);
                 _firstPanel.ItemsSource = menuButtons;
 
@@ -113,7 +118,9 @@ namespace Paygl
                 SecondMenu.Visibility = Visibility.Hidden;
             }
 
-            brdMain.Child = new ImportOperationsView();
+            var view = new ImportOperationsView();
+            AddUserControl(view);
+            OpenUserControl(view);
         }
 
         private void BtnAddManually_Click(object sender, RoutedEventArgs e)
@@ -123,7 +130,9 @@ namespace Paygl
                 SecondMenu.Visibility = Visibility.Hidden;
             }
 
-            brdMain.Child = new ManuallyOperationsView();
+            var view = new ManuallyOperationsView();
+            AddUserControl(view);
+            OpenUserControl(view);
         }
 
         private void BtnAddGroups_Click(object sender, RoutedEventArgs e)
@@ -133,7 +142,9 @@ namespace Paygl
                 SecondMenu.Visibility = Visibility.Hidden;
             }
 
-            brdMain.Child = new AddGroupsView();
+            var view = new AddGroupsView();
+            AddUserControl(view);
+            OpenUserControl(view);
         }
 
         private void BtnShowOperations_Click(object sender, RoutedEventArgs e)
@@ -143,7 +154,9 @@ namespace Paygl
                 SecondMenu.Visibility = Visibility.Hidden;
             }
 
-            brdMain.Child = new ShowOperations();
+            var view = new ShowOperations();
+            AddUserControl(view);
+            OpenUserControl(view);
         }
         #endregion
 
@@ -275,7 +288,7 @@ namespace Paygl
             }
             else
             {
-               SecondMenu.Visibility = Visibility.Visible;
+                SecondMenu.Visibility = Visibility.Visible;
             }
         }
 
@@ -292,6 +305,167 @@ namespace Paygl
 
             return button;
         }
+
+        private ButtonWithObject CreateViewBarButton(string name, string content, int width, object insideObject, bool isSelected, RoutedEventHandler operation)
+        {
+            var brush = (Brush)FindResource("MyAzure");
+            var style = (Style)FindResource("MyButton");
+            if (isSelected)
+            {
+                brush = (Brush)FindResource("MyWhite");
+                style = (Style)FindResource("MyButtonBarView");
+            }
+
+            var columnDefinition1 = new ColumnDefinition()
+            {
+                Width = new GridLength(VIEWBAR_BUTTON_WIDTH - 30),
+            };
+            var columnDefinition2 = new ColumnDefinition()
+            {
+                Width = new GridLength(20),
+            };
+            var grid = new Grid
+            {
+                Width = VIEWBAR_BUTTON_WIDTH - 10,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Background = (Brush)FindResource("Transparent"),
+                ColumnDefinitions =
+                {
+                    columnDefinition1,
+                    columnDefinition2
+                },
+            };
+
+            var label = new Label
+            {
+                Content = content,
+                HorizontalAlignment = HorizontalAlignment.Center,               
+                Background = (Brush)FindResource("Transparent"),
+                Foreground = brush,
+            };
+            var closeButton = CreateCloseButton(insideObject);
+            closeButton.HorizontalAlignment = HorizontalAlignment.Right;
+            label.SetValue(Grid.ColumnProperty, 0);
+            closeButton.SetValue(Grid.ColumnProperty, 1);
+            grid.Children.Add(label);
+            grid.Children.Add(closeButton);
+
+            var button = new ButtonWithObject
+            {
+                Name = name,
+                Content = grid,
+                Object = insideObject,
+                Context = label,
+            };
+            button.Click += operation;
+            if (!isSelected)
+            {
+                button.MouseEnter += MouseEnter_Event;
+                button.MouseLeave += MouseLeave_Event;
+            }
+            button.Width = width;
+            button.Style = style;
+
+            return button;
+        }
+
+        private void MouseLeave_Event(object sender, MouseEventArgs e)
+        {
+            var button = (ButtonWithObject)sender;
+            (button.Context as Label).Foreground = (Brush)FindResource("MyAzure");
+        }
+
+        private void MouseEnter_Event(object sender, MouseEventArgs e)
+        {
+            var button = (ButtonWithObject)sender;
+            (button.Context as Label).Foreground = (Brush)FindResource("MyDarkGrey");
+        }
+
+        public void AddUserControl(UserControl uc)
+        {
+            if (_views.Any(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName))
+            {
+                return;
+            }
+            _views.Add(uc);
+        }
+
+        public void OpenUserControl(UserControl uc)
+        {
+            _selectedView = _views.Where(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName).FirstOrDefault();
+            brdMain.Child = _selectedView;
+            UpdateViewBar(_selectedView);
+        }
+
+        public void RemoveUserControl(UserControl uc)
+        {
+            var userControl = _views.Where(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName).First();
+            _views.Remove(userControl);
+        }
+
+        private void UpdateViewBar(UserControl selected)
+        {
+            _viewBarStockPanel.Children.Clear();
+
+            foreach (var item in _views)
+            {           
+                if ((item as IRepresentative).RepresentativeName == (selected as IRepresentative).RepresentativeName)
+                {
+                    _btnView = CreateViewBarButton($"btn{item.ToString()}", (item as IRepresentative).RepresentativeName, VIEWBAR_BUTTON_WIDTH, item, true, BtnView_Click);
+                } else
+                {
+                    _btnView = CreateViewBarButton($"btn{item.ToString()}", (item as IRepresentative).RepresentativeName, VIEWBAR_BUTTON_WIDTH, item, false, BtnView_Click);
+                }
+                _viewBarStockPanel.Children.Add(_btnView);
+            }
+        }
+
+        private void BtnView_Click(object sender, RoutedEventArgs e)
+        {
+            var uc = (sender as ButtonWithObject).Object as UserControl;
+            OpenUserControl(uc);
+        }
+
         #endregion
+
+        private ButtonWithObject CreateCloseButton(object uc)
+        {
+            var newbutton = new ButtonWithObject
+            {
+                Content = new Image
+                {
+                    Source = new BitmapImage(new Uri(@"..\img\x-icon.png", UriKind.Relative)),
+                    VerticalAlignment = VerticalAlignment.Center
+                },
+                Object = uc,
+                Width = 20,
+                Height = 20,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+            };
+            newbutton.Style = (Style)FindResource("MyButton");
+            newbutton.Click += RemoveFromBarView_Click;
+
+            return newbutton;
+        }
+
+        private void RemoveFromBarView_Click(object sender, RoutedEventArgs e)
+        {
+            var uc = (sender as ButtonWithObject).Object as UserControl;
+            if ((_selectedView as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName)
+            {
+                RemoveUserControl(uc);
+                if (_views.Count() > 0)
+                {
+                    OpenUserControl(_views[0]);
+                }
+                else
+                {
+                    OpenUserControl(null);
+                }
+            }
+
+            e.Handled = true;
+        }
     }
 }

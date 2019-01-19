@@ -7,8 +7,8 @@
         xmlns:paygl="clr-namespace:Paygl"
         xmlns:views ="clr-namespace:Paygl.Views" 
         mc:Ignorable="d"
-        Title="Paygl" Height="650" Width="1200"
-        MinHeight="650" MinWidth="1200"
+        Title="Paygl" Height="750" Width="1200"
+        MinHeight="750" MinWidth="1200"
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip"
         Icon="./img/logo.ico" Loaded="Window_Loaded">
@@ -33,7 +33,13 @@
                     </StackPanel>
                 </DockPanel>
             </Border>
-            <Border Style="{StaticResource MyBorder}" BorderThickness="1" Margin="6,46,12,12" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="brdMain">
+            <Border Style="{StaticResource MyBorder}" BorderThickness="1" Margin="6,46,12,0" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Height="30" Name="_brdViewBar" VerticalAlignment="Top">
+                <DockPanel>
+                    <StackPanel x:Name="_viewBarStockPanel" Orientation="Horizontal">
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border Style="{StaticResource MyBorder}" BorderThickness="1" Margin="6,83,12,12" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="brdMain">
                 <UserControl x:Name="MainControl"/>
             </Border>
 

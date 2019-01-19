@@ -20,7 +20,7 @@ namespace Paygl.Views
     /// <summary>
     /// Interaction logic for AddGroupsView.xaml
     /// </summary>
-    public partial class AddGroupsView : UserControl
+    public partial class AddGroupsView : UserControl, IRepresentative
     {
         private OperationsGroup _group;
         private List<Tag> _selectedTags;
@@ -28,6 +28,8 @@ namespace Paygl.Views
         private ObservableRangeCollection<Frequence> _observableFrequencies;
         private ObservableRangeCollection<Importance> _observableImportances;
         private ObservableRangeCollection<Tag> _observableTags;
+
+        public string RepresentativeName { get; set; } = "Dodaj grupę";
 
         public AddGroupsView()
         {
@@ -215,6 +217,11 @@ namespace Paygl.Views
                 _labDate.Content = _calDate.SelectedDate.Value.ToString("dd.MM.yyyy");
             }
             _borderCalendar.Visibility = Visibility.Hidden;
+        }
+
+        public override string ToString()
+        {
+            return "AddGroupView";
         }
     }
 }

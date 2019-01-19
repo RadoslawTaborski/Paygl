@@ -18,8 +18,10 @@ namespace Paygl.Views
     /// <summary>
     /// Interaction logic for AnalysisView.xaml
     /// </summary>
-    public partial class AnalysisView : UserControl
+    public partial class AnalysisView : UserControl, IRepresentative
     {
+        public string RepresentativeName { get; set; } = "Analiza";
+
         public AnalysisView()
         {
             InitializeComponent();
@@ -28,6 +30,11 @@ namespace Paygl.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        public override string ToString()
+        {
+            return "AnalysisView";
         }
     }
 }

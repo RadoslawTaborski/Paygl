@@ -27,7 +27,7 @@ namespace Paygl.Views
     /// <summary>
     /// Interaction logic for ImportView.xaml
     /// </summary>
-    public partial class ImportOperationsView : UserControl
+    public partial class ImportOperationsView : UserControl, IRepresentative
     {
         private List<Tag> _selectedTags;
 
@@ -35,6 +35,8 @@ namespace Paygl.Views
         private ObservableRangeCollection<Importance> _observableImportances;
         private ObservableRangeCollection<OperationsGroup> _observableGroups;
         private ObservableRangeCollection<Tag> _observableTags;
+
+        public string RepresentativeName { get; set; } = "Importuj";
 
         public ImportOperationsView()
         {
@@ -293,6 +295,11 @@ namespace Paygl.Views
                 newborder.Child = newstackpanel;
                 _spTags.Children.Add(newborder);
             }
+        }
+
+        public override string ToString()
+        {
+            return "ImportOperationsView";
         }
 
         #region events

@@ -20,7 +20,7 @@ namespace Paygl.Views
     /// <summary>
     /// Interaction logic for ManualyAddView.xaml
     /// </summary>
-    public partial class ManuallyOperationsView : UserControl
+    public partial class ManuallyOperationsView : UserControl, IRepresentative
     {
         private Operation _operation;
         private List<Tag> _selectedTags;
@@ -31,6 +31,8 @@ namespace Paygl.Views
         private ObservableRangeCollection<Tag> _observableTags;
         private ObservableRangeCollection<TransactionType> _observableTransactionType;
         private ObservableRangeCollection<TransferType> _observableTransferType;
+
+        public string RepresentativeName { get; set; } = "Dodaj manualnie";
 
         public ManuallyOperationsView()
         {
@@ -314,6 +316,11 @@ namespace Paygl.Views
                 ResetRelatedAttributes();
                 SetRelatedControlsAttributesVisibility(Visibility.Hidden);
             }
+        }
+
+        public override string ToString()
+        {
+            return "ManuallyOperationsView";
         }
     }
 }
