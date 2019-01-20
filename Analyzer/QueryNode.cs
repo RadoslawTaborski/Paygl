@@ -10,9 +10,11 @@ namespace Analyzer
     {
         public List<IQueryItem> Items { get; private set; }
         public List<IOperation> Result { get; private set; }
+        public bool OnlyOperations { get; }
 
-        public QueryNode()
+        public QueryNode(bool onlyOperations)
         {
+            OnlyOperations = onlyOperations;
             Items = new List<IQueryItem>();
         }
 

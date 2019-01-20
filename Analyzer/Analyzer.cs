@@ -119,7 +119,7 @@ namespace Analyzer
                                     tmp = tmp.Substring(0, tmp.IndexOf("\""));
                                     right.Add(tmp);
                                 }
-                                node.Items.Add(new QueryLeaf(substrings1[0], separators1[0], right));
+                                node.Items.Add(new QueryLeaf(substrings1[0], separators1[0], right, node.OnlyOperations));
                             }
                         }
                     }
@@ -130,7 +130,7 @@ namespace Analyzer
 
                     continue;
                 }
-                var newNode = new QueryNode();
+                var newNode = new QueryNode(node.OnlyOperations);
                 node.Items.Add(newNode);
                 SplitQuery(item, ref newNode);
             }
@@ -148,9 +148,9 @@ namespace Analyzer
             return true;
         }
 
-        public static QueryNode StringToQuery(string query)
+        public static QueryNode StringToQuery(string query, bool onlyOperations=false)
         {
-            var root = new QueryNode();
+            var root = new QueryNode(onlyOperations);
             SplitQuery(query, ref root);
             return root;
         }

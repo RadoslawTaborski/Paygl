@@ -273,6 +273,11 @@ namespace Paygl.Views
             resultStackPanel.Children.Add(borderTransactionType);
             resultStackPanel.Children.Add(borderImportance);
             resultStackPanel.Children.Add(borderFrequence);
+            if(operation is Operation)
+            {
+                var borderTransferType = CreateBorderWithLabel($"{(operation as Operation).TransferType}");
+                resultStackPanel.Children.Add(borderTransferType);
+            }
             foreach (var item in operation.Tags)
             {
                 resultStackPanel.Children.Add(CreateBorderWithLabel($"{item}"));

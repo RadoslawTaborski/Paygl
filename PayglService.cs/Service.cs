@@ -286,7 +286,13 @@ namespace PayglService.cs
                 {
                     throw new Exception("File with queries has wrong data");
                 }
-                result.Add(new KeyValuePair<string, QueryNode>(substrings[0], Analyzer.Analyzer.StringToQuery(substrings[1])));
+                if (substrings[1].IndexOf("TransferType") == -1)
+                {
+                    result.Add(new KeyValuePair<string, QueryNode>(substrings[0], Analyzer.Analyzer.StringToQuery(substrings[1])));
+                } else
+                {
+                    result.Add(new KeyValuePair<string, QueryNode>(substrings[0], Analyzer.Analyzer.StringToQuery(substrings[1], true)));
+                }
             }
 
             return result;

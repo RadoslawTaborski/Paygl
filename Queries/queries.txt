@@ -7,3 +7,4 @@ Inne wydatki konieczne jednorazowe:Tags NOT IN ["opłaty"] AND TransactionType I
 Inne wydatki konieczne częstsze:Tags NOT IN ["opłaty"] AND TransactionType IN ["wydatek"] AND Importance IN ["konieczne"] AND Frequence NOT IN ["jednorazowe"]
 Markety: Name LIKE ["Lidl%","Biedronka%"]
 Nie markety: Name NOT LIKE ["Lidl%","Biedronka%"]
+TEST:Tags ONE IN ["praca"] AND TransferType IN ["gotówka"]

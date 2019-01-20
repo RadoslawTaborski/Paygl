@@ -13,14 +13,16 @@ namespace Analyzer
         public string Left { get; private set; }
         public string Operation { get; private set; }
         public List<string> Right { get; private set; }
+        public bool OnlyOperations { get; }
 
         public List<IOperation> Result { get; private set; }
 
-        public QueryLeaf(string left, string operation, List<string> right)
+        public QueryLeaf(string left, string operation, List<string> right, bool onlyOperations)
         {
             Left = left;
             Operation = operation;
             Right = right;
+            OnlyOperations = onlyOperations;
         }
 
         public void SetRight(List<string> right)
@@ -41,13 +43,20 @@ namespace Analyzer
         public void Filter(List<IOperation> all)
         {
             var result = new List<IOperation>(all);
+            if (OnlyOperations)
+            {
+                var onlyOperations= result.Where(r => (r is Operation)).Select(r => (r as Operation)).ToList();
+                onlyOperations.AddRange(result.Where(r => (r is OperationsGroup)).SelectMany(r => (r as OperationsGroup).Operations).ToList());
+                result = new List<IOperation>();
+                result.AddRange(onlyOperations);
+            }
             foreach (var key in KeyWords.List)
             {
                 if (!this.Left.Equals(key))
                 {
                     continue;
                 }
-                if (!key.Equals("Tags") && !key.Equals("Name"))
+                if (!key.Equals("Tags") && !key.Equals("Name") && !key.Equals("TransferType"))
                 {
                     switch (this.Operation)
                     {
@@ -91,6 +100,20 @@ namespace Analyzer
                             break;
                         case string w when w == SetOperations.Like:
                             result = result.Where(o => regex.Match(o.Description).Success).ToList();
+                            break;
+                        default:
+                            throw new Exception($"Operations is wrong for {this.Operation}");
+                    }
+                }
+                else if (key.Equals("TransferType"))
+                {
+                    switch (this.Operation)
+                    {
+                        case string w when w == SetOperations.In:
+                            result = result.Where(o => o is Operation && this.Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter).Text)).ToList();
+                            break;
+                        case string w when w == SetOperations.NotIn:
+                            result = result.Where(o => o is Operation && !this.Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter).Text)).ToList();
                             break;
                         default:
                             throw new Exception($"Operations is wrong for {this.Operation}");

@@ -8,8 +8,8 @@ namespace Analyzer
     public class QueryLeafOperation: IQueryItem
     {
         public string Operation { get; private set; }
-
         public List<IOperation> Result => throw new NotImplementedException();
+        public bool OnlyOperations => throw new NotImplementedException();
 
         public QueryLeafOperation(string operation)
         {
