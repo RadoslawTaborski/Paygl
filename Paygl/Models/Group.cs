@@ -1,4 +1,5 @@
-﻿using DataBaseWithBusinessLogicConnector.Entities;
+﻿using Analyzer;
+using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,24 +10,23 @@ namespace Paygl.Models
     public class Group
     {
         public string Description { get; private set; }
+        public QueryNode Query { get; private set; }
         public decimal Amount { get; private set; }
+        public List<IOperation> AllOperations{get; private set;}
 
         public List<IOperation> Operations { get; private set; }
 
-        public Group(string description)
+        public Group(string description, QueryNode query, List<IOperation> all)
         {
             Description = description;
+            Query = query;
+            AllOperations = all;
             Operations = new List<IOperation>();
         }
 
-        public void AddRange(List<IOperation> operations)
+        public void FilterOperations()
         {
-            Operations.AddRange(operations);
-        }
-
-        public void Add(IOperation operation)
-        {
-            Operations.Add(operation);
+            Operations = Analyzer.Analyzer.FilterOperations(AllOperations, Query);
         }
 
         public void UpdateAmount()
@@ -43,6 +43,11 @@ namespace Paygl.Models
                     Amount -= item.Amount;
                 }
             }
+        }
+
+        public void SetQuery(QueryNode query)
+        {
+            Query = query;
         }
     }
 }

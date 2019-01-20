@@ -17,6 +17,8 @@ namespace Paygl.Views
     public partial class ShowOperations : UserControl, IRepresentative
     {
         private List<Operation> _operations;
+        private List<OperationsGroup> _operationsGroup;
+
         private const int HEIGHT = 25;
 
         public string RepresentativeName { get; set; } = "Pokaż";
@@ -65,25 +67,25 @@ namespace Paygl.Views
             DateTime dt1 = DateTime.Parse(_tbFrom.Text);
             DateTime dt2 = DateTime.Parse(_tbTo.Text);
             _operations = Service.Operations.Where(o => o.Parent == null && o.Date.Date <= dt2.Date && o.Date.Date >= dt1.Date).ToList();
+            _operationsGroup = Service.OperationsGroups.Where(o => o.Date.Date <= dt2.Date && o.Date.Date >= dt1.Date).ToList();
+            var ioperations = new List<IOperation>();
+            ioperations.AddRange(_operations);
+            ioperations.AddRange(_operationsGroup);
 
             var queries = Service.ReadQuery();
 
             //var groups = new List<OperationsGroup>(Service.OperationsGroups);
             var groups = new List<Group>();
 
-            foreach (var elem in Service.OperationsGroups)
+            foreach (var elem in _operationsGroup)
             {
                 elem.UpdateAmount(Service.TransactionTypes);
             }
 
             foreach (var item in queries)
             {
-                var operations = Analyzer.Analyzer.FilterOperations(_operations.OfType<IOperation>().ToList<IOperation>(), item.Value);
-                var operationsGroups = Analyzer.Analyzer.FilterOperations(Service.OperationsGroups.OfType<IOperation>().ToList<IOperation>().Where(o => o.Date.Date <= dt2.Date && o.Date.Date >= dt1.Date).ToList(), item.Value);
-
-                var newGroup = new Group(item.Key);
-                newGroup.AddRange(operations);
-                newGroup.AddRange(operationsGroups);
+                var newGroup = new Group(item.Key, item.Value, ioperations);
+                newGroup.FilterOperations();
 
                 groups.Add(newGroup);
             }
