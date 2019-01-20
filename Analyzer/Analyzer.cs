@@ -4,11 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace Analyzer
 {
     public static class Analyzer
     {
+        private static List<string> _boolOperations;
+        private static List<string> _setOperations;
+
         public static bool AnalyzeSyntax(string query)
         {
             var result = false;
@@ -16,123 +20,139 @@ namespace Analyzer
             return result;
         }
 
-        public static Query StringToQuery(string query)
+        static Analyzer()
         {
-            var result = new Query();
-
-            var boolOperations = new List<string>();
+            _boolOperations = new List<string>();
             foreach (PropertyInfo prop in typeof(BooleanOperations).GetProperties())
             {
-                boolOperations.Add(prop.GetValue(null).ToString());
+                _boolOperations.Add(prop.GetValue(null).ToString());
             }
 
-            var setOperations = new List<string>();
+            _setOperations = new List<string>();
             foreach (PropertyInfo prop in typeof(SetOperations).GetProperties())
             {
-                setOperations.Add(prop.GetValue(null).ToString());
+                _setOperations.Add(prop.GetValue(null).ToString());
             }
-
-            var (substrings, separators) = query.SplitWithSeparators(boolOperations.ToArray());
-            result.conjunctions = separators;
-            foreach (var item in substrings)
-            {
-                var (substrings1, separators1) = item.SplitWithSeparators(setOperations.ToArray());
-                if (substrings1.Count != 2 && separators1.Count != 1)
-                {
-                    throw new Exception("Wrong query");
-                }
-                if (!KeyWords.List.Contains(substrings1[0]))
-                {
-                    throw new Exception("Wrong query");
-                }
-                var right = new List<string>();
-                substrings1[1] = substrings1[1].Replace("(", "");
-                substrings1[1] = substrings1[1].Replace(")", "");
-                var rights = substrings1[1].Split(',');
-                foreach (var elem in rights)
-                {
-                    var tmp = elem;
-                    tmp = tmp.Substring(tmp.IndexOf("\"") + 1);
-                    tmp = tmp.Substring(0, tmp.IndexOf("\""));
-                    right.Add(tmp);
-                }
-                result.queries.Add(new QueryItem(substrings1[0], separators1[0], right));
-            }
-
-            return result;
         }
 
-        public static List<IOperation> FilterOperations(List<IOperation> operations, Query query)
+        public static List<IOperation> FilterOperations(List<IOperation> all, QueryNode node)
         {
-            var result = new List<IOperation>(operations);
-            result = FilterOperations(result, query.queries[0]);
-            for (int i = 1; i < query.queries.Count; i++)
+            node.Filter(all);
+            return node.Result;
+        }
+
+        private static void SplitQuery(string query, ref QueryNode node)
+        {
+            var subqueries = new List<string>();
+
+            var bracketsCounter = 0;
+            StringBuilder sb = new StringBuilder();
+            foreach (var c in query)
             {
-                switch (query.conjunctions[i-1])
+                if (c == '(')
                 {
-                    case string w when w == BooleanOperations.Conjunction:
-                        result = FilterOperations(result, query.queries[i]);
-                        break;
-                    case string w when w == BooleanOperations.Disjunction:
-                        result.AddRange(FilterOperations(result, query.queries[i]));
-                        result.ToArray().Distinct().ToList();
-                        break;
-                    default:
-                        throw new Exception($"Operations {query.conjunctions[i - 1]} not exist");
+                    bracketsCounter++;
+                    if (bracketsCounter == 1)
+                    {
+                        if (sb.Length != 0)
+                        {
+                            subqueries.Add(sb.ToString());
+                        }
+                        sb = new StringBuilder();
+                        continue;
+                    }
                 }
+                if (c == ')')
+                {
+                    bracketsCounter--;
+                    if (bracketsCounter == 0)
+                    {
+                        if (sb.Length != 0)
+                        {
+                            subqueries.Add(sb.ToString());
+                        }
+                        sb = new StringBuilder();
+                        continue;
+                    }
+                }
+                sb.Insert(sb.Length, c);
+            }
+            if (sb.Length != 0)
+            {
+                subqueries.Add(sb.ToString());
             }
 
-            return result;
-        }
-
-        private static object GetPropValue(object src, string propName)
-        {
-            return src.GetType().GetProperty(propName).GetValue(src, null);
-        }
-
-        private static List<IOperation> FilterOperations(List<IOperation> operations, QueryItem query)
-        {
-            var result = new List<IOperation>(operations);
-            foreach (var key in KeyWords.List)
+            foreach (var item in subqueries)
             {
-                if (!query.Left.Equals(key))
+                var itemWithoutWhiteSpace = item.Trim();
+                if ((itemWithoutWhiteSpace.Count(f => f == '(') == 0 && IsSingleQuery(itemWithoutWhiteSpace)) || subqueries.Count == 1)
                 {
+                    if (!_boolOperations.Contains(itemWithoutWhiteSpace))
+                    {
+                        var (substrings, separators) = itemWithoutWhiteSpace.SplitWithSeparators(_boolOperations.ToArray());
+                        for (int i = 0; i < substrings.Count; i++)
+                        {
+                            string substring = substrings[i];
+                            if (i != 0)
+                            {
+                                node.Items.Add(new QueryLeafOperation(separators[i - 1]));
+                            }
+                            if (substring != "")
+                            {
+                                var (substrings1, separators1) = substring.SplitWithSeparators(_setOperations.ToArray());
+                                if (substrings1.Count != 2 && separators1.Count != 1)
+                                {
+                                    throw new Exception("Wrong query");
+                                }
+                                if (!KeyWords.List.Contains(substrings1[0]))
+                                {
+                                    throw new Exception("Wrong query");
+                                }
+                                var right = new List<string>();
+                                substrings1[1] = substrings1[1].Replace("[", "");
+                                substrings1[1] = substrings1[1].Replace("]", "");
+                                var rights = substrings1[1].Split(',');
+                                foreach (var elem in rights)
+                                {
+                                    var tmp = elem;
+                                    tmp = tmp.Substring(tmp.IndexOf("\"") + 1);
+                                    tmp = tmp.Substring(0, tmp.IndexOf("\""));
+                                    right.Add(tmp);
+                                }
+                                node.Items.Add(new QueryLeaf(substrings1[0], separators1[0], right));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        node.Items.Add(new QueryLeafOperation(itemWithoutWhiteSpace));
+                    }
+
                     continue;
                 }
-                if (!key.Equals("Tags"))
-                {
-                    switch (query.Operation)
-                    {
-                        case string w when w == SetOperations.In:
-                            result = result.Where(o => query.Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter).Text)).ToList();
-                            break;
-                        case string w when w == SetOperations.NotIn:
-                            result = result.Where(o => !query.Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter).Text)).ToList();
-                            break;
-                        default:
-                            throw new Exception($"Operations is wrong for {query.Operation}");
-                    }
-                }
-                else
-                {
-                    var tags = result.Select(r => (GetPropValue(r, KeyWords.OperationProperty[key]) as RelTag).Tag.Text);
-                    switch (query.Operation)
-                    {
-                        case string w when w == SetOperations.NotIn:
-                            result = result.Where(o => query.Right.Intersect(o.Tags.Select(x => x.Tag.Text)).Count() == 0).ToList();
-                            break;
-                        case string w when w == SetOperations.AllIn:
-                            result = result.Where(o => query.Right.Intersect(o.Tags.Select(x => x.Tag.Text)).Count() == query.Right.Count()).ToList();
-                            break;
-                        case string w when w == SetOperations.OneIn:
-                            result = result.Where(o => query.Right.Intersect(o.Tags.Select(x => x.Tag.Text)).Count() > 0).ToList();
-                            break;
-                        default:
-                            throw new Exception($"Operations is wrong for {query.Operation}");
-                    }
-                }
+                var newNode = new QueryNode();
+                node.Items.Add(newNode);
+                SplitQuery(item, ref newNode);
             }
-            return result;
+        }
+
+        private static bool IsSingleQuery(string query)
+        {
+            var (substrings, separators) = query.SplitWithSeparators(_boolOperations.ToArray());
+            substrings.RemoveAll(item => item == "");
+            if (substrings.Count > 1)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static QueryNode StringToQuery(string query)
+        {
+            var root = new QueryNode();
+            SplitQuery(query, ref root);
+            return root;
         }
     }
 }

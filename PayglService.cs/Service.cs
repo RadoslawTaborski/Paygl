@@ -274,11 +274,11 @@ namespace PayglService.cs
             }
         }
 
-        public static List<KeyValuePair<string,Query>> ReadQuery()
+        public static List<KeyValuePair<string,QueryNode>> ReadQuery()
         {
-            var result = new List<KeyValuePair<string, Query>>();
+            var result = new List<KeyValuePair<string, QueryNode>>();
             string line;
-            var file = new StreamReader(@"D:\Programowanie\C#\Paygl\Queries\queries.txt");
+            var file = new StreamReader(@"D:\Programowanie\C#\Paygl\Queries\queries.txt"); //TODO: to file
             while ((line = file.ReadLine()) != null)
             {
                 var substrings = line.Split(':');
@@ -286,7 +286,7 @@ namespace PayglService.cs
                 {
                     throw new Exception("File with queries has wrong data");
                 }
-                result.Add(new KeyValuePair<string, Query>(substrings[0], Analyzer.Analyzer.StringToQuery(substrings[1])));
+                result.Add(new KeyValuePair<string, QueryNode>(substrings[0], Analyzer.Analyzer.StringToQuery(substrings[1])));
             }
 
             return result;

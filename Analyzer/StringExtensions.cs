@@ -11,20 +11,19 @@ namespace Analyzer
         public static (List<string> substrings, List<string> separators) SplitWithSeparators(this string value, string[] separators)
         {
             var separators1 = new List<string>();
-            var separatorsWithSpace = new List<string>();
-            foreach(var sep in separators)
+
+            var substrings1 = value.Split(separators, StringSplitOptions.None).ToList();
+            for (int i = 0; i < substrings1.Count; i++)
             {
-                separatorsWithSpace.Add($" {sep} ");
+                substrings1[i] = substrings1[i].Trim();
             }
 
-            var substrings1 = value.Split(separatorsWithSpace.ToArray(), StringSplitOptions.None).ToList();
-
             var indexes = new List<KeyValuePair<int, string>>();
-            foreach(var item in separators)
+            foreach (var item in separators)
             {
-                indexes.AddRange(IndexesOfString(value.AllIndexesOf(item),item));
+                indexes.AddRange(IndexesOfString(value.AllIndexesOf(item), item));
                 var tmp = "";
-                for(var i=0; i < item.Length; ++i)
+                for (var i = 0; i < item.Length; ++i)
                 {
                     tmp += "X";
                 }
@@ -33,9 +32,9 @@ namespace Analyzer
 
             indexes.Sort((x, y) => x.Key.CompareTo(y.Key));
 
-            foreach(var item in indexes)
+            foreach (var item in indexes)
             {
-                separators1.Add(item.Value);
+                separators1.Add(item.Value.Trim());
             }
 
             return (substrings1, separators1);
