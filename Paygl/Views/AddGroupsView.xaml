@@ -61,6 +61,7 @@
                 </Grid.ColumnDefinitions>
                 <Button Style="{StaticResource MyButton}" x:Name="_btnManualClear" Content="Wyczyść" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="0" Click="BtnManualClear_Click"/>
                 <Button Style="{StaticResource MyButton}" x:Name="_btnManualAccept" Content="Akceptuj" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="BtnManualAccept_Click"/>
+                <Button Style="{StaticResource MyButton}" x:Name="_btnEditAccept" Content="Akceptuj" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="_btnEditAccept_Click" />
             </Grid>
         </Grid>
         <Border x:Name="_borderCalendar" Style ="{StaticResource MyBorder}" HorizontalAlignment="Right" Margin="0,189,479,216" Width="180">

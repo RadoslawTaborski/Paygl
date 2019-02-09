@@ -124,7 +124,7 @@ namespace Paygl.Views
                 Height = HEIGHT + 10,
             };
             borderGroup.Child = GroupHeaderToStackPanel(group);
-            result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, result, "MyMediumGrey", new Thickness(0,0,0,0), ClickInGroup));
+            result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, result, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInGroup));
 
             return result;
         }
@@ -213,7 +213,8 @@ namespace Paygl.Views
                     border2.Child = IOperationToStackPanel(elem);
                     context.Children.Add(CreateButtonWithBorderContent(border2, elem, null, "MyMediumGrey", new Thickness(50, 0, 0, 0), ClickInOperation));
                 }
-            } else
+            }
+            else
             {
                 System.Collections.IList list = context.Children;
                 for (int i1 = 0; i1 < list.Count; i1++)
@@ -251,7 +252,7 @@ namespace Paygl.Views
                 Style = (Style)FindResource("MyButtonLeft"),
                 HorizontalContentAlignment = HorizontalAlignment.Left,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
-                Object=objectForButton,
+                Object = objectForButton,
                 Context = context,
                 Background = (Brush)FindResource(colorName),
             };
@@ -300,7 +301,7 @@ namespace Paygl.Views
             resultStackPanel.Children.Add(borderTransactionType);
             resultStackPanel.Children.Add(borderImportance);
             resultStackPanel.Children.Add(borderFrequence);
-            if(operation is Operation)
+            if (operation is Operation)
             {
                 var borderTransferType = CreateBorderWithLabel($"{(operation as Operation).TransferType}");
                 resultStackPanel.Children.Add(borderTransferType);
@@ -319,19 +320,19 @@ namespace Paygl.Views
             Console.WriteLine("click edit");
             var parameter = ((sender as ButtonWithObject).Object);
 
-            if(parameter is Operation)
+            if (parameter is Operation)
             {
                 var view = new ManuallyOperationsView(parameter as Operation);
                 ViewManager.AddUserControl(view);
                 ViewManager.OpenUserControl(view);
             }
-            else if(parameter is OperationsGroup)
+            else if (parameter is OperationsGroup)
             {
-                //var view = new AddGroupsView(parameter as OperationsGroup);
-                //ViewManager.AddUserControl(view);
-                //ViewManager.OpenUserControl(view);
+                var view = new AddGroupsView(parameter as OperationsGroup);
+                ViewManager.AddUserControl(view);
+                ViewManager.OpenUserControl(view);
             }
-            else if(parameter is Group)
+            else if (parameter is Group)
             {
 
             }
@@ -384,7 +385,7 @@ namespace Paygl.Views
                     Style = (Style)FindResource("MyLabel"),
                     Margin = new Thickness(0, -5, 0, 0),
                     Height = HEIGHT,
-                    VerticalAlignment=VerticalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
                 },
                 BorderBrush = (SolidColorBrush)FindResource("MyLight"),
                 BorderThickness = new Thickness(0, 0, 1, 0),

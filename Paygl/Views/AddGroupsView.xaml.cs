@@ -40,14 +40,78 @@ namespace Paygl.Views
             Background = Brushes.Azure;
 
             LoadAttributes();
+            _group = new OperationsGroup(null, Service.User, "", null, null, DateTime.Now);
 
             SetEditableControls();
-            SetOperationValues();
+            SetOperationsGroupValues(_group);
+            EditMode(false);
+        }
+
+        public AddGroupsView(OperationsGroup group)
+        {
+            InitializeComponent();
+            ViewsMemory.AddedParameter += AddedParameterEvent;
+            Background = Brushes.Azure;
+
+            LoadAttributes();
+            _group = group;
+
+            SetEditableControls();
+            SetOperationsGroupValues(_group);
+            EditMode(true);
+        }
+
+        private void EditMode(bool value)
+        {
+            if (value)
+            {
+                RepresentativeName = $"Edycja: {_group.Description}";
+                _btnManualClear.Visibility = Visibility.Hidden;
+                _btnManualAccept.Visibility = Visibility.Hidden;
+                _btnEditAccept.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                RepresentativeName = "Dodaj manualnie";
+                _btnManualClear.Visibility = Visibility.Visible;
+                _btnManualAccept.Visibility = Visibility.Visible;
+                _btnEditAccept.Visibility = Visibility.Hidden;
+            }
         }
 
         private void AddedParameterEvent(IParameter added)
         {
             throw new NotImplementedException();
+        }
+
+        private void SetOperationsGroupValues(OperationsGroup group)
+        {
+            _borderCalendar.Visibility = Visibility.Hidden;
+            _calDate.SelectedDate = DateTime.Now;
+
+            _group = group;
+
+            ResetEditableControls();
+
+            _tbNewDescription.Text = _group.Description;
+            _labDate.Content = _group.Date.ToString("dd.MM.yyyy");
+            if (_group.Frequence != null)
+            {
+                _cbFrequent.SelectedItem = _observableFrequencies.Where(f => f.Text == _group.Frequence.Text).First();
+            }
+            if (_group.Importance != null)
+            {
+                _cbImportance.SelectedItem = _observableImportances.Where(f => f.Text == _group.Importance.Text).First();
+            }
+            foreach (var tag in _group.Tags)
+            {
+                if (!tag.IsMarkForDeletion && !tag.IsDirty)
+                {
+                    SetTagLabel(tag.Tag);
+                }
+            }
+
+            UserEditableControlsVisibility(Visibility.Visible);
         }
 
         private void SetEditableControls()
@@ -58,27 +122,6 @@ namespace Paygl.Views
             _cbImportance.ItemsSource = _observableImportances;
             _observableTags = new ObservableRangeCollection<Tag>(Service.Tags);
             _cbTags.ItemsSource = _observableTags;
-        }
-
-        private void SetOperationValues()
-        {
-            _borderCalendar.Visibility = Visibility.Hidden;
-            _calDate.SelectedDate = DateTime.Now;
-
-            _group = new OperationsGroup(null, Service.User, "", null, null, DateTime.Now);
-
-            ResetEditableControls();
-
-            _tbNewDescription.Text = "";
-            _labDate.Content = _group.Date.ToString("dd.MM.yyyy");
-            _cbFrequent.SelectedItem = _group.Frequence;
-            _cbImportance.SelectedItem = _group.Importance;
-            foreach (var tag in _group.Tags)
-            {
-                SetTagLabel(tag.Tag);
-            }
-
-            UserEditableControlsVisibility(Visibility.Visible);
         }
 
         private void ResetEditableControls()
@@ -119,10 +162,7 @@ namespace Paygl.Views
             _group.SetImportance(_cbImportance.SelectedItem as Importance);
             _group.SetFrequence(_cbFrequent.SelectedItem as Frequence);
             _group.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
-            foreach (var item in _selectedTags)
-            {
-                _group.AddTag(item);
-            }
+            UpdateOperationsGroupTags();
             _group.SetDescription(_tbNewDescription.Text);
 
             try
@@ -131,7 +171,8 @@ namespace Paygl.Views
                 ViewsMemory.AddedGroup?.Invoke(_group);
                 ResetEditableControls();
                 SetEditableControls();
-                SetOperationValues();
+                var group = new OperationsGroup(null, Service.User, "", null, null, DateTime.Now);
+                SetOperationsGroupValues(group);
             }
             catch (Exception ex)
             {
@@ -179,7 +220,7 @@ namespace Paygl.Views
                 };
                 newlabel.Style = (Style)FindResource("MyLabel");
 
-                var newbutton = new Button
+                var newbutton = new ButtonWithObject
                 {
                     Content = new Image
                     {
@@ -190,6 +231,7 @@ namespace Paygl.Views
                     Height = 20,
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Center,
+                    Object=tag,
                 };
                 newbutton.Style = (Style)FindResource("MyButton");
                 newbutton.Click += BtnClose_Click;
@@ -203,12 +245,12 @@ namespace Paygl.Views
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
+            var button = sender as ButtonWithObject;
             var panel = button.Parent as StackPanel;
             var border = panel.Parent as Border;
             var label = panel.Children[0] as Label;
 
-            var tag = Service.Tags.Where(t => t.Text.Equals(label.Content)).First();
+            var tag = button.Object as Tag;
             _spTags.Children.Remove(border);
             _selectedTags.Remove(tag);
         }
@@ -231,6 +273,37 @@ namespace Paygl.Views
         public override string ToString()
         {
             return "AddGroupView";
+        }
+
+        private void _btnEditAccept_Click(object sender, RoutedEventArgs e)
+        {
+            _group.SetImportance(_cbImportance.SelectedItem as Importance);
+            _group.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+            _group.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
+            UpdateOperationsGroupTags();
+            _group.SetDescription(_tbNewDescription.Text);
+
+            try
+            {
+                Service.UpdateOperationsGroupComplex(_group);
+                ViewsMemory.AddedGroup?.Invoke(_group);
+                var dialog = new MessageBox("Komunikat", "Modyfikacja udana");
+                dialog.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                var dialog = new MessageBox("Komunikat", ex.Message);
+                dialog.ShowDialog();
+            }
+        }
+
+        private void UpdateOperationsGroupTags()
+        {
+            _group.Tags.ForEach(t => t.IsMarkForDeletion = true);
+            foreach (var item in _selectedTags)
+            {
+                _group.AddTag(item);
+            }
         }
     }
 }

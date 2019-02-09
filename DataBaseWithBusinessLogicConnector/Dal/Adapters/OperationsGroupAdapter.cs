@@ -83,7 +83,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             var frequenceId = _adapterHelper.ToStr(entity.FrequenceId, COLUMNS["frequent_id"]);
             var importanceId = _adapterHelper.ToStr(entity.ImportanceId, COLUMNS["importance_id"]);
             var date = _adapterHelper.ToStr(entity.Date, COLUMNS["date"]);
-            _adapterHelper.Update(id, userId, description, frequenceId, importanceId, date);
+            _adapterHelper.Update(id, id, userId, description, frequenceId, importanceId, date);
         }
     }
 }

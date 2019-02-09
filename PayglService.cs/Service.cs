@@ -229,21 +229,47 @@ namespace PayglService.cs
             return new TransactionToOperationMapper().ConvertToEntitiesCollection(transactions, User, Importances, Frequencies, Tags, TransactionTypes, TransferTypes).ToList();
         }
 
-        public static void UpdateOperationsGroupComplex(OperationsGroup operation)
+        public static void UpdateOperationsGroupComplex(OperationsGroup group)
         {
-            UpdateOperationGroup(operation);
+            UpdateOperationGroup(group);
 
-            foreach (var tag in operation.Tags)
+            for (int i = group.Tags.Count - 1; i > -1; i--)
             {
-                InsertGroupTags(tag, operation);
+                RelTag tag = group.Tags[i];
+                if (tag.IsMarkForDeletion && !tag.IsDirty)
+                {
+                    DeleteRelation(tag, group);
+                    continue;
+                }
+                if (tag.IsDirty)
+                {
+                    InsertRelation(tag, group);
+                }
+            }
+
+            foreach(var operation in group.Operations)
+            {
+                operation.SetFrequence(group.Frequence);
+                operation.SetImportance(group.Importance);
+                UpdateOperationTags(operation, group.Tags);
+                UpdateOperationComplex(operation);
             }
         }
 
-        private static int InsertGroupTags(RelTag tag, OperationsGroup grupe)
+        private static void UpdateOperationTags(Operation operation, List<RelTag> parentTag)
+        {
+            operation.Tags.ForEach(t => t.IsMarkForDeletion = true);
+            foreach (var relTag in parentTag)
+            {
+                operation.AddTag(relTag.Tag);
+            }
+        }
+
+        private static int InsertRelation(RelTag tag, OperationsGroup group)
         {
             if (tag.IsDirty)
             {
-                var newId = OperationsGroupRelationAdapter.Insert(OperationsGroupRelationMapper.ConvertToDALEntity(tag, grupe));
+                var newId = OperationsGroupRelationAdapter.Insert(OperationsGroupRelationMapper.ConvertToDALEntity(tag, group));
                 tag.UpdateId(newId);
                 tag.IsDirty = false;
             }
@@ -251,13 +277,14 @@ namespace PayglService.cs
             return tag.Id.Value;
         }
 
+        private static void DeleteRelation(RelTag tag, OperationsGroup group)
+        {
+            group.RemoveTag(tag);
+            OperationsGroupRelationAdapter.Delete(OperationsGroupRelationMapper.ConvertToDALEntity(tag, group));
+        }
+
         public static void UpdateOperationComplex(Operation operation)
         {
-            if (operation.Parent != null)
-            {
-                UpdateOperationsGroupComplex(operation.Parent);
-            }
-
             if (operation.DetailsList != null)
             {
                 foreach (var item in operation.DetailsList)

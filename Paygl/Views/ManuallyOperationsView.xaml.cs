@@ -54,16 +54,6 @@ namespace Paygl.Views
             SetUserEditableControlsVisibility(Visibility.Visible);
         }
 
-        private void AddedParameterEvent(IParameter added)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void AddedGroupEvent(OperationsGroup added)
-        {
-            _observableGroups.Add(added);
-        }
-
         public ManuallyOperationsView(Operation operation)
         {
             InitializeComponent();
@@ -75,10 +65,29 @@ namespace Paygl.Views
             LoadOperationsGroup();
 
             SetEditableControls();
-            SetOperationValues(operation);
-            EditMode(true);
-            SetRelatedControlsAttributesVisibility(Visibility.Hidden);
             SetUserEditableControlsVisibility(Visibility.Visible);
+            SetOperationValues(operation);
+            if (operation.Parent != null)
+            {
+                ResetRelatedAttributes();
+                SetRelatedAttributes(operation.Parent);
+                SetRelatedControlsAttributesVisibility(Visibility.Visible);
+            }
+            else
+            {
+                SetRelatedControlsAttributesVisibility(Visibility.Hidden);
+            }
+            EditMode(true);
+        }
+
+        private void AddedParameterEvent(IParameter added)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void AddedGroupEvent(OperationsGroup added)
+        {
+            _observableGroups.Add(added);
         }
 
         private void EditMode(bool value)
@@ -86,10 +95,10 @@ namespace Paygl.Views
             if (value)
             {
                 RepresentativeName = $"Edycja: {_operation.ShortDescription}";
-                _tbDescription.Visibility = Visibility.Visible;
-                _labDescription.Visibility = Visibility.Visible;
                 _btnManualClear.Visibility = Visibility.Hidden;
                 _btnManualAccept.Visibility = Visibility.Hidden;
+                _tbDescription.Visibility = Visibility.Visible;
+                _labDescription.Visibility = Visibility.Visible;
                 _btnEditAccept.Visibility = Visibility.Visible;
             }
             else
@@ -151,6 +160,11 @@ namespace Paygl.Views
             {
                 _cbTransfer.SelectedItem = _observableTransferType.Where(f => f.Text == _operation.TransferType.Text).First();
             }
+            if (_operation.Parent != null)
+            {
+                var tmp = _observableGroups.Where(f => f != null && f.Id == _operation.Parent.Id).First();
+                _cbRelated.SelectedItem = tmp;
+            }
             foreach (var tag in _operation.Tags)
             {
                 if (!tag.IsMarkForDeletion && !tag.IsDirty)
@@ -201,7 +215,7 @@ namespace Paygl.Views
             _labImportance.Visibility = v;
             _labTags.Visibility = v;
 
-            var v2 = v == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden;
+            var v2 = v == Visibility.Hidden ?Visibility.Visible:Visibility.Hidden;
 
             _cbFrequent.Visibility = v2;
             _cbImportance.Visibility = v2;
@@ -212,7 +226,11 @@ namespace Paygl.Views
         private void SetRelatedAttributes()
         {
             var group = _cbRelated.SelectedItem as OperationsGroup;
+            SetRelatedAttributes(group);
+        }
 
+        private void SetRelatedAttributes(OperationsGroup group)
+        {
             _labFrequence.Content = group.Frequence;
             _labImportance.Content = group.Importance;
             foreach (var item in group.Tags)
@@ -351,12 +369,12 @@ namespace Paygl.Views
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
+            var button = sender as ButtonWithObject;
             var panel = button.Parent as StackPanel;
             var border = panel.Parent as Border;
             var label = panel.Children[0] as Label;
 
-            var tag = (sender as ButtonWithObject).Object as Tag;
+            var tag = button.Object as Tag;
             _spTags.Children.Remove(border);
             _selectedTags.Remove(tag);
         }
@@ -398,7 +416,6 @@ namespace Paygl.Views
 
         private void _btnEditAccept_Click(object sender, RoutedEventArgs e)
         {
-            _operation.IsDirty = true;
             _operation.SetTransaction(_cbTransaction.SelectedItem as TransactionType);
             _operation.SetTransfer(_cbTransfer.SelectedItem as TransferType);
             _operation.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
