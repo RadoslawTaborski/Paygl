@@ -1,4 +1,6 @@
 ﻿using DataBaseWithBusinessLogicConnector.Entities;
+using DataBaseWithBusinessLogicConnector.Interfaces;
+using Paygl.Models;
 using PayglService.cs;
 using System;
 using System.Collections.Generic;
@@ -37,6 +39,8 @@ namespace Paygl.Views
         public ManuallyOperationsView()
         {
             InitializeComponent();
+            ViewsMemory.AddedGroup += AddedGroupEvent;
+            ViewsMemory.AddedParameter += AddedParameterEvent;
             Background = Brushes.Azure;
 
             LoadAttributes();
@@ -50,9 +54,21 @@ namespace Paygl.Views
             SetUserEditableControlsVisibility(Visibility.Visible);
         }
 
+        private void AddedParameterEvent(IParameter added)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void AddedGroupEvent(OperationsGroup added)
+        {
+            _observableGroups.Add(added);
+        }
+
         public ManuallyOperationsView(Operation operation)
         {
             InitializeComponent();
+            ViewsMemory.AddedGroup += AddedGroupEvent;
+            ViewsMemory.AddedParameter += AddedParameterEvent;
             Background = Brushes.Azure;
 
             LoadAttributes();

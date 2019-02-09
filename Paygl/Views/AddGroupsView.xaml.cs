@@ -1,4 +1,6 @@
 ﻿using DataBaseWithBusinessLogicConnector.Entities;
+using DataBaseWithBusinessLogicConnector.Interfaces;
+using Paygl.Models;
 using PayglService.cs;
 using System;
 using System.Collections.Generic;
@@ -34,12 +36,18 @@ namespace Paygl.Views
         public AddGroupsView()
         {
             InitializeComponent();
+            ViewsMemory.AddedParameter += AddedParameterEvent;
             Background = Brushes.Azure;
 
             LoadAttributes();
 
             SetEditableControls();
             SetOperationValues();
+        }
+
+        private void AddedParameterEvent(IParameter added)
+        {
+            throw new NotImplementedException();
         }
 
         private void SetEditableControls()
@@ -120,6 +128,7 @@ namespace Paygl.Views
             try
             {
                 Service.UpdateOperationsGroupComplex(_group);
+                ViewsMemory.AddedGroup?.Invoke(_group);
                 ResetEditableControls();
                 SetEditableControls();
                 SetOperationValues();

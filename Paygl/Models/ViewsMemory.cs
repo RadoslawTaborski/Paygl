@@ -1,4 +1,5 @@
 ﻿using DataBaseWithBusinessLogicConnector.Entities;
+using DataBaseWithBusinessLogicConnector.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,12 @@ namespace Paygl.Models
         private static List<Operation> _importingOperations = new List<Operation>();
         private static Operation _currentOperation;
         private static int _index = 0;
+       
+        public delegate void AddedGroupDelegate(OperationsGroup added);
+        public static AddedGroupDelegate AddedGroup;
 
+        public delegate void AddedParameterDelegate(IParameter added);
+        public static AddedParameterDelegate AddedParameter;
 
         public static void AddImportingOperations(IEnumerable<Operation> operations)
         {

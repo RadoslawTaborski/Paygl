@@ -3,6 +3,7 @@ using DataBaseWithBusinessLogicConnector;
 using DataBaseWithBusinessLogicConnector.Dal.Adapters;
 using DataBaseWithBusinessLogicConnector.Dal.Mappers;
 using DataBaseWithBusinessLogicConnector.Entities;
+using DataBaseWithBusinessLogicConnector.Interfaces;
 using Importer;
 using Paygl.Models;
 using PayglService.cs;
@@ -41,6 +42,8 @@ namespace Paygl.Views
         public ImportOperationsView()
         {
             InitializeComponent();
+            ViewsMemory.AddedGroup += AddedGroupEvent;
+            ViewsMemory.AddedParameter += AddedParameterEvent;
             Background = Brushes.Azure;
 
             LoadAttributes();
@@ -60,6 +63,16 @@ namespace Paygl.Views
                 SetNavigateButtonVisibility(Visibility.Visible);
                 Show(ViewsMemory.CurrentOperation());
             }
+        }
+
+        private void AddedParameterEvent(IParameter added)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void AddedGroupEvent(OperationsGroup added)
+        {
+            _observableGroups.Add(added);
         }
 
         private void SetStandardEditableControls()
