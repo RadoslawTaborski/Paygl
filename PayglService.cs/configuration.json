@@ -12,7 +12,7 @@
       "Address": "localhost",
       "Login": "root",
       "Password": "",
-      "Table": "paygl_2"
+      "Table": "paygl_test"
     }
   },
   "Ignored": [

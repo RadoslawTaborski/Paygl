@@ -268,9 +268,18 @@ namespace PayglService.cs
 
             UpdateOperation(operation);
 
-            foreach (var tag in operation.Tags)
+            for (int i = operation.Tags.Count-1; i > -1 ; i--)
             {
-                InsertRelation(tag, operation);
+                RelTag tag = operation.Tags[i];
+                if (tag.IsMarkForDeletion && !tag.IsDirty)
+                {
+                    DeleteRelation(tag, operation);
+                    continue;
+                }
+                if (tag.IsDirty)
+                {
+                    InsertRelation(tag, operation);
+                }
             }
         }
 

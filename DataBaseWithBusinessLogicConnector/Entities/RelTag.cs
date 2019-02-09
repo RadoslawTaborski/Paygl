@@ -11,6 +11,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public Tag Tag { get; private set; }
         public int? RelatedId { get; private set; }
         public bool IsDirty { get; set; }
+        public bool IsMarkForDeletion { get; set; }
 
         public RelTag(int? id, Tag tag, int? operationId)
         {
@@ -18,6 +19,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Tag = tag;
             RelatedId = operationId;
             IsDirty = true;
+            IsMarkForDeletion = false;
         }
 
         public void UpdateId(int? id)

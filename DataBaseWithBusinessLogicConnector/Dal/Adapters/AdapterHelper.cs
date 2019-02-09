@@ -19,9 +19,9 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         public void Delete(int? id)
         {
-            if (!id.HasValue)
+            if (id.HasValue)
             {
-                string query = queries.Update;
+                string query = queries.Delete;
                 query += string.Format(queries.Where, $"id={id}");
                 _connection.DataAccess.ConnectToDb();
                 _connection.DataAccess.ExecuteNonQueryDb(query);

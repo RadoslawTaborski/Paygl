@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS `paygl_2`;
-CREATE DATABASE IF NOT EXISTS `paygl_2` DEFAULT CHARACTER SET utf8 COLLATE utf8_polish_ci;
-USE `paygl_2`;
+DROP DATABASE IF EXISTS `paygl`;
+CREATE DATABASE IF NOT EXISTS `paygl` DEFAULT CHARACTER SET utf8 COLLATE utf8_polish_ci;
+USE `paygl`;
 
 DELIMITER $$
 
@@ -140,6 +140,8 @@ INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'dom',1);
 INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'nauka',1);
 INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'prezenty',1);
 INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'zdrowie',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'uroda',1);
+INSERT INTO `tags` (`id`, `text`, `language_id`) VALUES(NULL, 'inne',1);
 
 DROP TABLE IF EXISTS `frequencies`;
 CREATE TABLE `frequencies`(

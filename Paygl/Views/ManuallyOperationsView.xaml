@@ -33,7 +33,7 @@
                     <RowDefinition Height="42" />
                     <RowDefinition Height="60" />
                 </Grid.RowDefinitions>
-
+                <Label x:Name="_labDescription" Style="{StaticResource MyLabel}" Content="Opis:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="0" Margin="0,0,0,0"/>
                 <Label Style="{StaticResource MyLabel}" Content="Nowy opis:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0"/>
                 <Label Style="{StaticResource MyLabel}" Content="Kwota:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="2" Margin="0,0,0,0"/>
                 <Label Style="{StaticResource MyLabel}" Content="Data:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="3" Margin="0,0,0,0"/>
@@ -44,6 +44,7 @@
                 <Label Style="{StaticResource MyLabel}" Content="Typ transferu:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="8" Margin="0,0,0,0"/>
                 <Label Style="{StaticResource MyLabel}" Content="Powiązany z:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="9" Margin="0,0,0,0"/>
 
+                <TextBlock Style="{StaticResource MyTextBlock}" x:Name="_tbDescription" HorizontalAlignment="Stretch"  VerticalAlignment="Center" Margin="10,0,10,0" TextWrapping="Wrap" Text="" Grid.Column="1" Grid.Row="0"/>
                 <TextBox Style="{StaticResource MyTextBox}" x:Name="_tbNewDescription" HorizontalAlignment="Left"  VerticalAlignment="Center" Width="500" Margin="10,0,0,0" TextWrapping="Wrap" Text="" Grid.Column="1" Grid.Row="1"/>
                 <xctk:DecimalUpDown Style="{StaticResource MyDecimalUpDown}" x:Name="_upDownAmount" FormatString="F2" Increment="0.01" Minimum="0" Width="500" Grid.Column="1" Grid.Row="2" Margin="10,0,0,0"  HorizontalAlignment="Left"  VerticalAlignment="Center" />
                 <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3">
@@ -72,6 +73,7 @@
                 </Grid.ColumnDefinitions>
                 <Button Style="{StaticResource MyButton}" x:Name="_btnManualClear" Content="Wyczyść" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="0" Click="BtnManualClear_Click"/>
                 <Button Style="{StaticResource MyButton}" x:Name="_btnManualAccept" Content="Akceptuj" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="BtnManualAccept_Click"/>
+                <Button Style="{StaticResource MyButton}" x:Name="_btnEditAccept" Content="Akceptuj" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="_btnEditAccept_Click"/>
             </Grid>
         </Grid>
         <Border x:Name="_borderCalendar" Style ="{StaticResource MyBorder}" HorizontalAlignment="Right" Margin="0,189,479,216" Width="180">

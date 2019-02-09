@@ -38,7 +38,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
 
         public void RemoveOperation(RelOperation relOperation)
         {
-            Operations.Remove(relOperation);
+            relOperation.IsMarkForDeletion = true;
         }
 
         public override string ToString()

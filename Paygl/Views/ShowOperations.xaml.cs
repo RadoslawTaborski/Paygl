@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Paygl.Views
 {
@@ -19,7 +20,7 @@ namespace Paygl.Views
         private List<Operation> _operations;
         private List<OperationsGroup> _operationsGroup;
 
-        private const int HEIGHT = 25;
+        private const int HEIGHT = 27;
 
         public string RepresentativeName { get; set; } = "Pokaż";
 
@@ -34,8 +35,16 @@ namespace Paygl.Views
             _borderCalendarFrom.Visibility = Visibility.Hidden;
             _borderCalendarTo.Visibility = Visibility.Hidden;
 
-            _tbFrom.Text = Service.Operations.First().Date.ToString("dd.MM.yyyy");
-            _tbTo.Text = Service.Operations.Last().Date.ToString("dd.MM.yyyy");
+            if (Service.Operations.Count != 0)
+            {
+                _tbFrom.Text = Service.Operations.First().Date.ToString("dd.MM.yyyy");
+                _tbTo.Text = Service.Operations.Last().Date.ToString("dd.MM.yyyy");
+            }
+            else
+            {
+                _tbFrom.Text = DateTime.Now.ToString("dd.MM.yyyy");
+                _tbTo.Text = DateTime.Now.ToString("dd.MM.yyyy");
+            }
         }
 
         private bool OperationHasTag(Operation operation, Tag tag)
@@ -241,6 +250,7 @@ namespace Paygl.Views
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Style = (Style)FindResource("MyButtonLeft"),
                 HorizontalContentAlignment = HorizontalAlignment.Left,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
                 Object=objectForButton,
                 Context = context,
                 Background = (Brush)FindResource(colorName),
@@ -258,6 +268,7 @@ namespace Paygl.Views
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
                 Height = HEIGHT,
+                VerticalAlignment = VerticalAlignment.Stretch,
             };
 
             var borderDate = CreateBorderWithLabel($"{operation.Date.ToString("dd.MM.yyyy")}:");
@@ -266,6 +277,22 @@ namespace Paygl.Views
             var borderTransactionType = CreateBorderWithLabel($"{operation.TransactionType}");
             var borderImportance = CreateBorderWithLabel($"{operation.Importance}");
             var borderFrequence = CreateBorderWithLabel($"{operation.Frequence}");
+            var button = new ButtonWithObject()
+            {
+                Content = new Image
+                {
+                    Source = new BitmapImage(new Uri(@"..\img\edit-icon.png", UriKind.Relative)),
+                    VerticalAlignment = VerticalAlignment.Stretch
+                },
+                Width = 20,
+                Height = 20,
+                VerticalContentAlignment = VerticalAlignment.Top,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
+                Object = operation,
+            };
+
+            button.Click += Edit_Click;
 
             resultStackPanel.Children.Add(borderDate);
             resultStackPanel.Children.Add(borderAmount);
@@ -282,8 +309,34 @@ namespace Paygl.Views
             {
                 resultStackPanel.Children.Add(CreateBorderWithLabel($"{item}"));
             }
+            resultStackPanel.Children.Add(button);
 
             return resultStackPanel;
+        }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("click edit");
+            var parameter = ((sender as ButtonWithObject).Object);
+
+            if(parameter is Operation)
+            {
+                var view = new ManuallyOperationsView(parameter as Operation);
+                ViewManager.AddUserControl(view);
+                ViewManager.OpenUserControl(view);
+            }
+            else if(parameter is OperationsGroup)
+            {
+                //var view = new AddGroupsView(parameter as OperationsGroup);
+                //ViewManager.AddUserControl(view);
+                //ViewManager.OpenUserControl(view);
+            }
+            else if(parameter is Group)
+            {
+
+            }
+
+            e.Handled = true;
         }
 
         private UIElement GroupHeaderToStackPanel(Group group)
@@ -292,14 +345,31 @@ namespace Paygl.Views
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT + 5,
+                Height = HEIGHT + 3,
             };
 
             var borderAmount = CreateBorderWithLabel($"{group.Amount}");
             var borderDescription = CreateBorderWithLabel($"{group.Description}");
+            var button = new ButtonWithObject()
+            {
+                Content = new Image
+                {
+                    Source = new BitmapImage(new Uri(@"..\img\edit-icon.png", UriKind.Relative)),
+                    VerticalAlignment = VerticalAlignment.Stretch
+                },
+                Width = 20,
+                Height = 20,
+                VerticalContentAlignment = VerticalAlignment.Top,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
+                Object = group,
+            };
+
+            button.Click += Edit_Click;
 
             resultStackPanel.Children.Add(borderDescription);
             resultStackPanel.Children.Add(borderAmount);
+            resultStackPanel.Children.Add(button);
 
             return resultStackPanel;
         }
@@ -314,11 +384,13 @@ namespace Paygl.Views
                     Style = (Style)FindResource("MyLabel"),
                     Margin = new Thickness(0, -5, 0, 0),
                     Height = HEIGHT,
+                    VerticalAlignment=VerticalAlignment.Stretch,
                 },
                 BorderBrush = (SolidColorBrush)FindResource("MyLight"),
                 BorderThickness = new Thickness(0, 0, 1, 0),
                 Margin = new Thickness(0, 0, 0, 0),
                 Height = HEIGHT,
+                VerticalAlignment = VerticalAlignment.Stretch,
             };
         }
 

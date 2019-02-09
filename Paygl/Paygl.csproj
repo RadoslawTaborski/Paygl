@@ -112,6 +112,7 @@
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewManager.cs" />
     <Compile Include="Views\AddGroupsView.xaml.cs">
       <DependentUpon>AddGroupsView.xaml</DependentUpon>
     </Compile>
@@ -240,6 +241,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\x-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\edit-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

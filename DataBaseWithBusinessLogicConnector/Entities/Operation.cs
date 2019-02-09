@@ -76,15 +76,20 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             ShortDescription = newDescription;
         }
 
-        public (RelTag, RelOperation) AddTag(Tag tag)
+        public void AddTag(Tag tag)
         {
-            var relTag = new RelTag(null, tag, Id);
-            var relOperation = new RelOperation(null, this, tag.Id);
-            Tags.Add(relTag);
+            if (!Tags.Any(t => t.Tag.Text == tag.Text))
+            {
+                var relTag = new RelTag(null, tag, Id);
+                var relOperation = new RelOperation(null, this, tag.Id);
+                Tags.Add(relTag);
 
-            tag.AddOperation(relOperation);
-
-            return (relTag, relOperation);
+                tag.AddOperation(relOperation);
+            }
+            else
+            {
+                Tags.Where(t => t.Tag.Text == tag.Text).First().IsMarkForDeletion = false;
+            }
         }
 
         public void RemoveTag(RelTag tag)

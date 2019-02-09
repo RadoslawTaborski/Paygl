@@ -53,6 +53,7 @@ namespace Paygl
         public MainWindow()
         {
             InitializeComponent();
+            ViewManager.SetMainWindow(this);
         }
         #endregion
 
@@ -452,9 +453,9 @@ namespace Paygl
         private void RemoveFromBarView_Click(object sender, RoutedEventArgs e)
         {
             var uc = (sender as ButtonWithObject).Object as UserControl;
+            RemoveUserControl(uc);
             if ((_selectedView as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName)
             {
-                RemoveUserControl(uc);
                 if (_views.Count() > 0)
                 {
                     OpenUserControl(_views[0]);
@@ -464,6 +465,7 @@ namespace Paygl
                     OpenUserControl(null);
                 }
             }
+            UpdateViewBar(_selectedView);
 
             e.Handled = true;
         }

@@ -100,7 +100,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             var importanceId = _adapterHelper.ToStr(entity.ImportanceId, COLUMNS["importance_id"]);
             var date = _adapterHelper.ToStr(entity.Date, COLUMNS["date"]);
             var receiptPath = _adapterHelper.ToStr(entity.ReceiptPath, COLUMNS["receipt_path"]);
-            _adapterHelper.Update(id, parentId, userId, description, amount, transferTypeId, transactionTypeId, frequenceId, importanceId, date, receiptPath);
+            _adapterHelper.Update(id, id, parentId, userId, description, amount, transferTypeId, transactionTypeId, frequenceId, importanceId, date, receiptPath);
         }
     }
 }

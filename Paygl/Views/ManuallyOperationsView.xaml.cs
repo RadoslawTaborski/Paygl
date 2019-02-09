@@ -41,11 +41,50 @@ namespace Paygl.Views
 
             LoadAttributes();
             LoadOperationsGroup();
+            var operation = new Operation(null, null, Service.User, "", 0M, null, null, null, null, DateTime.Now, "");
 
+            EditMode(false);
             SetEditableControls();
-            SetOperationValues();
+            SetOperationValues(operation);
             SetRelatedControlsAttributesVisibility(Visibility.Hidden);
             SetUserEditableControlsVisibility(Visibility.Visible);
+        }
+
+        public ManuallyOperationsView(Operation operation)
+        {
+            InitializeComponent();
+            Background = Brushes.Azure;
+
+            LoadAttributes();
+            LoadOperationsGroup();
+
+            SetEditableControls();
+            SetOperationValues(operation);
+            EditMode(true);
+            SetRelatedControlsAttributesVisibility(Visibility.Hidden);
+            SetUserEditableControlsVisibility(Visibility.Visible);
+        }
+
+        private void EditMode(bool value)
+        {
+            if (value)
+            {
+                RepresentativeName = $"Edycja: {_operation.ShortDescription}";
+                _tbDescription.Visibility = Visibility.Visible;
+                _labDescription.Visibility = Visibility.Visible;
+                _btnManualClear.Visibility = Visibility.Hidden;
+                _btnManualAccept.Visibility = Visibility.Hidden;
+                _btnEditAccept.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                RepresentativeName = "Dodaj manualnie";
+                _tbDescription.Visibility = Visibility.Hidden;
+                _labDescription.Visibility = Visibility.Hidden;
+                _btnManualClear.Visibility = Visibility.Visible;
+                _btnManualAccept.Visibility = Visibility.Visible;
+                _btnEditAccept.Visibility = Visibility.Hidden;
+            }
         }
 
         private void SetEditableControls()
@@ -67,25 +106,41 @@ namespace Paygl.Views
             _cbTags.ItemsSource = _observableTags;
         }
 
-        private void SetOperationValues()
+        private void SetOperationValues(Operation operation)
         {
             _borderCalendar.Visibility = Visibility.Hidden;
             _calDate.SelectedDate = DateTime.Now;
 
-            _operation = new Operation(null, null, Service.User, "", 0M, null, null, null, null, DateTime.Now, "");
+            _operation = operation;
 
             ResetEditableControls();
 
-            _tbNewDescription.Text = "";
+            _tbDescription.Text = _operation.Description;
+            _tbNewDescription.Text = _operation.Description;
             _labDate.Content = _operation.Date.ToString("dd.MM.yyyy");
             _upDownAmount.Value = _operation.Amount;
-            _cbFrequent.SelectedItem = _operation.Frequence;
-            _cbImportance.SelectedItem = _operation.Importance;
-            _cbTransaction.SelectedItem = Service.TransactionTypes[1];
-            _cbTransfer.SelectedItem = Service.TransferTypes[0];
+            if (_operation.Frequence != null)
+            {
+                _cbFrequent.SelectedItem = _observableFrequencies.Where(f => f.Text == _operation.Frequence.Text).First();
+            }
+            if (_operation.Importance!=null)
+            {
+                _cbImportance.SelectedItem = _observableImportances.Where(f=>f.Text == _operation.Importance.Text).First();
+            }
+            if (_operation.TransactionType != null)
+            {
+                _cbTransaction.SelectedItem = _observableTransactionType.Where(f => f.Text == _operation.TransactionType.Text).First();
+            }
+            if (_operation.TransferType != null)
+            {
+                _cbTransfer.SelectedItem = _observableTransferType.Where(f => f.Text == _operation.TransferType.Text).First();
+            }
             foreach (var tag in _operation.Tags)
             {
-                SetTagLabel(tag.Tag);
+                if (!tag.IsMarkForDeletion && !tag.IsDirty)
+                {
+                    SetTagLabel(tag.Tag);
+                }
             }
 
             SetUserEditableControlsVisibility(Visibility.Visible);
@@ -205,8 +260,9 @@ namespace Paygl.Views
             {
                 Service.UpdateOperationComplex(_operation);
                 ResetEditableControls();
+                var operation=new Operation(null, null, Service.User, "", 0M, null, null, null, null, DateTime.Now, "");
                 SetEditableControls();
-                SetOperationValues();
+                SetOperationValues(operation);
             }
             catch(Exception ex)
             {
@@ -229,7 +285,7 @@ namespace Paygl.Views
         {
             foreach (var item in _selectedTags)
             {
-                if (item.Equals(newTag))
+                if (item.Text == newTag.Text)
                 {
                     return true;
                 }
@@ -254,13 +310,14 @@ namespace Paygl.Views
                 };
                 newlabel.Style = (Style)FindResource("MyLabel");
 
-                var newbutton = new Button
+                var newbutton = new ButtonWithObject
                 {
                     Content = new Image
                     {
                         Source = new BitmapImage(new Uri(@"..\img\x-icon.png", UriKind.Relative)),
                         VerticalAlignment = VerticalAlignment.Center
                     },
+                    Object=tag,
                     Width = 20,
                     Height = 20,
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -283,7 +340,7 @@ namespace Paygl.Views
             var border = panel.Parent as Border;
             var label = panel.Children[0] as Label;
 
-            var tag = Service.Tags.Where(t => t.Text.Equals(label.Content)).First();
+            var tag = (sender as ButtonWithObject).Object as Tag;
             _spTags.Children.Remove(border);
             _selectedTags.Remove(tag);
         }
@@ -321,6 +378,64 @@ namespace Paygl.Views
         public override string ToString()
         {
             return "ManuallyOperationsView";
+        }
+
+        private void _btnEditAccept_Click(object sender, RoutedEventArgs e)
+        {
+            _operation.IsDirty = true;
+            _operation.SetTransaction(_cbTransaction.SelectedItem as TransactionType);
+            _operation.SetTransfer(_cbTransfer.SelectedItem as TransferType);
+            _operation.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
+            _operation.SetParent(_cbRelated.SelectedItem as OperationsGroup);
+            _operation.SetDescription(_tbNewDescription.Text);
+            _operation.SetShortDescription(_tbNewDescription.Text);
+            _operation.SetAmount(_upDownAmount.Value);
+
+            if (_operation.Parent != null)
+            {
+                _operation.SetImportance(_operation.Parent.Importance);
+                _operation.SetFrequence(_operation.Parent.Frequence);
+                UpdateOperationTags(_operation.Parent.Tags);
+            }
+            else
+            {
+                _operation.SetImportance(_cbImportance.SelectedItem as Importance);
+                _operation.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+                UpdateOperationTags();
+            }
+
+            try
+            {
+                Service.UpdateOperationComplex(_operation);
+                var dialog = new MessageBox("Komunikat", "Modyfikacja udana");
+                dialog.ShowDialog();
+                ResetEditableControls();
+                SetEditableControls();
+                SetOperationValues(_operation);
+            }
+            catch (Exception ex)
+            {
+                var dialog = new MessageBox("Komunikat", ex.Message);
+                dialog.ShowDialog();
+            }
+        }
+
+        private void UpdateOperationTags()
+        {
+            _operation.Tags.ForEach(t => t.IsMarkForDeletion = true);
+            foreach (var item in _selectedTags)
+            {
+                _operation.AddTag(item);
+            }
+        }
+
+        private void UpdateOperationTags(List<RelTag> parentTag)
+        {
+            _operation.Tags.ForEach(t => t.IsMarkForDeletion = true);
+            foreach (var relTag in parentTag)
+            {
+                _operation.AddTag(relTag.Tag);
+            }
         }
     }
 }
