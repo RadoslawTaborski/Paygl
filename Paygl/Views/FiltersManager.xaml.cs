@@ -146,7 +146,6 @@ namespace Paygl.Views
             var stackPanel = button.Context as StackPanel;
             var parent = button.Parent as StackPanel;
             parent.Children[1].Visibility = parent.Children[1].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-            //stackPanel.Children[1].Visibility = stackPanel.Children[1].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void OpenEditMode(object sender, RoutedEventArgs e)

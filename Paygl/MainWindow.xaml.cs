@@ -91,7 +91,7 @@ namespace Paygl
                 var b2Buttons = new List<Button>();
                 _btnFilters = CreateButton("btnFilters", "Filtry", MENU_BUTTON_HEIGHT, btnFilters_Click);
                 _btnAnalysis = CreateButton("btnAnalysis", "Analiza", MENU_BUTTON_HEIGHT, btnAnalysis_Click);
-                _btnShowOperations = CreateButton("btnShowOperations", "Pokaż", MENU_BUTTON_HEIGHT, BtnShowOperations_Click);
+                _btnShowOperations = CreateButton("btnShowOperations", "Wyszukiwanie", MENU_BUTTON_HEIGHT, BtnShowOperations_Click);
                 b2Buttons.Add(_btnShowOperations);
                 b2Buttons.Add(_btnAnalysis);
                 b2Buttons.Add(_btnFilters);

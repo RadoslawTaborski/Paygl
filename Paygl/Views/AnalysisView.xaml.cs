@@ -154,7 +154,7 @@ namespace Paygl.Views
             {
                 Style = (Style)FindResource("MyBorder2"),
                 BorderThickness = new Thickness(1, 1, 1, 1),
-                Height = HEIGHT + 10,
+                Height = HEIGHT + 5,
             };
             borderGroup.Child = GroupHeaderToStackPanel(group, result);
             result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, result, "MyLightGrey", new Thickness(0, 0, 0, 0), ClickInGroup));
@@ -397,6 +397,8 @@ namespace Paygl.Views
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
                 Height = HEIGHT + 3,
+                VerticalAlignment=VerticalAlignment.Stretch,
+                HorizontalAlignment=HorizontalAlignment.Stretch,
             };
 
             var borderAmount = CreateBorderWithLabel($"{group.Amount}");
@@ -410,9 +412,9 @@ namespace Paygl.Views
                 },
                 Width = 20,
                 Height = 20,
-                VerticalContentAlignment = VerticalAlignment.Top,
+                VerticalContentAlignment = VerticalAlignment.Center,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Top,
+                VerticalAlignment = VerticalAlignment.Center,
                 Object = group,
                 Context = main,
             };
@@ -437,6 +439,7 @@ namespace Paygl.Views
                     Margin = new Thickness(0, -5, 0, 0),
                     Height = HEIGHT,
                     VerticalAlignment = VerticalAlignment.Stretch,
+                    VerticalContentAlignment = VerticalAlignment.Stretch,
                 },
                 BorderBrush = (SolidColorBrush)FindResource("MyLight"),
                 BorderThickness = new Thickness(0, 0, 1, 0),
