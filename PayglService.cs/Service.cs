@@ -199,7 +199,7 @@ namespace PayglService.cs
         {
             var ignored = ConfigurationManager.IgnoredTransaction();
 
-            var importFactory = ImportFactory.GetFactory("ING");
+            var importFactory = ImportFactory.GetFactory(ConfigurationManager.BankName());
             IImporter importer = importFactory.CreateImporter();
             var transactions = new List<Transaction>();
             var path = ConfigurationManager.PathToImportFiles();

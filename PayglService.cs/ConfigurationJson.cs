@@ -29,6 +29,7 @@ namespace PayglService.cs
         public System System { get; set; }
         public UserData UserData { get; set; }
         public DataBase DataBase { get; set; }
+        public string Bank { get; set; }
     }
 
     public class Ignored

@@ -13,7 +13,8 @@
       "Login": "root",
       "Password": "",
       "Table": "paygl"
-    }
+    },
+    "Bank":  "ING"
   },
   "Ignored": [
     {
