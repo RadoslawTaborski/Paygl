@@ -15,6 +15,8 @@
         </Grid.RowDefinitions>
         <Grid VerticalAlignment="Stretch" Style="{StaticResource MyGrid}">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25"/>
+                <ColumnDefinition Width="25"/>
                 <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="125"/>
                 <ColumnDefinition Width="50"/>
@@ -29,24 +31,34 @@
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="75"/>
             </Grid.ColumnDefinitions>
-            <Label Style="{StaticResource MyLabel}" Content="Od:" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
-            <TextBox Name="_tbFrom" Style="{StaticResource MyTextBox}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="1" IsEnabled="False"/>
-            <Button x:Name="_btnCalendarFrom" Style="{StaticResource MyButton}" Width="30" Height="30" Grid.Column="2"  HorizontalAlignment="Left" Click="_btnCalendarFrom_Click">
+            <Button x:Name="_btnBack" Style="{StaticResource MyButton}" Width="20" Height="30" Grid.Column="0"  HorizontalAlignment="Right" Click="_btnBack_Click" >
+                <Button.Background>
+                    <ImageBrush ImageSource="../img/back.png"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="_btnNext" Style="{StaticResource MyButton}" Width="20" Height="30" Grid.Column="1"  HorizontalAlignment="Right" Click="_btnNext_Click" >
+                <Button.Background>
+                    <ImageBrush ImageSource="../img/next.png"/>
+                </Button.Background>
+            </Button>
+            <Label Style="{StaticResource MyLabel}" Content="Od:" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="2"/>
+            <TextBox Name="_tbFrom" Style="{StaticResource MyTextBox}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="3" IsEnabled="False"/>
+            <Button x:Name="_btnCalendarFrom" Style="{StaticResource MyButton}" Width="30" Height="30" Grid.Column="4"  HorizontalAlignment="Left" Click="_btnCalendarFrom_Click">
                 <Button.Background>
                     <ImageBrush ImageSource="../img/cal.png"/>
                 </Button.Background>
             </Button>
-            <Label Style="{StaticResource MyLabel}" Content="Do:" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center"  Grid.Column="4"/>
-            <TextBox Name="_tbTo" Style="{StaticResource MyTextBox}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="5" IsEnabled="False"/>
-            <Button x:Name="_btnCalendarTo" Style="{StaticResource MyButton}" Width="30" Height="30" Grid.Column="6" HorizontalAlignment="Left" Click="_btnCalendarTo_Click">
+            <Label Style="{StaticResource MyLabel}" Content="Do:" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center"  Grid.Column="6"/>
+            <TextBox Name="_tbTo" Style="{StaticResource MyTextBox}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="7" IsEnabled="False"/>
+            <Button x:Name="_btnCalendarTo" Style="{StaticResource MyButton}" Width="30" Height="30" Grid.Column="8" HorizontalAlignment="Left" Click="_btnCalendarTo_Click">
                 <Button.Background>
                     <ImageBrush ImageSource="../img/cal.png"/>
                 </Button.Background>
             </Button>
-            <Button Name="_btnConfirm" Style="{StaticResource MyButton}" Content="Pokaż" HorizontalAlignment="Stretch" Grid.Column="7" Click="_btnConfirm_Click"/>
-            <Label Name="_labName" Style="{StaticResource MyLabel}" Content="Nazwa:" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center"  Grid.Column="9"/>
-            <TextBox Name="_tbName" Style="{StaticResource MyTextBox}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="10" IsEnabled="True"/>
-            <Button Name="_btnSave" Style="{StaticResource MyButton}" Content="Zapisz" HorizontalAlignment="Stretch" Grid.Column="12" Click="_btnSave_Click"/>
+            <Button Name="_btnConfirm" Style="{StaticResource MyButton}" Content="Pokaż" HorizontalAlignment="Stretch" Grid.Column="9" Click="_btnConfirm_Click"/>
+            <Label Name="_labName" Style="{StaticResource MyLabel}" Content="Nazwa:" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center"  Grid.Column="11"/>
+            <TextBox Name="_tbName" Style="{StaticResource MyTextBox}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="12" IsEnabled="True"/>
+            <Button Name="_btnSave" Style="{StaticResource MyButton}" Content="Zapisz" HorizontalAlignment="Stretch" Grid.Column="14" Click="_btnSave_Click"/>
         </Grid>
         <Border Style="{StaticResource MyBorderMedium}" Margin="10,5,10,5" Grid.Row="1">
             <TextBox Name="_tbQuery" Style="{StaticResource MyTextBox}" FontSize="14" VerticalContentAlignment="Center"/>
@@ -58,10 +70,10 @@
                 </StackPanel>
             </ScrollViewer>
         </Border>
-        <Border x:Name="_borderCalendarFrom" Style ="{StaticResource MyBorder}" Margin="25,29,0,0" Width="180" Grid.RowSpan="3" HorizontalAlignment="Left" Height="162" VerticalAlignment="Top">
+        <Border x:Name="_borderCalendarFrom" Style ="{StaticResource MyBorder}" Margin="75,29,0,0" Width="180" Grid.RowSpan="3" HorizontalAlignment="Left" Height="162" VerticalAlignment="Top">
             <Calendar x:Name="_calDateFrom" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" Height="160" SelectedDatesChanged="_calDateFrom_SelectedDatesChanged"/>
         </Border>
-        <Border x:Name="_borderCalendarTo" Style ="{StaticResource MyBorder}" Margin="265,29,0,0" Width="180" Grid.RowSpan="3" HorizontalAlignment="Left" Height="162" VerticalAlignment="Top">
+        <Border x:Name="_borderCalendarTo" Style ="{StaticResource MyBorder}" Margin="315,29,0,0" Width="180" Grid.RowSpan="3" HorizontalAlignment="Left" Height="162" VerticalAlignment="Top">
             <Calendar x:Name="_calDateTo" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" Height="160" SelectedDatesChanged="_calDateTo_SelectedDatesChanged"/>
         </Border>
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10,0,10,0">

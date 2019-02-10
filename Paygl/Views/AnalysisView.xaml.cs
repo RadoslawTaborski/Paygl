@@ -37,14 +37,17 @@ namespace Paygl.Views
 
             if (Service.Operations.Count != 0)
             {
-                _tbFrom.Text = Service.Operations.First().Date.ToString("dd.MM.yyyy");
-                _tbTo.Text = Service.Operations.Last().Date.ToString("dd.MM.yyyy");
+                var endDate = Service.Operations.Last().Date;
+                _tbFrom.Text = endDate.AddMonths(-1).AddDays(1).ToString("dd.MM.yyyy");
+                _tbTo.Text = endDate.ToString("dd.MM.yyyy");
             }
             else
             {
                 _tbFrom.Text = DateTime.Now.ToString("dd.MM.yyyy");
                 _tbTo.Text = DateTime.Now.ToString("dd.MM.yyyy");
             }
+
+            Show();
         }
 
         private bool OperationHasTag(Operation operation, Tag tag)
@@ -71,7 +74,7 @@ namespace Paygl.Views
             return false;
         }
 
-        private void _btnConfirm_Click(object sender, RoutedEventArgs e)
+        private void Show()
         {
             DateTime dt1 = DateTime.Parse(_tbFrom.Text);
             DateTime dt2 = DateTime.Parse(_tbTo.Text);
@@ -106,6 +109,11 @@ namespace Paygl.Views
             }
 
             _labSum.Content = SumGroups(groups);
+        }
+
+        private void _btnConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            Show();
         }
 
         private UIElement GroupToStackPanel(Group group)
@@ -466,6 +474,20 @@ namespace Paygl.Views
             }
 
             return result;
+        }
+
+        private void _btnBack_Click(object sender, RoutedEventArgs e)
+        {
+            var endDate = DateTime.ParseExact(_tbTo.Text, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            _tbFrom.Text = endDate.AddDays(1).AddMonths(-2).ToString("dd.MM.yyyy");
+            _tbTo.Text = endDate.AddDays(1).AddMonths(-1).AddDays(-1).ToString("dd.MM.yyyy");
+        }
+
+        private void _btnNext_Click(object sender, RoutedEventArgs e)
+        {
+            var endDate = DateTime.ParseExact(_tbTo.Text, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            _tbFrom.Text = endDate.AddDays(1).ToString("dd.MM.yyyy");
+            _tbTo.Text = endDate.AddDays(1).AddMonths(1).AddDays(-1).ToString("dd.MM.yyyy");
         }
 
         public override string ToString()
