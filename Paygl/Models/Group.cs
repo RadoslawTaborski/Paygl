@@ -25,6 +25,7 @@ namespace Paygl.Models
         public void FilterOperations()
         {
             Operations = Analyzer.Analyzer.FilterOperations(AllOperations, Filter.Query);
+            Operations.Sort((x, y) => x.Date.CompareTo(y.Date));
         }
 
         public void UpdateAmount()
