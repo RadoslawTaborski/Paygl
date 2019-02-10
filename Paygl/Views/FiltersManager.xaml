@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="Paygl.Views.FiltersManager"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Paygl.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Style="{StaticResource MyGrid}">
+        <Border Style="{StaticResource MyBorderMedium}" Margin="10,10,10,10" Grid.Row="1">
+            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                <StackPanel Name="_spDisplay" Orientation="Vertical">
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

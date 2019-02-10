@@ -45,6 +45,7 @@ namespace Paygl
         private static Button _btnShowOperations;
 
         private static ItemsControl _icAnalyseButtons;
+        private static Button _btnFilters;
 
         private List<UserControl> _views;
         #endregion
@@ -88,6 +89,8 @@ namespace Paygl
 
                 _icAnalyseButtons = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
                 var b2Buttons = new List<Button>();
+                _btnFilters = CreateButton("btnFilters", "Filtry", MENU_BUTTON_HEIGHT, btnFilters_Click);
+                b2Buttons.Add(_btnFilters);
                 _icAnalyseButtons.ItemsSource = b2Buttons;
             }
             catch (Exception ex)
@@ -114,54 +117,30 @@ namespace Paygl
         #region OperationItems
         private void btnImport_Click(object sender, RoutedEventArgs e)
         {
-            if (SecondMenu.IsVisible)
-            {
-                SecondMenu.Visibility = Visibility.Hidden;
-            }
-
-            var view = new ImportOperationsView();
-            AddUserControl(view);
-            OpenUserControl(view);
+            CreateAndOpenNewView(new ImportOperationsView());
         }
 
         private void BtnAddManually_Click(object sender, RoutedEventArgs e)
         {
-            if (SecondMenu.IsVisible)
-            {
-                SecondMenu.Visibility = Visibility.Hidden;
-            }
-
-            var view = new ManuallyOperationsView();
-            AddUserControl(view);
-            OpenUserControl(view);
+            CreateAndOpenNewView(new ManuallyOperationsView());
         }
 
         private void BtnAddGroups_Click(object sender, RoutedEventArgs e)
         {
-            if (SecondMenu.IsVisible)
-            {
-                SecondMenu.Visibility = Visibility.Hidden;
-            }
-
-            var view = new AddGroupsView();
-            AddUserControl(view);
-            OpenUserControl(view);
+            CreateAndOpenNewView(new AddGroupsView());
         }
 
         private void BtnShowOperations_Click(object sender, RoutedEventArgs e)
         {
-            if (SecondMenu.IsVisible)
-            {
-                SecondMenu.Visibility = Visibility.Hidden;
-            }
-
-            var view = new ShowOperations();
-            AddUserControl(view);
-            OpenUserControl(view);
+            CreateAndOpenNewView(new ShowOperations());
         }
         #endregion
 
         #region AnalyseItems
+        private void btnFilters_Click(object sender, RoutedEventArgs e)
+        {
+            CreateAndOpenNewView(new FiltersManager());
+        }
         #endregion
 
         #region TITLE_BAR
@@ -291,6 +270,17 @@ namespace Paygl
             {
                 SecondMenu.Visibility = Visibility.Visible;
             }
+        }
+
+        private void CreateAndOpenNewView(UserControl view)
+        {
+            if (SecondMenu.IsVisible)
+            {
+                SecondMenu.Visibility = Visibility.Hidden;
+            }
+
+            AddUserControl(view);
+            OpenUserControl(view);
         }
 
         private Button CreateButton(string name, string content, int height, RoutedEventHandler operation)

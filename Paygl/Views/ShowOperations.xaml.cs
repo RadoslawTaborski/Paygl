@@ -117,16 +117,67 @@ namespace Paygl.Views
                 Margin = new Thickness(0, 0, 0, 20),
             };
 
+            var stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Height = 20,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 0, 0, 0)
+            };
+
+            var editTextBox = new TextBox
+            {
+                Style = (Style)FindResource("MyTextBox"),
+                Text = group.Query.ToString(),
+                FontSize = 14,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 0, 0, 0),
+            };
+
+            var button = new ButtonWithObject
+            {
+                Style = (Style)FindResource("MyButton"),
+                Content = "Zapisz",
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Object = group,
+                Context = result,
+            };
+
+            button.Click += AcceptQuery;
+
+            stackPanel.Children.Add(editTextBox);
+            stackPanel.Children.Add(button);
+
+            result.Children.Add(stackPanel);
+
             var borderGroup = new Border
             {
                 Style = (Style)FindResource("MyBorderMedium"),
                 BorderThickness = new Thickness(1, 1, 1, 1),
                 Height = HEIGHT + 10,
             };
-            borderGroup.Child = GroupHeaderToStackPanel(group);
+            borderGroup.Child = GroupHeaderToStackPanel(group, result);
             result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, result, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInGroup));
 
+            result.Children[0].Visibility = Visibility.Collapsed;
+
             return result;
+        }
+
+        private void AcceptQuery(object sender, RoutedEventArgs e)
+        {
+            var button = (sender as ButtonWithObject);
+            var group = button.Object as Group;
+            var stackPanel = button.Context as StackPanel;
+            var text = ((button.Parent as StackPanel).Children[0] as TextBox).Text;
+
+            group.SetQuery(Analyzer.Analyzer.StringToQuery(text));
+            group.FilterOperations();
+            if (stackPanel.Children.Count > 1)
+            {
+                stackPanel.Children.RemoveRange(2, stackPanel.Children.Count - 2);
+            }
+            stackPanel.Children[0].Visibility = Visibility.Collapsed;
         }
 
         private void ClickInGroup(object sender, RoutedEventArgs e)
@@ -135,7 +186,7 @@ namespace Paygl.Views
             var button = sender as ButtonWithObject;
             var group = (button.Object as Group);
             var context = (button.Context as StackPanel);
-            if (context.Children.Count == 1)
+            if (context.Children.Count == 2)
             {
                 foreach (var item in group.Operations)
                 {
@@ -175,20 +226,17 @@ namespace Paygl.Views
             else
             {
                 System.Collections.IList list = context.Children;
-                for (int i1 = 0; i1 < list.Count; i1++)
+                for (int i1 = 2; i1 < list.Count; i1++)
                 {
-                    if (i1 != 0)
+                    object item = list[i1];
+                    var i = item as UIElement;
+                    if (i.Visibility == Visibility.Visible)
                     {
-                        object item = list[i1];
-                        var i = item as UIElement;
-                        if (i.Visibility == Visibility.Visible)
-                        {
-                            i.Visibility = Visibility.Collapsed;
-                        }
-                        else
-                        {
-                            i.Visibility = Visibility.Visible;
-                        }
+                        i.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        i.Visibility = Visibility.Visible;
                     }
                 }
             }
@@ -318,7 +366,8 @@ namespace Paygl.Views
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("click edit");
-            var parameter = ((sender as ButtonWithObject).Object);
+            var button = sender as ButtonWithObject;
+            var parameter = button.Object;
 
             if (parameter is Operation)
             {
@@ -334,13 +383,14 @@ namespace Paygl.Views
             }
             else if (parameter is Group)
             {
-
+                var stackPanel = button.Context as StackPanel;
+                stackPanel.Children[0].Visibility = stackPanel.Children[0].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
             }
 
             e.Handled = true;
         }
 
-        private UIElement GroupHeaderToStackPanel(Group group)
+        private UIElement GroupHeaderToStackPanel(Group group, StackPanel main)
         {
             var resultStackPanel = new StackPanel
             {
@@ -364,6 +414,7 @@ namespace Paygl.Views
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Top,
                 Object = group,
+                Context = main,
             };
 
             button.Click += Edit_Click;

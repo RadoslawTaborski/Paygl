@@ -104,6 +104,7 @@
     <Compile Include="MessageBox.xaml.cs">
       <DependentUpon>MessageBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\Filter.cs" />
     <Compile Include="Models\Group.cs" />
     <Compile Include="Models\ViewsMemory.cs" />
     <Compile Include="RounderProgressBarControl.xaml.cs">
@@ -118,6 +119,9 @@
     </Compile>
     <Compile Include="Views\AnalysisView.xaml.cs">
       <DependentUpon>AnalysisView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FiltersManager.xaml.cs">
+      <DependentUpon>FiltersManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ImportOperationsView.xaml.cs">
       <DependentUpon>ImportOperationsView.xaml</DependentUpon>
@@ -162,6 +166,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AnalysisView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FiltersManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -244,6 +252,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="img\edit-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\confirm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\add.png" />
+    <Resource Include="img\remove.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
