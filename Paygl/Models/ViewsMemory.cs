@@ -13,12 +13,17 @@ namespace Paygl.Models
         private static List<Operation> _importingOperations = new List<Operation>();
         private static Operation _currentOperation;
         private static int _index = 0;
+
+        private static List<Filter> _filters;
        
         public delegate void AddedGroupDelegate(OperationsGroup added);
         public static AddedGroupDelegate AddedGroup;
 
         public delegate void AddedParameterDelegate(IParameter added);
         public static AddedParameterDelegate AddedParameter;
+
+        public delegate void ChangeInFilters();
+        public static ChangeInFilters ChangeFilters;
 
         public static void AddImportingOperations(IEnumerable<Operation> operations)
         {

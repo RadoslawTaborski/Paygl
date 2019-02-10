@@ -42,9 +42,10 @@ namespace Paygl
         private static Button _btnImport;
         private static Button _btnAddManually;
         private static Button _btnAddGroups;
-        private static Button _btnShowOperations;
 
         private static ItemsControl _icAnalyseButtons;
+        private static Button _btnShowOperations;
+        private static Button _btnAnalysis;
         private static Button _btnFilters;
 
         private List<UserControl> _views;
@@ -80,7 +81,6 @@ namespace Paygl
                 _btnImport = CreateButton("btnImport", "Importuj", MENU_BUTTON_HEIGHT, btnImport_Click);
                 _btnAddManually = CreateButton("btnAddManually", "Dodaj manualnie", MENU_BUTTON_HEIGHT, BtnAddManually_Click);
                 _btnAddGroups = CreateButton("btnAddGroups", "Dodaj grupę", MENU_BUTTON_HEIGHT, BtnAddGroups_Click);
-                _btnShowOperations = CreateButton("btnShowOperations", "Pokaż", MENU_BUTTON_HEIGHT, BtnShowOperations_Click);
                 b1Buttons.Add(_btnImport);
                 b1Buttons.Add(_btnAddManually);
                 b1Buttons.Add(_btnAddGroups);
@@ -90,6 +90,10 @@ namespace Paygl
                 _icAnalyseButtons = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
                 var b2Buttons = new List<Button>();
                 _btnFilters = CreateButton("btnFilters", "Filtry", MENU_BUTTON_HEIGHT, btnFilters_Click);
+                _btnAnalysis = CreateButton("btnAnalysis", "Analiza", MENU_BUTTON_HEIGHT, btnAnalysis_Click);
+                _btnShowOperations = CreateButton("btnShowOperations", "Pokaż", MENU_BUTTON_HEIGHT, BtnShowOperations_Click);
+                b2Buttons.Add(_btnShowOperations);
+                b2Buttons.Add(_btnAnalysis);
                 b2Buttons.Add(_btnFilters);
                 _icAnalyseButtons.ItemsSource = b2Buttons;
             }
@@ -129,17 +133,22 @@ namespace Paygl
         {
             CreateAndOpenNewView(new AddGroupsView());
         }
-
-        private void BtnShowOperations_Click(object sender, RoutedEventArgs e)
-        {
-            CreateAndOpenNewView(new ShowOperations());
-        }
         #endregion
 
         #region AnalyseItems
         private void btnFilters_Click(object sender, RoutedEventArgs e)
         {
             CreateAndOpenNewView(new FiltersManager());
+        }
+
+        private void btnAnalysis_Click(object sender, RoutedEventArgs e)
+        {
+            CreateAndOpenNewView(new AnalysisView());
+        }
+
+        private void BtnShowOperations_Click(object sender, RoutedEventArgs e)
+        {
+            CreateAndOpenNewView(new ShowOperations());
         }
         #endregion
 

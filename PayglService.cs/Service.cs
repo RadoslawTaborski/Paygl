@@ -334,8 +334,59 @@ namespace PayglService.cs
             return result;
         }
 
-        #region private
+        public static void SaveFilter(string name, string query)
+        {
+            var added = false;
+            string sourceFile = @"D:\Programowanie\C#\Paygl\Queries\queries.txt";
+            string destinationFile = @"D:\Programowanie\C#\Paygl\Queries\queries.txt";
 
+            // Read the old file.
+            string[] lines = File.ReadAllLines(sourceFile);
+
+            // Write the new file over the old file.
+            using (StreamWriter writer = new StreamWriter(destinationFile))
+            {
+                for (int currentLine = 1; currentLine <= lines.Length; ++currentLine)
+                {
+                    var line = lines[currentLine - 1];
+                    if (line.Split(':')[0] == name)
+                    {
+                        line = $"{name}: {query}";
+                        added = true;
+                    }
+                    writer.WriteLine(line);
+                }
+                if (!added)
+                {
+                    writer.WriteLine($"{name}: {query}");
+                }
+            }
+        }
+
+        public static void RemoveFilter(string name)
+        {
+            string sourceFile = @"D:\Programowanie\C#\Paygl\Queries\queries.txt";
+            string destinationFile = @"D:\Programowanie\C#\Paygl\Queries\queries.txt";
+
+            // Read the old file.
+            string[] lines = File.ReadAllLines(sourceFile);
+
+            // Write the new file over the old file.
+            using (StreamWriter writer = new StreamWriter(destinationFile))
+            {
+                for (int currentLine = 1; currentLine <= lines.Length; ++currentLine)
+                {
+                    var line = lines[currentLine - 1];
+                    if (line.Split(':')[0] == name)
+                    {
+                        continue;
+                    }
+                    writer.WriteLine(line);
+                }
+            }
+        }
+
+        #region private
         #region Updates
 
         private static int UpdateOperationDetails(OperationDetails details, int operationId)

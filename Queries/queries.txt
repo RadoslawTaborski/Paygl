@@ -1,4 +1,4 @@
-﻿Opłaty:Tags ONE IN ["opłaty"]
+Opłaty: (Tags ONE IN ["opłaty"]) OR Tags ONE IN ["gadżety"]
 Wypłaty:Tags ONE IN ["praca"] AND TransactionType IN ["przychód"]
 Inne przychody:Tags NOT IN ["praca","opłaty"] AND TransactionType IN ["przychód"]
 Inne wydatki niekonieczne jednorazowe:Tags NOT IN ["opłaty"] AND TransactionType IN ["wydatek"] AND Importance NOT IN ["konieczne"] AND Frequence IN ["jednorazowe"]

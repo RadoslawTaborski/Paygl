@@ -33,30 +33,37 @@ namespace Analyzer
                 }
                 item.Filter(all);
             }
-
-            var result = Items[0].Result;
-            for (int i = 0; i < Items.Count; i++)
+            if (Items.Count > 0)
             {
-                var item = Items[i];
-                if (item is QueryLeafOperation)
+                var result = Items[0].Result;
+                for (int i = 0; i < Items.Count; i++)
                 {
-                    var operation = item as QueryLeafOperation;
-                    switch (operation.Operation)
+                    var item = Items[i];
+                    if (item is QueryLeafOperation)
                     {
-                        case string w when w == BooleanOperations.Conjunction:
-                            result = result.Intersect(Items[i + 1].Result).ToList();
-                            break;
-                        case string w when w == BooleanOperations.Disjunction:
-                            result.AddRange(Items[i + 1].Result);
-                            result.ToArray().Distinct().ToList();
-                            break;
-                        default:
-                            throw new Exception($"Operations {operation.Operation} not exist");
+                        var operation = item as QueryLeafOperation;
+                        switch (operation.Operation)
+                        {
+                            case string w when w == BooleanOperations.Conjunction:
+                                result = result.Intersect(Items[i + 1].Result).ToList();
+                                break;
+                            case string w when w == BooleanOperations.Disjunction:
+                                result.AddRange(Items[i + 1].Result);
+                                result.ToArray().Distinct().ToList();
+                                break;
+                            default:
+                                throw new Exception($"Operations {operation.Operation} not exist");
+                        }
                     }
                 }
+                Result = result;
+            }
+            else
+            {
+                Result = all;
             }
 
-            Result = result;
+
         }
 
         public override string ToString()

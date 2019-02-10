@@ -133,7 +133,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
     <Style TargetType="Button" x:Key="MyButtonLight">
         <Setter Property="BorderBrush" Value="{StaticResource MyLight}" />
         <Setter Property="Background" Value="{StaticResource MyAzure}"/>

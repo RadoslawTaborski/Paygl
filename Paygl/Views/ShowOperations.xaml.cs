@@ -1,4 +1,5 @@
-﻿using DataBaseWithBusinessLogicConnector.Entities;
+﻿using Analyzer;
+using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Interfaces;
 using Paygl.Models;
 using PayglService.cs;
@@ -22,7 +23,7 @@ namespace Paygl.Views
 
         private const int HEIGHT = 27;
 
-        public string RepresentativeName { get; set; } = "Pokaż";
+        public string RepresentativeName { get; set; } = "Wyszukiwanie";
 
         public ShowOperations()
         {
@@ -45,6 +46,45 @@ namespace Paygl.Views
                 _tbFrom.Text = DateTime.Now.ToString("dd.MM.yyyy");
                 _tbTo.Text = DateTime.Now.ToString("dd.MM.yyyy");
             }
+
+            SetVisibilityForSave(Visibility.Hidden);
+            show("");
+        }
+
+        public ShowOperations(Filter filter)
+        {
+            InitializeComponent();
+            RepresentativeName = $"Edycja: {filter.Description}";
+
+            Service.LoadAttributes();
+            Service.LoadOperationsGroups();
+            Service.LoadOperations();
+
+            _borderCalendarFrom.Visibility = Visibility.Hidden;
+            _borderCalendarTo.Visibility = Visibility.Hidden;
+
+            if (Service.Operations.Count != 0)
+            {
+                _tbFrom.Text = Service.Operations.First().Date.ToString("dd.MM.yyyy");
+                _tbTo.Text = Service.Operations.Last().Date.ToString("dd.MM.yyyy");
+            }
+            else
+            {
+                _tbFrom.Text = DateTime.Now.ToString("dd.MM.yyyy");
+                _tbTo.Text = DateTime.Now.ToString("dd.MM.yyyy");
+            }
+
+            SetVisibilityForSave(Visibility.Hidden);
+            _tbQuery.Text = filter.Query.ToString();
+            _tbName.Text = filter.Description;
+            show(filter.Query.ToString());
+        }
+
+        private void SetVisibilityForSave(Visibility v)
+        {
+            _labName.Visibility = v;
+            _tbName.Visibility = v;
+            _btnSave.Visibility = v;
         }
 
         private bool OperationHasTag(Operation operation, Tag tag)
@@ -71,7 +111,7 @@ namespace Paygl.Views
             return false;
         }
 
-        private void _btnConfirm_Click(object sender, RoutedEventArgs e)
+        private void show(string query)
         {
             DateTime dt1 = DateTime.Parse(_tbFrom.Text);
             DateTime dt2 = DateTime.Parse(_tbTo.Text);
@@ -81,32 +121,36 @@ namespace Paygl.Views
             ioperations.AddRange(_operations);
             ioperations.AddRange(_operationsGroup);
 
-            var queries = Service.ReadQuery();
-
-            //var groups = new List<OperationsGroup>(Service.OperationsGroups);
-            var groups = new List<Group>();
+            var queryWithName = new KeyValuePair<string, QueryNode>("", Analyzer.Analyzer.StringToQuery(query));
 
             foreach (var elem in _operationsGroup)
             {
                 elem.UpdateAmount(Service.TransactionTypes);
             }
 
-            foreach (var item in queries)
-            {
-                var newGroup = new Group(item.Key, item.Value, ioperations);
-                newGroup.FilterOperations();
-
-                groups.Add(newGroup);
-            }
+            var group = new Group(queryWithName.Key, queryWithName.Value, ioperations);
+            group.FilterOperations();
 
             _spDisplay.Children.Clear();
-            foreach (var item in groups)
-            {
-                item.UpdateAmount();
-                _spDisplay.Children.Add(GroupToStackPanel(item));
-            }
+            group.UpdateAmount();
+            _spDisplay.Children.Add(GroupToStackPanel(group));
 
-            _labSum.Content = SumGroups(groups);
+            _labSum.Content = SumGroups(group);
+        }
+
+        private void _btnConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            var text = _tbQuery.Text;
+            try
+            {
+                show(text);
+                SetVisibilityForSave(Visibility.Visible);
+            }
+            catch (Exception ex)
+            {
+                var dialog = new MessageBox("Komunikat", "Zły format zapytania");
+                dialog.ShowDialog();
+            }
         }
 
         private UIElement GroupToStackPanel(Group group)
@@ -117,127 +161,45 @@ namespace Paygl.Views
                 Margin = new Thickness(0, 0, 0, 20),
             };
 
-            var stackPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Height = 20,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Margin = new Thickness(0, 0, 0, 0)
-            };
-
-            var editTextBox = new TextBox
-            {
-                Style = (Style)FindResource("MyTextBox"),
-                Text = group.Query.ToString(),
-                FontSize = 14,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Margin = new Thickness(0, 0, 0, 0),
-            };
-
-            var button = new ButtonWithObject
-            {
-                Style = (Style)FindResource("MyButton"),
-                Content = "Zapisz",
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Object = group,
-                Context = result,
-            };
-
-            button.Click += AcceptQuery;
-
-            stackPanel.Children.Add(editTextBox);
-            stackPanel.Children.Add(button);
-
-            result.Children.Add(stackPanel);
-
-            var borderGroup = new Border
-            {
-                Style = (Style)FindResource("MyBorderMedium"),
-                BorderThickness = new Thickness(1, 1, 1, 1),
-                Height = HEIGHT + 10,
-            };
-            borderGroup.Child = GroupHeaderToStackPanel(group, result);
-            result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, result, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInGroup));
-
-            result.Children[0].Visibility = Visibility.Collapsed;
+            ShowOperationsGroup(group, result);
 
             return result;
         }
 
-        private void AcceptQuery(object sender, RoutedEventArgs e)
+        private void ShowOperationsGroup(Group group, StackPanel context)
         {
-            var button = (sender as ButtonWithObject);
-            var group = button.Object as Group;
-            var stackPanel = button.Context as StackPanel;
-            var text = ((button.Parent as StackPanel).Children[0] as TextBox).Text;
-
-            group.SetQuery(Analyzer.Analyzer.StringToQuery(text));
-            group.FilterOperations();
-            if (stackPanel.Children.Count > 1)
+            foreach (var item in group.Operations)
             {
-                stackPanel.Children.RemoveRange(2, stackPanel.Children.Count - 2);
-            }
-            stackPanel.Children[0].Visibility = Visibility.Collapsed;
-        }
-
-        private void ClickInGroup(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("click group");
-            var button = sender as ButtonWithObject;
-            var group = (button.Object as Group);
-            var context = (button.Context as StackPanel);
-            if (context.Children.Count == 2)
-            {
-                foreach (var item in group.Operations)
+                if (item is OperationsGroup)
                 {
-                    if (item is OperationsGroup)
+                    var i = item as OperationsGroup;
+                    var childStackPanel = new StackPanel
                     {
-                        var i = item as OperationsGroup;
-                        var childStackPanel = new StackPanel
-                        {
-                            Orientation = Orientation.Vertical,
-                            Margin = new Thickness(0, 0, 0, 5),
-                        };
-                        var border = new Border
-                        {
-                            Style = (Style)FindResource("MyBorderMedium"),
-                            BorderThickness = new Thickness(1, 1, 1, 1),
-                            Height = HEIGHT,
-                        };
-                        border.Child = IOperationToStackPanel(i);
-                        childStackPanel.Children.Add(CreateButtonWithBorderContent(border, item, childStackPanel, "MyMediumGrey", new Thickness(25, 0, 0, 0), ClickInOperationsGroup));
+                        Orientation = Orientation.Vertical,
+                        Margin = new Thickness(0, 0, 0, 0),
+                    };
+                    var border = new Border
+                    {
+                        Style = (Style)FindResource("MyBorder2"),
+                        BorderThickness = new Thickness(1, 1, 1, 1),
+                        Height = HEIGHT,
+                    };
+                    border.Child = IOperationToStackPanel(i);
+                    childStackPanel.Children.Add(CreateButtonWithBorderContent(border, item, childStackPanel, "MyLightGrey", new Thickness(0, 0, 0, 0), ClickInOperationsGroup));
 
-                        context.Children.Add(childStackPanel);
-                    }
-                    if (item is Operation)
-                    {
-                        var i = item as Operation;
-                        var border = new Border
-                        {
-                            Style = (Style)FindResource("MyBorderMedium"),
-                            BorderThickness = new Thickness(1, 1, 1, 1),
-                            Height = HEIGHT,
-                            Child = IOperationToStackPanel(i),
-                        };
-                        context.Children.Add(CreateButtonWithBorderContent(border, item, null, "MyMediumGrey", new Thickness(25, 0, 0, 0), ClickInOperation));
-                    }
+                    context.Children.Add(childStackPanel);
                 }
-            }
-            else
-            {
-                System.Collections.IList list = context.Children;
-                for (int i1 = 2; i1 < list.Count; i1++)
+                if (item is Operation)
                 {
-                    object item = list[i1];
-                    var i = item as UIElement;
-                    if (i.Visibility == Visibility.Visible)
+                    var i = item as Operation;
+                    var border = new Border
                     {
-                        i.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        i.Visibility = Visibility.Visible;
-                    }
+                        Style = (Style)FindResource("MyBorderMedium"),
+                        BorderThickness = new Thickness(1, 1, 1, 1),
+                        Height = HEIGHT,
+                        Child = IOperationToStackPanel(i),
+                    };
+                    context.Children.Add(CreateButtonWithBorderContent(border, item, null, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInOperation));
                 }
             }
         }
@@ -259,7 +221,7 @@ namespace Paygl.Views
                         Height = HEIGHT,
                     };
                     border2.Child = IOperationToStackPanel(elem);
-                    context.Children.Add(CreateButtonWithBorderContent(border2, elem, null, "MyMediumGrey", new Thickness(50, 0, 0, 0), ClickInOperation));
+                    context.Children.Add(CreateButtonWithBorderContent(border2, elem, null, "MyMediumGrey", new Thickness(25, 0, 0, 0), ClickInOperation));
                 }
             }
             else
@@ -400,7 +362,7 @@ namespace Paygl.Views
             };
 
             var borderAmount = CreateBorderWithLabel($"{group.Amount}");
-            var borderDescription = CreateBorderWithLabel($"{group.Description}");
+            var borderDescription = CreateBorderWithLabel($"{group.Filter.Description}");
             var button = new ButtonWithObject()
             {
                 Content = new Image
@@ -476,27 +438,24 @@ namespace Paygl.Views
             _borderCalendarTo.Visibility = Visibility.Hidden;
         }
 
-        private decimal SumGroups(List<Group> groups)
+        private decimal SumGroups(Group group)
         {
             var result = decimal.Zero;
             var operations = new List<Operation>();
 
-            foreach (var item in groups)
+            foreach (var elem in group.Operations)
             {
-                foreach (var elem in item.Operations)
+                if (elem is OperationsGroup)
                 {
-                    if (elem is OperationsGroup)
+                    var operationsGroup = elem as OperationsGroup;
+                    foreach (var operation in operationsGroup.Operations)
                     {
-                        var group = elem as OperationsGroup;
-                        foreach (var operation in group.Operations)
-                        {
-                            operations.Add(operation);
-                        }
+                        operations.Add(operation);
                     }
-                    if (elem is Operation)
-                    {
-                        operations.Add(elem as Operation);
-                    }
+                }
+                if (elem is Operation)
+                {
+                    operations.Add(elem as Operation);
                 }
             }
 
@@ -520,6 +479,13 @@ namespace Paygl.Views
         public override string ToString()
         {
             return "ShowOperationsView";
+        }
+
+        private void _btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            SetVisibilityForSave(Visibility.Hidden);
+            Service.SaveFilter(_tbName.Text, _tbQuery.Text);
+            ViewsMemory.ChangeFilters?.Invoke();
         }
     }
 }

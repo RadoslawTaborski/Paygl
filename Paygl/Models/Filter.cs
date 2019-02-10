@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Paygl.Models
 {
-    class Filter
+    public class Filter
     {
         public string Description { get; private set; }
         public QueryNode Query { get; private set; }

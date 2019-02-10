@@ -9,8 +9,7 @@ namespace Paygl.Models
 {
     public class Group
     {
-        public string Description { get; private set; }
-        public QueryNode Query { get; private set; }
+        public Filter Filter { get; private set; }
         public decimal Amount { get; private set; }
         public List<IOperation> AllOperations{get; private set;}
 
@@ -18,15 +17,14 @@ namespace Paygl.Models
 
         public Group(string description, QueryNode query, List<IOperation> all)
         {
-            Description = description;
-            Query = query;
+            Filter = new Filter(description, query);
             AllOperations = all;
             Operations = new List<IOperation>();
         }
 
         public void FilterOperations()
         {
-            Operations = Analyzer.Analyzer.FilterOperations(AllOperations, Query);
+            Operations = Analyzer.Analyzer.FilterOperations(AllOperations, Filter.Query);
         }
 
         public void UpdateAmount()
@@ -47,7 +45,7 @@ namespace Paygl.Models
 
         public void SetQuery(QueryNode query)
         {
-            Query = query;
+            Filter.SetQuery(query);
         }
     }
 }
