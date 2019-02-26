@@ -310,6 +310,19 @@ namespace PayglService.cs
             }
         }
 
+        public static void LoadSettings()
+        {
+            var path = @"D:\Programowanie\C#\Paygl\Queries\settings";
+            if (File.Exists(path))
+                SerializeStatic.Load(typeof(Models.Settings), path);
+        }
+
+        public static void SaveSettings()
+        {
+            var path = @"D:\Programowanie\C#\Paygl\Queries\settings";
+            SerializeStatic.Save(typeof(Models.Settings), path);
+        }
+
         public static List<KeyValuePair<string,QueryNode>> ReadQuery()
         {
             var result = new List<KeyValuePair<string, QueryNode>>();

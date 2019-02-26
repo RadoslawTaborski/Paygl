@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="12.1.0" />
+    <PackageReference Include="SoapFormatter" Version="1.0.11" />
   </ItemGroup>
 
   <ItemGroup>

@@ -12,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using PayglService.Models;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
@@ -40,19 +41,10 @@ namespace Paygl.Views
         private void LoadFilters()
         {
             _spDisplay.Children.Clear();
-            var queries = Service.ReadQuery();
 
-            var filters = new List<Filter>();
-
-            foreach (var item in queries)
+            foreach (var elem in ViewsMemory.Filters)
             {
-                var newFilter = new Filter(item.Key, item.Value);
-                filters.Add(newFilter);
-            }
-
-            foreach (var item in filters)
-            {
-                _spDisplay.Children.Add(FilterToStackPanel(item));
+                _spDisplay.Children.Add(FilterToStackPanel(elem));
             }
         }
 
@@ -87,9 +79,9 @@ namespace Paygl.Views
                 Text = $"{filter.Description}: {filter.Query.ToString()}",
                 FontSize = 13,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment=VerticalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 0, 0),
-                IsEnabled=false,
+                IsEnabled = false,
             };
 
             var button = new ButtonWithObject
@@ -178,7 +170,8 @@ namespace Paygl.Views
         private void RemoveFilter(object sender, RoutedEventArgs e)
         {
             var filter = (sender as ButtonWithObject).Object as Filter;
-            Service.RemoveFilter(filter.Description);
+            ViewsMemory.Filters.Remove(filter);
+            Service.SaveSettings();
 
             LoadFilters();
 
@@ -228,6 +221,11 @@ namespace Paygl.Views
         public override string ToString()
         {
             return "FiltersManager";
+        }
+
+        private void _btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            Service.SaveSettings();
         }
     }
 }

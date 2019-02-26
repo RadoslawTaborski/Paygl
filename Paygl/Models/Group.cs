@@ -1,8 +1,10 @@
 ﻿using Analyzer;
 using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Interfaces;
+using PayglService.Models;
 using System;
 using System.Collections.Generic;
+using PayglService.Models;
 using System.Text;
 
 namespace Paygl.Models
@@ -15,7 +17,7 @@ namespace Paygl.Models
 
         public List<IOperation> Operations { get; private set; }
 
-        public Group(string description, QueryNode query, List<IOperation> all)
+        public Group(string description, string query, List<IOperation> all)
         {
             Filter = new Filter(description, query);
             AllOperations = all;
@@ -24,7 +26,8 @@ namespace Paygl.Models
 
         public void FilterOperations()
         {
-            Operations = Analyzer.Analyzer.FilterOperations(AllOperations, Filter.Query);
+            var query = Analyzer.Analyzer.StringToQuery(Filter.Query);
+            Operations = Analyzer.Analyzer.FilterOperations(AllOperations, query);
             Operations.Sort((x, y) => x.Date.CompareTo(y.Date));
         }
 
@@ -44,7 +47,7 @@ namespace Paygl.Models
             }
         }
 
-        public void SetQuery(QueryNode query)
+        public void SetQuery(string query)
         {
             Filter.SetQuery(query);
         }

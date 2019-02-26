@@ -8,11 +8,17 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Style="{StaticResource MyGrid}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="14*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid VerticalAlignment="Stretch" Style="{StaticResource MyGrid}">
+        <Border Style="{StaticResource MyBorder}" BorderThickness="1" Grid.Row="0" Margin="0,0,0,0" Height="30" Name="_brdViewBar" VerticalAlignment="Center">
+            <DockPanel>
+                <StackPanel x:Name="_viewBarStockPanel" Orientation="Horizontal">
+                </StackPanel>
+            </DockPanel>
+        </Border>
+        <Grid VerticalAlignment="Stretch" Style="{StaticResource MyGrid}" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="25"/>
                 <ColumnDefinition Width="25"/>
@@ -51,29 +57,14 @@
             </Button>
             <Button Name="_btnConfirm" Style="{StaticResource MyButton}" Content="Pokaż" HorizontalAlignment="Stretch" Grid.Column="9" Click="_btnConfirm_Click"/>
         </Grid>
-        <Border Style="{StaticResource MyBorderMedium}" Margin="10,10,10,10" Grid.Row="1">
-            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                <StackPanel Name="_spDisplay" Orientation="Vertical">
-
-                </StackPanel>
-            </ScrollViewer>
+        <Border Style="{StaticResource MyBorder}" BorderThickness="1" Margin="0,0,0,0" Grid.Row="2" Name="brdMain">
+            <UserControl x:Name="MainControl"/>
         </Border>
-        <!--<xctk:RichTextBox x:Name="rtbText" Style="{StaticResource MyRichTextBox}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" Grid.Row="1">
-            <FlowDocument>
-                <Paragraph>
-                    <Run Text=""/>
-                </Paragraph>
-            </FlowDocument>
-        </xctk:RichTextBox>-->
-        <Border x:Name="_borderCalendarFrom" Style ="{StaticResource MyBorder}" Margin="75,29,0,0" Width="180" Grid.RowSpan="3" HorizontalAlignment="Left" Height="162" VerticalAlignment="Top">
+        <Border x:Name="_borderCalendarFrom" Style ="{StaticResource MyBorder}" Margin="78,60,0,0" Width="180" Grid.RowSpan="3" HorizontalAlignment="Left" Height="162" VerticalAlignment="Top">
             <Calendar x:Name="_calDateFrom" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" Height="160" SelectedDatesChanged="_calDateFrom_SelectedDatesChanged"/>
         </Border>
-        <Border x:Name="_borderCalendarTo" Style ="{StaticResource MyBorder}" Margin="315,29,0,0" Width="180" Grid.RowSpan="3" HorizontalAlignment="Left" Height="162" VerticalAlignment="Top">
+        <Border x:Name="_borderCalendarTo" Style ="{StaticResource MyBorder}" Margin="318,60,0,0" Width="180" Grid.RowSpan="3" HorizontalAlignment="Left" Height="162" VerticalAlignment="Top">
             <Calendar x:Name="_calDateTo" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" Height="160" SelectedDatesChanged="_calDateTo_SelectedDatesChanged"/>
         </Border>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10,0,10,0">
-            <Label Style="{StaticResource MyLabel}" Content="Sumarycznie: " HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center"/>
-            <Label Name="_labSum" Style="{StaticResource MyLabel}" Content="" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center"/>
-        </StackPanel>
     </Grid>
 </UserControl>

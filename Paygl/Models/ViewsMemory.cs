@@ -1,5 +1,7 @@
 ﻿using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Interfaces;
+using PayglService.cs;
+using PayglService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,33 @@ namespace Paygl.Models
         private static int _index = 0;
 
         private static List<Filter> _filters;
-       
+        public static List<Filter> Filters
+        {
+            get
+            {
+                if (_filters == null)
+                {
+                    Service.LoadSettings();
+                    _filters = PayglService.Models.Settings.Filters;
+                }
+                return _filters;
+            }
+        }
+
+        private static List<FiltersGroup> _filtersGroups;
+        public static List<FiltersGroup> FiltersGroups
+        {
+            get
+            {
+                if (_filtersGroups == null)
+                {
+                    Service.LoadSettings();
+                    _filtersGroups = PayglService.Models.Settings.FiltersGroup;
+                }
+                return _filtersGroups;
+            }
+        }
+
         public delegate void AddedGroupDelegate(OperationsGroup added);
         public static AddedGroupDelegate AddedGroup;
 

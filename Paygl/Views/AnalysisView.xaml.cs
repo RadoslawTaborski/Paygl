@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -17,23 +18,26 @@ namespace Paygl.Views
     /// </summary>
     public partial class AnalysisView : UserControl, IRepresentative
     {
-        private List<Operation> _operations;
-        private List<OperationsGroup> _operationsGroup;
+        private AnalysisViewItem _selectedView;
 
         private const int HEIGHT = 27;
+        public const int VIEWBAR_BUTTON_WIDTH = 100;
 
         public string RepresentativeName { get; set; } = "Analiza";
+
+        private List<AnalysisViewItem> _views;
 
         public AnalysisView()
         {
             InitializeComponent();
+            _views = new List<AnalysisViewItem>();
+
+            _borderCalendarFrom.Visibility = Visibility.Hidden;
+            _borderCalendarTo.Visibility = Visibility.Hidden;
 
             Service.LoadAttributes();
             Service.LoadOperationsGroups();
             Service.LoadOperations();
-
-            _borderCalendarFrom.Visibility = Visibility.Hidden;
-            _borderCalendarTo.Visibility = Visibility.Hidden;
 
             if (Service.Operations.Count != 0)
             {
@@ -47,362 +51,17 @@ namespace Paygl.Views
                 _tbTo.Text = DateTime.Now.ToString("dd.MM.yyyy");
             }
 
-            Show();
-        }
-
-        private bool OperationHasTag(Operation operation, Tag tag)
-        {
-            foreach (var item in operation.Tags)
+            var filtersGroups = ViewsMemory.FiltersGroups;
+            foreach (var filtersGroup in filtersGroups)
             {
-                if (item.Tag.Text == tag.Text)
-                {
-                    return true;
-                }
+                AddUserControl(new AnalysisViewItem(filtersGroup.Name, filtersGroup.Filters, _tbFrom.Text, _tbTo.Text));
             }
-
-            return false;
-        }
-
-        private bool OperationHasFrequence(Operation operation, Frequence frequence)
-        {
-
-            if (operation.Frequence.Text == frequence.Text)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private void Show()
-        {
-            DateTime dt1 = DateTime.Parse(_tbFrom.Text);
-            DateTime dt2 = DateTime.Parse(_tbTo.Text);
-            _operations = Service.Operations.Where(o => o.Parent == null && o.Date.Date <= dt2.Date && o.Date.Date >= dt1.Date).ToList();
-            _operationsGroup = Service.OperationsGroups.Where(o => o.Date.Date <= dt2.Date && o.Date.Date >= dt1.Date).ToList();
-            var ioperations = new List<IOperation>();
-            ioperations.AddRange(_operations);
-            ioperations.AddRange(_operationsGroup);
-
-            var queries = Service.ReadQuery();
-
-            var groups = new List<Group>();
-
-            foreach (var elem in _operationsGroup)
-            {
-                elem.UpdateAmount(Service.TransactionTypes);
-            }
-
-            foreach (var item in queries)
-            {
-                var newGroup = new Group(item.Key, item.Value, ioperations);
-                newGroup.FilterOperations();
-
-                groups.Add(newGroup);
-            }
-
-            _spDisplay.Children.Clear();
-            foreach (var item in groups)
-            {
-                item.UpdateAmount();
-                _spDisplay.Children.Add(GroupToStackPanel(item));
-            }
-
-            _labSum.Content = SumGroups(groups);
+            OpenUserControl(_views[0]);
         }
 
         private void _btnConfirm_Click(object sender, RoutedEventArgs e)
         {
-            Show();
-        }
-
-        private UIElement GroupToStackPanel(Group group)
-        {
-            var result = new StackPanel
-            {
-                Orientation = Orientation.Vertical,
-                Margin = new Thickness(0, 0, 0, 20),
-            };
-
-            var borderGroup = new Border
-            {
-                Style = (Style)FindResource("MyBorder2"),
-                BorderThickness = new Thickness(1, 1, 1, 1),
-                Height = HEIGHT + 5,
-            };
-            borderGroup.Child = GroupHeaderToStackPanel(group, result);
-            result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, result, "MyLightGrey", new Thickness(0, 0, 0, 0), ClickInGroup));
-
-            return result;
-        }
-
-        private void ClickInGroup(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("click group");
-            var button = sender as ButtonWithObject;
-            var group = (button.Object as Group);
-            var context = (button.Context as StackPanel);
-            if (context.Children.Count == 1)
-            {
-                foreach (var item in group.Operations)
-                {
-                    if (item is OperationsGroup)
-                    {
-                        var i = item as OperationsGroup;
-                        var childStackPanel = new StackPanel
-                        {
-                            Orientation = Orientation.Vertical,
-                            Margin = new Thickness(0, 0, 0, 0),
-                        };
-                        var border = new Border
-                        {
-                            Style = (Style)FindResource("MyBorder2"),
-                            BorderThickness = new Thickness(1, 1, 1, 1),
-                            Height = HEIGHT,
-                        };
-                        border.Child = IOperationToStackPanel(i);
-                        childStackPanel.Children.Add(CreateButtonWithBorderContent(border, item, childStackPanel, "MyLightGrey", new Thickness(25, 0, 0, 0), ClickInOperationsGroup));
-
-                        context.Children.Add(childStackPanel);
-                    }
-                    if (item is Operation)
-                    {
-                        var i = item as Operation;
-                        var border = new Border
-                        {
-                            Style = (Style)FindResource("MyBorderMedium"),
-                            BorderThickness = new Thickness(1, 1, 1, 1),
-                            Height = HEIGHT,
-                            Child = IOperationToStackPanel(i),
-                        };
-                        context.Children.Add(CreateButtonWithBorderContent(border, item, null, "MyMediumGrey", new Thickness(25, 0, 0, 0), ClickInOperation));
-                    }
-                }
-            }
-            else
-            {
-                System.Collections.IList list = context.Children;
-                for (int i1 = 2; i1 < list.Count; i1++)
-                {
-                    object item = list[i1];
-                    var i = item as UIElement;
-                    if (i.Visibility == Visibility.Visible)
-                    {
-                        i.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        i.Visibility = Visibility.Visible;
-                    }
-                }
-            }
-        }
-
-        private void ClickInOperationsGroup(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("click operations group");
-            var button = sender as ButtonWithObject;
-            var group = (button.Object as OperationsGroup);
-            var context = (button.Context as StackPanel);
-            if (context.Children.Count == 1)
-            {
-                foreach (var elem in group.Operations)
-                {
-                    var border2 = new Border
-                    {
-                        Style = (Style)FindResource("MyBorderMedium"),
-                        BorderThickness = new Thickness(1, 1, 1, 1),
-                        Height = HEIGHT,
-                    };
-                    border2.Child = IOperationToStackPanel(elem);
-                    context.Children.Add(CreateButtonWithBorderContent(border2, elem, null, "MyMediumGrey", new Thickness(50, 0, 0, 0), ClickInOperation));
-                }
-            }
-            else
-            {
-                System.Collections.IList list = context.Children;
-                for (int i1 = 0; i1 < list.Count; i1++)
-                {
-                    if (i1 != 0)
-                    {
-                        object item = list[i1];
-                        var i = item as UIElement;
-                        if (i.Visibility == Visibility.Visible)
-                        {
-                            i.Visibility = Visibility.Collapsed;
-                        }
-                        else
-                        {
-                            i.Visibility = Visibility.Visible;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void ClickInOperation(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("click operation");
-            var parameter = ((sender as ButtonWithObject).Object as Operation);
-        }
-
-        private ButtonWithObject CreateButtonWithBorderContent(Border border, object objectForButton, object context, string colorName, Thickness margin, RoutedEventHandler method)
-        {
-            var result = new ButtonWithObject
-            {
-                Content = border,
-                Margin = margin,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Style = (Style)FindResource("MyButtonLeft"),
-                HorizontalContentAlignment = HorizontalAlignment.Left,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
-                Object = objectForButton,
-                Context = context,
-                Background = (Brush)FindResource(colorName),
-            };
-
-            result.Click += method;
-
-            return result;
-        }
-
-        private UIElement IOperationToStackPanel(IOperation operation)
-        {
-            var resultStackPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT,
-                VerticalAlignment = VerticalAlignment.Stretch,
-            };
-
-            var borderDate = CreateBorderWithLabel($"{operation.Date.ToString("dd.MM.yyyy")}:");
-            var borderAmount = CreateBorderWithLabel($"{operation.Amount}");
-            var borderDescription = CreateBorderWithLabel($"{operation.Description}");
-            var borderTransactionType = CreateBorderWithLabel($"{operation.TransactionType}");
-            var borderImportance = CreateBorderWithLabel($"{operation.Importance}");
-            var borderFrequence = CreateBorderWithLabel($"{operation.Frequence}");
-            var button = new ButtonWithObject()
-            {
-                Content = new Image
-                {
-                    Source = new BitmapImage(new Uri(@"..\img\edit-icon.png", UriKind.Relative)),
-                    VerticalAlignment = VerticalAlignment.Stretch
-                },
-                Width = 20,
-                Height = 20,
-                VerticalContentAlignment = VerticalAlignment.Top,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Top,
-                Object = operation,
-            };
-
-            button.Click += Edit_Click;
-
-            resultStackPanel.Children.Add(borderDate);
-            resultStackPanel.Children.Add(borderAmount);
-            resultStackPanel.Children.Add(borderDescription);
-            resultStackPanel.Children.Add(borderTransactionType);
-            resultStackPanel.Children.Add(borderImportance);
-            resultStackPanel.Children.Add(borderFrequence);
-            if (operation is Operation)
-            {
-                var borderTransferType = CreateBorderWithLabel($"{(operation as Operation).TransferType}");
-                resultStackPanel.Children.Add(borderTransferType);
-            }
-            foreach (var item in operation.Tags)
-            {
-                resultStackPanel.Children.Add(CreateBorderWithLabel($"{item}"));
-            }
-            resultStackPanel.Children.Add(button);
-
-            return resultStackPanel;
-        }
-
-        private void Edit_Click(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("click edit");
-            var button = sender as ButtonWithObject;
-            var parameter = button.Object;
-
-            if (parameter is Operation)
-            {
-                var view = new ManuallyOperationsView(parameter as Operation);
-                ViewManager.AddUserControl(view);
-                ViewManager.OpenUserControl(view);
-            }
-            else if (parameter is OperationsGroup)
-            {
-                var view = new AddGroupsView(parameter as OperationsGroup);
-                ViewManager.AddUserControl(view);
-                ViewManager.OpenUserControl(view);
-            }
-            else if (parameter is Group)
-            {
-                var stackPanel = button.Context as StackPanel;
-                stackPanel.Children[0].Visibility = stackPanel.Children[0].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-            }
-
-            e.Handled = true;
-        }
-
-        private UIElement GroupHeaderToStackPanel(Group group, StackPanel main)
-        {
-            var resultStackPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT + 3,
-                VerticalAlignment=VerticalAlignment.Stretch,
-                HorizontalAlignment=HorizontalAlignment.Stretch,
-            };
-
-            var borderAmount = CreateBorderWithLabel($"{group.Amount}");
-            var borderDescription = CreateBorderWithLabel($"{group.Filter.Description}");
-            var button = new ButtonWithObject()
-            {
-                Content = new Image
-                {
-                    Source = new BitmapImage(new Uri(@"..\img\edit-icon.png", UriKind.Relative)),
-                    VerticalAlignment = VerticalAlignment.Stretch
-                },
-                Width = 20,
-                Height = 20,
-                VerticalContentAlignment = VerticalAlignment.Center,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Object = group,
-                Context = main,
-            };
-
-            button.Click += Edit_Click;
-
-            resultStackPanel.Children.Add(borderDescription);
-            resultStackPanel.Children.Add(borderAmount);
-            resultStackPanel.Children.Add(button);
-
-            return resultStackPanel;
-        }
-
-        private Border CreateBorderWithLabel(string text)
-        {
-            return new Border
-            {
-                Child = new Label
-                {
-                    Content = text,
-                    Style = (Style)FindResource("MyLabel"),
-                    Margin = new Thickness(0, -5, 0, 0),
-                    Height = HEIGHT,
-                    VerticalAlignment = VerticalAlignment.Stretch,
-                    VerticalContentAlignment = VerticalAlignment.Stretch,
-                },
-                BorderBrush = (SolidColorBrush)FindResource("MyLight"),
-                BorderThickness = new Thickness(0, 0, 1, 0),
-                Margin = new Thickness(0, 0, 0, 0),
-                Height = HEIGHT,
-                VerticalAlignment = VerticalAlignment.Stretch,
-            };
+            _selectedView.Show(_tbFrom.Text, _tbTo.Text);
         }
 
         private void _btnCalendarFrom_Click(object sender, RoutedEventArgs e)
@@ -435,47 +94,6 @@ namespace Paygl.Views
             _borderCalendarTo.Visibility = Visibility.Hidden;
         }
 
-        private decimal SumGroups(List<Group> groups)
-        {
-            var result = decimal.Zero;
-            var operations = new List<Operation>();
-
-            foreach (var item in groups)
-            {
-                foreach (var elem in item.Operations)
-                {
-                    if (elem is OperationsGroup)
-                    {
-                        var group = elem as OperationsGroup;
-                        foreach (var operation in group.Operations)
-                        {
-                            operations.Add(operation);
-                        }
-                    }
-                    if (elem is Operation)
-                    {
-                        operations.Add(elem as Operation);
-                    }
-                }
-            }
-
-            operations = operations.ToArray().Distinct().ToList();
-
-            foreach (var operation in operations)
-            {
-                if (operation.TransactionType.Text == "przychód")
-                {
-                    result += operation.Amount;
-                }
-                if (operation.TransactionType.Text == "wydatek")
-                {
-                    result -= operation.Amount;
-                }
-            }
-
-            return result;
-        }
-
         private void _btnBack_Click(object sender, RoutedEventArgs e)
         {
             var endDate = DateTime.ParseExact(_tbTo.Text, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
@@ -488,6 +106,110 @@ namespace Paygl.Views
             var endDate = DateTime.ParseExact(_tbTo.Text, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
             _tbFrom.Text = endDate.AddDays(1).ToString("dd.MM.yyyy");
             _tbTo.Text = endDate.AddDays(1).AddMonths(1).AddDays(-1).ToString("dd.MM.yyyy");
+        }
+
+        private ButtonWithObject CreateViewBarButton(string name, string content, int width, object insideObject, bool isSelected, RoutedEventHandler operation)
+        {
+            var brush = (Brush)FindResource("MyAzure");
+            var style = (Style)FindResource("MyButton");
+            if (isSelected)
+            {
+                brush = (Brush)FindResource("MyWhite");
+                style = (Style)FindResource("MyButtonBarView");
+            }
+
+            var grid = new Grid
+            {
+                Width = VIEWBAR_BUTTON_WIDTH,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Background = (Brush)FindResource("Transparent"),
+            };
+
+            var label = new Label
+            {
+                Content = content,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Background = (Brush)FindResource("Transparent"),
+                Foreground = brush,
+            };
+            grid.Children.Add(label);
+
+            var button = new ButtonWithObject
+            {
+                Name = name,
+                Content = grid,
+                Object = insideObject,
+                Context = label,
+            };
+            button.Click += operation;
+            if (!isSelected)
+            {
+                button.MouseEnter += MouseEnter_Event;
+                button.MouseLeave += MouseLeave_Event;
+            }
+            button.Width = width;
+            button.Style = style;
+
+            return button;
+        }
+
+        private void MouseLeave_Event(object sender, MouseEventArgs e)
+        {
+            var button = (ButtonWithObject)sender;
+            (button.Context as Label).Foreground = (Brush)FindResource("MyAzure");
+        }
+
+        private void MouseEnter_Event(object sender, MouseEventArgs e)
+        {
+            var button = (ButtonWithObject)sender;
+            (button.Context as Label).Foreground = (Brush)FindResource("MyDarkGrey");
+        }
+
+        public void AddUserControl(AnalysisViewItem uc)
+        {
+            if (_views.Any(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName))
+            {
+                return;
+            }
+            _views.Add(uc);
+        }
+
+        public void OpenUserControl(UserControl uc)
+        {
+            _selectedView = _views.Where(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName).FirstOrDefault();
+            brdMain.Child = _selectedView;
+            UpdateViewBar(_selectedView);
+        }
+
+        public void RemoveUserControl(UserControl uc)
+        {
+            var userControl = _views.Where(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName).First();
+            _views.Remove(userControl);
+        }
+
+        private void UpdateViewBar(UserControl selected)
+        {
+            _viewBarStockPanel.Children.Clear();
+            Button btnView;
+
+            foreach (var item in _views)
+            {
+                if ((item as IRepresentative).RepresentativeName == (selected as IRepresentative).RepresentativeName)
+                {
+                    btnView = CreateViewBarButton($"btn{item.ToString()}", (item as IRepresentative).RepresentativeName, VIEWBAR_BUTTON_WIDTH, item, true, BtnView_Click);
+                }
+                else
+                {
+                    btnView = CreateViewBarButton($"btn{item.ToString()}", (item as IRepresentative).RepresentativeName, VIEWBAR_BUTTON_WIDTH, item, false, BtnView_Click);
+                }
+                _viewBarStockPanel.Children.Add(btnView);
+            }
+        }
+
+        private void BtnView_Click(object sender, RoutedEventArgs e)
+        {
+            var uc = (sender as ButtonWithObject).Object as UserControl;
+            OpenUserControl(uc);
         }
 
         public override string ToString()

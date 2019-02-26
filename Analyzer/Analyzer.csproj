@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SoapFormatter" Version="1.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DataBaseWithBusinessLogicConnector\DataBaseWithBusinessLogicConnector.csproj" />
   </ItemGroup>
 
