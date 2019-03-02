@@ -47,28 +47,106 @@ namespace Paygl.Views
         {
             ViewsMemory.ChangeInFilters += ChangeInFilters;
             _filtersGroup = group;
-            LoadFilters();
+            LoadFiltersAndFiltersGroups();
             _lblName.Text = group.Name;
             foreach(var item in group.Filters)
             {
-                checkboxes.Where(c=>((Filter)c.Object).Description==item.Description).First().IsChecked=true;
+                var tmp = checkboxes.Where(c => c.Object is Filter && ((Filter)c.Object).Description == item.Description).FirstOrDefault();
+                if(tmp != null)
+                {
+                    tmp.IsChecked = true;
+                }
+            }
+            foreach (var item in group.ChildGroups)
+            {
+                var tmp = checkboxes.Where(c => c.Object is FiltersGroup && ((FiltersGroup)c.Object).Name == item.Name).FirstOrDefault();
+                if (tmp != null)
+                {
+                    tmp.IsChecked = true;
+                }
             }
         }
 
         private void ChangeInFilters()
         {
-            LoadFilters();
+            LoadFiltersAndFiltersGroups();
         }
 
-        private void LoadFilters()
+        private void LoadFiltersAndFiltersGroups()
         {
             checkboxes.Clear();
             _spDisplay.Children.Clear();
+
+            foreach (var elem in ViewsMemory.FiltersGroups)
+            {
+                if (elem != _filtersGroup && elem.ChildGroups.Count()==0)
+                {
+                    _spDisplay.Children.Add(FiltersGroupToStackPanel(elem));
+                }
+            }
 
             foreach (var elem in ViewsMemory.Filters)
             {
                 _spDisplay.Children.Add(FilterToStackPanel(elem));
             }
+        }
+
+        private UIElement FiltersGroupToStackPanel(FiltersGroup group)
+        {
+            var result = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(0, 0, 0, 0),
+            };
+
+            var borderGroup = new Border
+            {
+                Style = (Style)FindResource("MyBorderMedium"),
+                BorderThickness = new Thickness(1, 1, 1, 1),
+                Height = HEIGHT,
+            };
+            borderGroup.Child = FiltersGroupHeaderToStackPanel(group, result);
+            result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, borderGroup.Child, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInFilter));
+
+            var stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 0, 0, 0)
+            };
+
+            foreach (var item in group.Filters)
+            {
+                stackPanel.Children.Add(FilterToBorder(item));
+            }
+
+            result.Children.Add(stackPanel);
+
+            result.Children[1].Visibility = Visibility.Collapsed;
+
+            return result;
+        }
+
+        private UIElement FilterToBorder(Filter filter)
+        {
+            var border = new Border
+            {
+                Style = (Style)FindResource("MyBorderMedium"),
+                BorderThickness = new Thickness(0, 0, 0, 0),
+                Height = HEIGHT - 5,
+                Margin = new Thickness(10, 0, 0, 0),
+            };
+
+            var button = new Button
+            {
+                Style = (Style)FindResource("MyButtonLeft"),
+                Content = filter.Description,
+                Height = HEIGHT - 5,
+            };
+
+            border.Child = button;
+
+            return border;
         }
 
         private UIElement FilterToStackPanel(Filter filter)
@@ -103,7 +181,7 @@ namespace Paygl.Views
                 FontSize = 13,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 0),
+                Margin = new Thickness(10, 0, 0, 0),
                 IsEnabled = false,
             };
 
@@ -164,20 +242,35 @@ namespace Paygl.Views
             return resultStackPanel;
         }
 
+        private UIElement FiltersGroupHeaderToStackPanel(FiltersGroup group, StackPanel main)
+        {
+            var resultStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 0, 0, 5),
+                Height = HEIGHT,
+            };
+
+            var checkbox = new CheckBoxWithObject
+            {
+                Object = group,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            checkbox.Checked += Checkbox_Changed;
+            checkbox.Unchecked += Checkbox_Changed;
+            var border = CreateBorderWithLabel(group.Name);
+            checkboxes.Add(checkbox);
+
+            resultStackPanel.Children.Add(checkbox);
+            resultStackPanel.Children.Add(border);
+
+            return resultStackPanel;
+        }
+
         private void Checkbox_Changed(object sender, RoutedEventArgs e)
         {
             var checkbox = (CheckBoxWithObject)sender;
-            e.Handled = true;
-        }
-
-        private void RemoveFilter(object sender, RoutedEventArgs e)
-        {
-            var filter = (sender as ButtonWithObject).Object as Filter;
-            ViewsMemory.Filters.Remove(filter);
-            //Service.SaveSettings();
-
-            LoadFilters();
-
             e.Handled = true;
         }
 
@@ -234,8 +327,16 @@ namespace Paygl.Views
             {
                 if (item.IsChecked.Value==true)
                 {
-                    var filter = (Filter)item.Object;
-                    _filtersGroup.Filters.Add(filter);
+                    if (item.Object is Filter)
+                    {
+                        var filter = (Filter)item.Object;
+                        _filtersGroup.Filters.Add(filter);
+                    }
+                    else if(item.Object is FiltersGroup)
+                    {
+                        var group = (FiltersGroup)item.Object;
+                        _filtersGroup.ChildGroups.Add(group);
+                    }
                 }
             }
 

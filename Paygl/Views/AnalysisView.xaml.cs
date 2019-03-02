@@ -63,7 +63,10 @@ namespace Paygl.Views
             var filtersGroups = ViewsMemory.FiltersGroups;
             foreach (var filtersGroup in filtersGroups)
             {
-                AddUserControl(new AnalysisViewItem(filtersGroup.Name, filtersGroup.Filters, _tbFrom.Text, _tbTo.Text));
+                if (filtersGroup.Visibility)
+                {
+                    AddUserControl(new AnalysisViewItem(filtersGroup.Name, filtersGroup, _tbFrom.Text, _tbTo.Text));
+                }
             }
             OpenUserControl(_views[0]);
         }

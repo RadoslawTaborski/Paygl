@@ -12,7 +12,7 @@
             <RowDefinition/>
             <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
-        <TextBox Name="_lblName" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="Wrap" Text="" Grid.Row="0" Style="{StaticResource MyTextBox}"/>
+        <TextBox Name="_lblName" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextWrapping="Wrap" Text="" Margin="10,5,10,5" Grid.Row="0" Style="{StaticResource MyTextBox}" VerticalContentAlignment="Center"/>
         <Border Style="{StaticResource MyBorderMedium}" Margin="10,10,10,10" Grid.Row="1">
             <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                 <StackPanel Name="_spDisplay" Orientation="Vertical">

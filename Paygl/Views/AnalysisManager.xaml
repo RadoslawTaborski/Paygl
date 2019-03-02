@@ -18,6 +18,6 @@
                 </StackPanel>
             </ScrollViewer>
         </Border>
-        <Button Name="_btnSave" Style="{StaticResource MyButton}" Content="Dodaj" Grid.Row="1" Click="_btnAdd_Click"></Button>
+        <Button Name="_btnAdd" Style="{StaticResource MyButton}" Content="Dodaj" Grid.Row="1" Click="_btnAdd_Click"></Button>
     </Grid>
 </UserControl>

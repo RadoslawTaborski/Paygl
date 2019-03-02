@@ -17,10 +17,10 @@ namespace Paygl.Models
 
         public List<IOperation> Operations { get; private set; }
 
-        public Group(string description, string query, List<IOperation> all)
+        public Group(Filter filter, List<IOperation> operations)
         {
-            Filter = new Filter(description, query);
-            AllOperations = all;
+            Filter = filter;
+            AllOperations = operations;
             Operations = new List<IOperation>();
         }
 

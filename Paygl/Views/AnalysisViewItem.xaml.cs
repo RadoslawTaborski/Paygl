@@ -20,16 +20,16 @@ namespace Paygl.Views
     {
         private List<Operation> _operations;
         private List<OperationsGroup> _operationsGroup;
-        private List<Filter> _filters;
+        private FiltersGroup _group;
 
         private const int HEIGHT = 27;
 
         public string RepresentativeName { get; set; }
 
-        public AnalysisViewItem(string name, List<Filter> filters, string from, string to)
+        public AnalysisViewItem(string name, FiltersGroup group, string from, string to)
         {
             InitializeComponent();
-            _filters = filters;
+            _group = group;
             RepresentativeName = name;
 
             Show(from, to);
@@ -69,48 +69,116 @@ namespace Paygl.Views
             ioperations.AddRange(_operationsGroup);
 
             var groups = new List<Group>();
+            var multiGroups = new List<Groups>();
 
             foreach (var elem in _operationsGroup)
             {
                 elem.UpdateAmount(Service.TransactionTypes);
             }
 
-            foreach (var item in _filters)
+            foreach (var item in _group.ChildGroups)
             {
-                var newGroup = new Group(item.Description, item.Query, ioperations);
+                var newGroup = new Groups(item, ioperations);
+                newGroup.FilterOperations();
+
+                multiGroups.Add(newGroup);
+            }
+
+            foreach (var item in _group.Filters)
+            {
+                var newGroup = new Group(item, ioperations);
                 newGroup.FilterOperations();
 
                 groups.Add(newGroup);
             }
 
             _spDisplay.Children.Clear();
+
+            foreach(var item in multiGroups)
+            {
+                item.UpdateAmount();
+                _spDisplay.Children.Add(GroupsToStackPanel(item, new Thickness(0,0,0,10),HEIGHT+3));
+            }
+
             foreach (var item in groups)
             {
                 item.UpdateAmount();
-                _spDisplay.Children.Add(GroupToStackPanel(item));
+                _spDisplay.Children.Add(GroupToStackPanel(item, new Thickness(0,0,0,10), HEIGHT+3));
             }
 
             _labSum.Content = SumGroups(groups);
         }
 
-        private UIElement GroupToStackPanel(Group group)
+        private UIElement GroupsToStackPanel(Groups groups, Thickness margin, int height)
         {
             var result = new StackPanel
             {
                 Orientation = Orientation.Vertical,
-                Margin = new Thickness(0, 0, 0, 20),
+                Margin = margin,
             };
 
             var borderGroup = new Border
             {
                 Style = (Style)FindResource("MyBorder2"),
                 BorderThickness = new Thickness(1, 1, 1, 1),
-                Height = HEIGHT + 5,
+                Height = height,
+            };
+            borderGroup.Child = GroupsHeaderToStackPanel(groups, result);
+            result.Children.Add(CreateButtonWithBorderContent(borderGroup, groups, result, "MyLightGrey", new Thickness(0, 0, 0, 0), ClickInGroups));
+
+            return result;
+        }
+
+        private UIElement GroupToStackPanel(Group group, Thickness margin, int height)
+        {
+            var result = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Margin = margin,
+            };
+
+            var borderGroup = new Border
+            {
+                Style = (Style)FindResource("MyBorder2"),
+                BorderThickness = new Thickness(1, 1, 1, 1),
+                Height = height,
             };
             borderGroup.Child = GroupHeaderToStackPanel(group, result);
             result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, result, "MyLightGrey", new Thickness(0, 0, 0, 0), ClickInGroup));
 
             return result;
+        }
+
+        private void ClickInGroups(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("click group");
+            var button = sender as ButtonWithObject;
+            var groups = (button.Object as Groups);
+            var context = (button.Context as StackPanel);
+            if (context.Children.Count == 1)
+            {
+                foreach(var item in groups.ListOfGroups)
+                {
+                    context.Children.Add(GroupToStackPanel(item, new Thickness(25, 0, 0, 0), HEIGHT));
+                }
+            }
+            else
+            {
+                System.Collections.IList list = context.Children;
+                for (int i1 = 1; i1 < list.Count; i1++)
+                {
+                    object item = list[i1];
+                    var i = item as UIElement;
+                    if (i.Visibility == Visibility.Visible)
+                    {
+                        i.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        i.Visibility = Visibility.Visible;
+                    }
+                }
+            }
         }
 
         private void ClickInGroup(object sender, RoutedEventArgs e)
@@ -323,6 +391,26 @@ namespace Paygl.Views
             e.Handled = true;
         }
 
+        private UIElement GroupsHeaderToStackPanel(Groups groups, StackPanel main)
+        {
+            var resultStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 0, 0, 5),
+                Height = HEIGHT + 3,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+            };
+
+            var borderAmount = CreateBorderWithLabel($"{groups.Amount}");
+            var borderDescription = CreateBorderWithLabel($"{groups.Group.Name}");
+
+            resultStackPanel.Children.Add(borderDescription);
+            resultStackPanel.Children.Add(borderAmount);
+
+            return resultStackPanel;
+        }
+
         private UIElement GroupHeaderToStackPanel(Group group, StackPanel main)
         {
             var resultStackPanel = new StackPanel
@@ -336,27 +424,9 @@ namespace Paygl.Views
 
             var borderAmount = CreateBorderWithLabel($"{group.Amount}");
             var borderDescription = CreateBorderWithLabel($"{group.Filter.Description}");
-            var button = new ButtonWithObject()
-            {
-                Content = new Image
-                {
-                    Source = new BitmapImage(new Uri(@"..\img\edit-icon.png", UriKind.Relative)),
-                    VerticalAlignment = VerticalAlignment.Stretch
-                },
-                Width = 20,
-                Height = 20,
-                VerticalContentAlignment = VerticalAlignment.Center,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Object = group,
-                Context = main,
-            };
-
-            button.Click += Edit_Click;
 
             resultStackPanel.Children.Add(borderDescription);
             resultStackPanel.Children.Add(borderAmount);
-            resultStackPanel.Children.Add(button);
 
             return resultStackPanel;
         }

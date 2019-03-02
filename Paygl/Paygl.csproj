@@ -109,6 +109,7 @@
       <DependentUpon>MessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Group.cs" />
+    <Compile Include="Models\Groups.cs" />
     <Compile Include="Models\ViewsMemory.cs" />
     <Compile Include="RounderProgressBarControl.xaml.cs">
       <DependentUpon>RounderProgressBarControl.xaml</DependentUpon>

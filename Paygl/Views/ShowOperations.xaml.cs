@@ -130,8 +130,8 @@ namespace Paygl.Views
             {
                 elem.UpdateAmount(Service.TransactionTypes);
             }
-
-            var group = new Group(queryWithName.Key, queryWithName.Value, ioperations);
+            var filter = new Filter(queryWithName.Key, queryWithName.Value);
+            var group = new Group(filter, ioperations);
             group.FilterOperations();
 
             _spDisplay.Children.Clear();

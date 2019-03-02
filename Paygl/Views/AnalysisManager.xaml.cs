@@ -72,7 +72,12 @@ namespace Paygl.Views
                 Margin = new Thickness(0, 0, 0, 0)
             };
 
-            foreach(var item in groups.Filters)
+            foreach (var item in groups.ChildGroups)
+            {
+                stackPanel.Children.Add(GroupToBorder(item));
+            }
+
+            foreach (var item in groups.Filters)
             {                
                 stackPanel.Children.Add(FilterToBorder(item));
             }
@@ -82,6 +87,28 @@ namespace Paygl.Views
             result.Children[1].Visibility = Visibility.Collapsed;
 
             return result;
+        }
+
+        private UIElement GroupToBorder(FiltersGroup group)
+        {
+            var border = new Border
+            {
+                Style = (Style)FindResource("MyBorderMedium"),
+                BorderThickness = new Thickness(0, 0, 0, 0),
+                Height = HEIGHT - 5,
+                Margin = new Thickness(10, 0, 0, 0),
+            };
+
+            var button = new Button
+            {
+                Style = (Style)FindResource("MyButtonLeft"),
+                Content = group.Name,
+                Height = HEIGHT - 5,
+            };
+
+            border.Child = button;
+
+            return border;
         }
 
         private UIElement FilterToBorder(Filter filter)
@@ -108,11 +135,14 @@ namespace Paygl.Views
 
         private void ClickInGroup(object sender, RoutedEventArgs e)
         {
-            var button = sender as ButtonWithObject;
-            var parameter = button.Object;
-            var stackPanel = button.Context as StackPanel;
-            var parent = button.Parent as StackPanel;
-            parent.Children[1].Visibility = parent.Children[1].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            if (!(e.OriginalSource is CheckBoxWithObject))
+            {
+                var button = sender as ButtonWithObject;
+                var parameter = button.Object;
+                var stackPanel = button.Context as StackPanel;
+                var parent = button.Parent as StackPanel;
+                parent.Children[1].Visibility = parent.Children[1].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            }
         }
 
         private void OpenEditMode(object sender, RoutedEventArgs e)
@@ -126,7 +156,7 @@ namespace Paygl.Views
             e.Handled = true;
         }
 
-        private UIElement GroupHeaderToStackPanel(FiltersGroup groups, StackPanel main)
+        private UIElement GroupHeaderToStackPanel(FiltersGroup group, StackPanel main)
         {
             var resultStackPanel = new StackPanel
             {
@@ -134,6 +164,20 @@ namespace Paygl.Views
                 Margin = new Thickness(0, 0, 0, 5),
                 Height = HEIGHT + 3,
             };
+
+            var checkbox = new CheckBoxWithObject
+            {
+                Object = group,
+                VerticalAlignment = VerticalAlignment.Top,
+                Height = 20,
+                Width = 20,
+                VerticalContentAlignment=VerticalAlignment.Stretch,
+                HorizontalContentAlignment=HorizontalAlignment.Right,
+            };
+
+            checkbox.IsChecked = group.Visibility;
+            checkbox.Checked += Checkbox_Changed;
+            checkbox.Unchecked += Checkbox_Changed;
 
             var button = new ButtonWithObject
             {
@@ -148,7 +192,7 @@ namespace Paygl.Views
                 Width = 20,
                 VerticalAlignment = VerticalAlignment.Top,
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Object = groups,
+                Object = group,
             };
 
             button.Click += OpenEditMode;
@@ -166,19 +210,29 @@ namespace Paygl.Views
                 Width = 20,
                 VerticalAlignment = VerticalAlignment.Top,
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Object = groups,
+                Object = group,
             };
 
             button2.Click += RemoveGroup;
 
             resultStackPanel.Children.Add(button2);
             resultStackPanel.Children.Add(button);
+            resultStackPanel.Children.Add(checkbox);
 
-            var borderDescription = CreateBorderWithLabel($"{groups.Name}");
+            var borderDescription = CreateBorderWithLabel($"{group.Name}");
 
             resultStackPanel.Children.Add(borderDescription);
 
             return resultStackPanel;
+        }
+
+        private void Checkbox_Changed(object sender, RoutedEventArgs e)
+        {
+            var checkbox = (CheckBoxWithObject)sender;
+            (checkbox.Object as FiltersGroup).SetVisibility(checkbox.IsChecked.Value);
+            Service.SetSettings(ViewsMemory.FiltersGroups);
+            Service.SaveSettings();
+            e.Handled = true;
         }
 
         private void RemoveGroup(object sender, RoutedEventArgs e)
