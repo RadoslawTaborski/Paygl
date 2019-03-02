@@ -29,5 +29,10 @@ namespace Paygl
         {
             _main.OpenUserControl(uc);
         }
+
+        public static void RemoveUserControl(UserControl uc)
+        {
+            _main.RemoveFromBarView(uc);
+        }
     }
 }

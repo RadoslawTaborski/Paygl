@@ -8,6 +8,6 @@ namespace PayglService.Models
     public static class Settings
     {
         public static List<Filter> Filters = new List<Filter>();
-        public static List<FiltersGroup> FiltersGroup = new List<FiltersGroup>();
+        public static List<FiltersGroup> FiltersGroups = new List<FiltersGroup>();
     }
 }

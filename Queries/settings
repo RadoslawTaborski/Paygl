@@ -3,7 +3,7 @@
     <SOAP-ENC:Array id="ref-1" SOAP-ENC:arrayType="xsd:anyType[2,2]">
       <item id="ref-2" xsi:type="SOAP-ENC:string">Filters</item>
       <item href="#ref-3" />
-      <item id="ref-4" xsi:type="SOAP-ENC:string">FiltersGroup</item>
+      <item id="ref-4" xsi:type="SOAP-ENC:string">FiltersGroups</item>
       <item href="#ref-5" />
     </SOAP-ENC:Array>
     <a1:_x0030__x002C__x0020_Culture_x003D_neutral_x002C__x0020_PublicKeyToken_x003D_null_x005D__x005D_ id="ref-3" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections.Generic.List`1[[PayglService.Models.Filter, PayglService.cs, Version=1.0.0">
@@ -14,7 +14,7 @@
     <a2:_x0030__x002C__x0020_Culture_x003D_neutral_x002C__x0020_PublicKeyToken_x003D_null_x005D__x005D_ id="ref-5" xmlns:a2="http://schemas.microsoft.com/clr/ns/System.Collections.Generic.List`1[[PayglService.Models.FiltersGroup, PayglService.cs, Version=1.0.0">
       <_items href="#ref-7" />
       <_size>1</_size>
-      <_version>1</_version>
+      <_version>3</_version>
     </a2:_x0030__x002C__x0020_Culture_x003D_neutral_x002C__x0020_PublicKeyToken_x003D_null_x005D__x005D_>
     <SOAP-ENC:Array id="ref-6" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull" SOAP-ENC:arrayType="a3:Filter[16]">
       <item href="#ref-8" />
@@ -77,70 +77,16 @@
       <_x003C_Query_x003E_k__BackingField id="ref-41">(Tags ONE IN ["rozrywka"]) </_x003C_Query_x003E_k__BackingField>
     </a3:Filter>
     <a3:FiltersGroup id="ref-19" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Name_x003E_k__BackingField id="ref-42">Podstawowa</_x003C_Name_x003E_k__BackingField>
+      <_x003C_Name_x003E_k__BackingField id="ref-42">Podstawowy123</_x003C_Name_x003E_k__BackingField>
       <_x003C_Filters_x003E_k__BackingField href="#ref-43" />
     </a3:FiltersGroup>
     <a1:_x0030__x002C__x0020_Culture_x003D_neutral_x002C__x0020_PublicKeyToken_x003D_null_x005D__x005D_ id="ref-43" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections.Generic.List`1[[PayglService.Models.Filter, PayglService.cs, Version=1.0.0">
       <_items href="#ref-44" />
-      <_size>11</_size>
-      <_version>11</_version>
+      <_size>1</_size>
+      <_version>22</_version>
     </a1:_x0030__x002C__x0020_Culture_x003D_neutral_x002C__x0020_PublicKeyToken_x003D_null_x005D__x005D_>
     <SOAP-ENC:Array id="ref-44" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull" SOAP-ENC:arrayType="a3:Filter[16]">
-      <item href="#ref-45" />
-      <item href="#ref-46" />
-      <item href="#ref-47" />
-      <item href="#ref-48" />
-      <item href="#ref-49" />
-      <item href="#ref-50" />
-      <item href="#ref-51" />
-      <item href="#ref-52" />
-      <item href="#ref-53" />
-      <item href="#ref-54" />
-      <item href="#ref-55" />
+      <item href="#ref-9" />
     </SOAP-ENC:Array>
-    <a3:Filter id="ref-45" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-20" />
-      <_x003C_Query_x003E_k__BackingField id="ref-56">(Tags ONE IN ["opłaty"]) OR (Tags ONE IN ["gadżety"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
-    <a3:Filter id="ref-46" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-22" />
-      <_x003C_Query_x003E_k__BackingField id="ref-57">(Tags ONE IN ["praca"]) AND (TransactionType IN ["przychód"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
-    <a3:Filter id="ref-47" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-24" />
-      <_x003C_Query_x003E_k__BackingField id="ref-58">(Tags NOT IN ["praca","opłaty"]) AND (TransactionType IN ["przychód"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
-    <a3:Filter id="ref-48" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-26" />
-      <_x003C_Query_x003E_k__BackingField id="ref-59">(Tags NOT IN ["opłaty"]) AND (TransactionType IN ["wydatek"]) AND (Importance NOT IN ["konieczne"]) AND (Frequence IN ["jednorazowe"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
-    <a3:Filter id="ref-49" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-28" />
-      <_x003C_Query_x003E_k__BackingField id="ref-60">(Tags NOT IN ["opłaty"]) AND (TransactionType IN ["wydatek"]) AND (Importance NOT IN ["konieczne"]) AND (Frequence NOT IN ["jednorazowe"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
-    <a3:Filter id="ref-50" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-30" />
-      <_x003C_Query_x003E_k__BackingField id="ref-61">(Tags NOT IN ["opłaty"]) AND (TransactionType IN ["wydatek"]) AND (Importance IN ["konieczne"]) AND (Frequence IN ["jednorazowe"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
-    <a3:Filter id="ref-51" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-32" />
-      <_x003C_Query_x003E_k__BackingField id="ref-62">(Tags NOT IN ["opłaty"]) AND (TransactionType IN ["wydatek"]) AND (Importance IN ["konieczne"]) AND (Frequence NOT IN ["jednorazowe"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
-    <a3:Filter id="ref-52" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-34" />
-      <_x003C_Query_x003E_k__BackingField id="ref-63">(Name LIKE ["Lidl%","Biedronka%","%CARREFOUR%"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
-    <a3:Filter id="ref-53" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-36" />
-      <_x003C_Query_x003E_k__BackingField id="ref-64">(Name LIKE ["Żabka%"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
-    <a3:Filter id="ref-54" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-38" />
-      <_x003C_Query_x003E_k__BackingField id="ref-65">(Name LIKE ["Squash%"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
-    <a3:Filter id="ref-55" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/PayglService.Models/PayglService.cs%2C%20Version%3D1.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
-      <_x003C_Description_x003E_k__BackingField href="#ref-40" />
-      <_x003C_Query_x003E_k__BackingField id="ref-66">(Tags ONE IN ["rozrywka"]) </_x003C_Query_x003E_k__BackingField>
-    </a3:Filter>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>

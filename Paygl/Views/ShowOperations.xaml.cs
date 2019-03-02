@@ -488,8 +488,9 @@ namespace Paygl.Views
         {
             SetVisibilityForSave(Visibility.Hidden);
             ViewsMemory.Filters.Add(new Filter(_tbName.Text, _tbQuery.Text));
+            Service.SetSettings(ViewsMemory.Filters);
             Service.SaveSettings();
-            ViewsMemory.ChangeFilters?.Invoke();
+            ViewsMemory.ChangeInFilters?.Invoke();
         }
 
         private void _btnBack_Click(object sender, RoutedEventArgs e)

@@ -159,7 +159,7 @@ namespace Paygl.Views
             else
             {
                 System.Collections.IList list = context.Children;
-                for (int i1 = 2; i1 < list.Count; i1++)
+                for (int i1 = 1; i1 < list.Count; i1++)
                 {
                     object item = list[i1];
                     var i = item as UIElement;

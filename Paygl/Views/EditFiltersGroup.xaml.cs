@@ -1,5 +1,6 @@
 ﻿using Paygl.Models;
 using PayglService.cs;
+using PayglService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,25 +13,46 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using PayglService.Models;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Paygl.Views
 {
     /// <summary>
-    /// Interaction logic for FiltersManager.xaml
+    /// Interaction logic for EditFiltersGroup.xaml
     /// </summary>
-    public partial class FiltersManager : UserControl, IRepresentative
+    public partial class EditFiltersGroup : UserControl, IRepresentative
     {
         private const int HEIGHT = 27;
-        public string RepresentativeName { get; set; } = "Filtry";
+        public string RepresentativeName { get; set; } = "";
+        List<CheckBoxWithObject> checkboxes = new List<CheckBoxWithObject>();
+        private FiltersGroup _filtersGroup;
 
-        public FiltersManager()
+        public EditFiltersGroup()
         {
             InitializeComponent();
-            LoadFilters();
+            var group = new FiltersGroup("");
+            RepresentativeName = "Dodawanie widoku";
+            Init(group);
+        }
+
+        public EditFiltersGroup(FiltersGroup group)
+        {
+            InitializeComponent();
+            RepresentativeName = $"Edycja: {group.Name}";
+            Init(group);
+        }
+
+        public void Init(FiltersGroup group)
+        {
             ViewsMemory.ChangeInFilters += ChangeInFilters;
+            _filtersGroup = group;
+            LoadFilters();
+            _lblName.Text = group.Name;
+            foreach(var item in group.Filters)
+            {
+                checkboxes.Where(c=>((Filter)c.Object).Description==item.Description).First().IsChecked=true;
+            }
         }
 
         private void ChangeInFilters()
@@ -40,6 +62,7 @@ namespace Paygl.Views
 
         private void LoadFilters()
         {
+            checkboxes.Clear();
             _spDisplay.Children.Clear();
 
             foreach (var elem in ViewsMemory.Filters)
@@ -84,45 +107,6 @@ namespace Paygl.Views
                 IsEnabled = false,
             };
 
-            var button = new ButtonWithObject
-            {
-                Style = (Style)FindResource("MyButton"),
-                Content = new Image
-                {
-                    Source = new BitmapImage(new Uri(@"..\img\edit-icon.png", UriKind.Relative)),
-                    VerticalAlignment = VerticalAlignment.Stretch,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                },
-                Height = 20,
-                Width = 20,
-                VerticalAlignment = VerticalAlignment.Top,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Object = filter,
-            };
-
-            button.Click += OpenEditMode;
-
-            var button2 = new ButtonWithObject
-            {
-                Style = (Style)FindResource("MyButton"),
-                Content = new Image
-                {
-                    Source = new BitmapImage(new Uri(@"..\img\x-icon.png", UriKind.Relative)),
-                    VerticalAlignment = VerticalAlignment.Stretch,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                },
-                Height = 20,
-                Width = 20,
-                VerticalAlignment = VerticalAlignment.Top,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Object = filter,
-            };
-
-            button2.Click += RemoveFilter;
-
-            stackPanel.Children.Add(button2);
-            stackPanel.Children.Add(button);
-
             stackPanel.Children.Add(editTextBox);
             result.Children.Add(stackPanel);
 
@@ -133,11 +117,14 @@ namespace Paygl.Views
 
         private void ClickInFilter(object sender, RoutedEventArgs e)
         {
-            var button = sender as ButtonWithObject;
-            var parameter = button.Object;
-            var stackPanel = button.Context as StackPanel;
-            var parent = button.Parent as StackPanel;
-            parent.Children[1].Visibility = parent.Children[1].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            if (!(e.OriginalSource is CheckBoxWithObject))
+            {
+                var button = sender as ButtonWithObject;
+                var parameter = button.Object;
+                var stackPanel = button.Context as StackPanel;
+                var parent = button.Parent as StackPanel;
+                parent.Children[1].Visibility = parent.Children[1].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            }
         }
 
         private void OpenEditMode(object sender, RoutedEventArgs e)
@@ -157,22 +144,37 @@ namespace Paygl.Views
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT + 3,
+                Height = HEIGHT,
             };
 
-            var borderDescription = CreateBorderWithLabel($"{filter.Description}");
+            var checkbox = new CheckBoxWithObject
+            {
+                Object = filter,
+                VerticalAlignment=VerticalAlignment.Center,
+            };
 
-            resultStackPanel.Children.Add(borderDescription);
+            checkbox.Checked += Checkbox_Changed;
+            checkbox.Unchecked += Checkbox_Changed;
+            var border = CreateBorderWithLabel(filter.Description);
+            checkboxes.Add(checkbox);
+
+            resultStackPanel.Children.Add(checkbox);
+            resultStackPanel.Children.Add(border);
 
             return resultStackPanel;
+        }
+
+        private void Checkbox_Changed(object sender, RoutedEventArgs e)
+        {
+            var checkbox = (CheckBoxWithObject)sender;
+            e.Handled = true;
         }
 
         private void RemoveFilter(object sender, RoutedEventArgs e)
         {
             var filter = (sender as ButtonWithObject).Object as Filter;
             ViewsMemory.Filters.Remove(filter);
-            Service.SetSettings(ViewsMemory.Filters);
-            Service.SaveSettings();
+            //Service.SaveSettings();
 
             LoadFilters();
 
@@ -226,7 +228,28 @@ namespace Paygl.Views
 
         private void _btnSave_Click(object sender, RoutedEventArgs e)
         {
+            _filtersGroup.SetName(_lblName.Text);
+            _filtersGroup.Filters.Clear();
+            foreach(var item in checkboxes)
+            {
+                if (item.IsChecked.Value==true)
+                {
+                    var filter = (Filter)item.Object;
+                    _filtersGroup.Filters.Add(filter);
+                }
+            }
+
+            bool alreadyExist = ViewsMemory.FiltersGroups.Contains(_filtersGroup);
+            if (!alreadyExist)
+            {
+                ViewsMemory.FiltersGroups.Add(_filtersGroup);
+            }
+
+            ViewManager.RemoveUserControl(this);
+            Service.SetSettings(ViewsMemory.FiltersGroups);
             Service.SaveSettings();
+            ViewsMemory.EditedAnalysisView?.Invoke();
+            ViewsMemory.ChangeInAnalysisManager?.Invoke();
         }
     }
 }

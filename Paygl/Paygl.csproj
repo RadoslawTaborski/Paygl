@@ -103,6 +103,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ButtonWithObject.cs" />
+    <Compile Include="CheckBoxWithObject.cs" />
     <Compile Include="ExtUserControl.cs" />
     <Compile Include="MessageBox.xaml.cs">
       <DependentUpon>MessageBox.xaml</DependentUpon>
@@ -119,11 +120,17 @@
     <Compile Include="Views\AddGroupsView.xaml.cs">
       <DependentUpon>AddGroupsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AnalysisManager.xaml.cs">
+      <DependentUpon>AnalysisManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AnalysisView.xaml.cs">
       <DependentUpon>AnalysisView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\AnalysisViewItem.xaml.cs">
       <DependentUpon>AnalysisViewItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditFiltersGroup.xaml.cs">
+      <DependentUpon>EditFiltersGroup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FiltersManager.xaml.cs">
       <DependentUpon>FiltersManager.xaml</DependentUpon>
@@ -170,11 +177,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\AnalysisManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\AnalysisView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AnalysisViewItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditFiltersGroup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

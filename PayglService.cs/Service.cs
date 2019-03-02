@@ -9,6 +9,7 @@ using DataBaseWithBusinessLogicConnector.Interfaces;
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using Importer;
 using PayglService.cs.Helpers;
+using PayglService.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -320,7 +321,19 @@ namespace PayglService.cs
         public static void SaveSettings()
         {
             var path = @"D:\Programowanie\C#\Paygl\Queries\settings";
+            var filters = Models.Settings.Filters;
+            var filtersGroups = Models.Settings.FiltersGroups;
             SerializeStatic.Save(typeof(Models.Settings), path);
+        }
+
+        public static void SetSettings(List<FiltersGroup> filtersGroups)
+        {
+            Models.Settings.FiltersGroups = filtersGroups;
+        }
+
+        public static void SetSettings(List<Filter> filters)
+        {
+            Models.Settings.Filters = filters;
         }
 
         public static List<KeyValuePair<string,QueryNode>> ReadQuery()

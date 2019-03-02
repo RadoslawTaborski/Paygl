@@ -27,5 +27,10 @@ namespace PayglService.Models
         {
             Filters.Add(filter);
         }
+
+        public void SetName(string name)
+        {
+            Name = name;
+        }
     }
 }

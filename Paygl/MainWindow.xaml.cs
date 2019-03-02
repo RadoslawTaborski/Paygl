@@ -47,6 +47,7 @@ namespace Paygl
         private static Button _btnShowOperations;
         private static Button _btnAnalysis;
         private static Button _btnFilters;
+        private static Button _btnAnalysisManager;
 
         private List<UserControl> _views;
         #endregion
@@ -90,11 +91,13 @@ namespace Paygl
                 _icAnalyseButtons = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
                 var b2Buttons = new List<Button>();
                 _btnFilters = CreateButton("btnFilters", "Filtry", MENU_BUTTON_HEIGHT, btnFilters_Click);
+                _btnAnalysisManager= CreateButton("btnAnalysisManager", "Menadżer Analizy", MENU_BUTTON_HEIGHT, btnAnalysisManager_Click);
                 _btnAnalysis = CreateButton("btnAnalysis", "Analiza", MENU_BUTTON_HEIGHT, btnAnalysis_Click);
                 _btnShowOperations = CreateButton("btnShowOperations", "Wyszukiwanie", MENU_BUTTON_HEIGHT, BtnShowOperations_Click);
                 b2Buttons.Add(_btnShowOperations);
                 b2Buttons.Add(_btnAnalysis);
                 b2Buttons.Add(_btnFilters);
+                b2Buttons.Add(_btnAnalysisManager);
                 _icAnalyseButtons.ItemsSource = b2Buttons;
             }
             catch (Exception ex)
@@ -149,6 +152,11 @@ namespace Paygl
         private void BtnShowOperations_Click(object sender, RoutedEventArgs e)
         {
             CreateAndOpenNewView(new ShowOperations());
+        }
+
+        private void btnAnalysisManager_Click(object sender, RoutedEventArgs e)
+        {
+            CreateAndOpenNewView(new AnalysisManager());
         }
         #endregion
 
@@ -452,6 +460,13 @@ namespace Paygl
         private void RemoveFromBarView_Click(object sender, RoutedEventArgs e)
         {
             var uc = (sender as ButtonWithObject).Object as UserControl;
+            RemoveFromBarView(uc);
+
+            e.Handled = true;
+        }
+
+        public void RemoveFromBarView(UserControl uc)
+        {
             RemoveUserControl(uc);
             if ((_selectedView as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName)
             {
@@ -465,8 +480,6 @@ namespace Paygl
                 }
             }
             UpdateViewBar(_selectedView);
-
-            e.Handled = true;
         }
     }
 }

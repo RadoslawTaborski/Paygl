@@ -38,7 +38,7 @@ namespace Paygl.Models
                 if (_filtersGroups == null)
                 {
                     Service.LoadSettings();
-                    _filtersGroups = PayglService.Models.Settings.FiltersGroup;
+                    _filtersGroups = PayglService.Models.Settings.FiltersGroups;
                 }
                 return _filtersGroups;
             }
@@ -50,8 +50,14 @@ namespace Paygl.Models
         public delegate void AddedParameterDelegate(IParameter added);
         public static AddedParameterDelegate AddedParameter;
 
-        public delegate void ChangeInFilters();
-        public static ChangeInFilters ChangeFilters;
+        public delegate void ChangeInFiltersDelegate();
+        public static ChangeInFiltersDelegate ChangeInFilters;
+
+        public delegate void ChangeInAnalysisManagerDelegate();
+        public static ChangeInAnalysisManagerDelegate ChangeInAnalysisManager;
+
+        public delegate void EditedAnalysisViewDelegate();
+        public static EditedAnalysisViewDelegate EditedAnalysisView;
 
         public static void AddImportingOperations(IEnumerable<Operation> operations)
         {

@@ -31,6 +31,8 @@ namespace Paygl.Views
         {
             InitializeComponent();
             _views = new List<AnalysisViewItem>();
+            ViewsMemory.ChangeInFilters += ChangeInSettings;
+            ViewsMemory.ChangeInAnalysisManager += ChangeInSettings;
 
             _borderCalendarFrom.Visibility = Visibility.Hidden;
             _borderCalendarTo.Visibility = Visibility.Hidden;
@@ -51,6 +53,13 @@ namespace Paygl.Views
                 _tbTo.Text = DateTime.Now.ToString("dd.MM.yyyy");
             }
 
+            ChangeInSettings();
+        }
+
+        private void ChangeInSettings()
+        {
+            _views.Clear();
+            _viewBarStockPanel.Children.Clear();
             var filtersGroups = ViewsMemory.FiltersGroups;
             foreach (var filtersGroup in filtersGroups)
             {
