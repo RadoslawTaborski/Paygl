@@ -18,9 +18,13 @@ namespace Paygl.Models
         {
             ListOfGroups = new List<Group>();
             Group = group;
-            foreach(var item in group.Filters)
+            Group.Items.Sort((x, y) => x.Value.CompareTo(y.Value));
+            foreach (var item in group.Items)
             {
-                ListOfGroups.Add(new Group(item, operations));
+                if (item.Key is Filter)
+                {
+                    ListOfGroups.Add(new Group((Filter)item.Key, operations));
+                }
             }
         }
 

@@ -76,20 +76,23 @@ namespace Paygl.Views
                 elem.UpdateAmount(Service.TransactionTypes);
             }
 
-            foreach (var item in _group.ChildGroups)
+            _group.Items.Sort((x, y) => x.Value.CompareTo(y.Value));
+            foreach (var item in _group.Items)
             {
-                var newGroup = new Groups(item, ioperations);
-                newGroup.FilterOperations();
+                if (item.Key is FiltersGroup)
+                {
+                    var newGroup = new Groups((FiltersGroup)item.Key, ioperations);
+                    newGroup.FilterOperations();
 
-                multiGroups.Add(newGroup);
-            }
+                    multiGroups.Add(newGroup);
+                }
+                else if (item.Key is Filter)
+                {
+                    var newGroup = new Group((Filter)item.Key, ioperations);
+                    newGroup.FilterOperations();
 
-            foreach (var item in _group.Filters)
-            {
-                var newGroup = new Group(item, ioperations);
-                newGroup.FilterOperations();
-
-                groups.Add(newGroup);
+                    groups.Add(newGroup);
+                }
             }
 
             _spDisplay.Children.Clear();

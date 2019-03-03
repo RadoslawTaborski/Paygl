@@ -85,6 +85,7 @@ namespace Paygl.Views
 
         private void SetVisibilityForSave(Visibility v)
         {
+            _labName.Content = "";
             _labName.Visibility = v;
             _tbName.Visibility = v;
             _btnSave.Visibility = v;
@@ -486,7 +487,16 @@ namespace Paygl.Views
 
         private void _btnSave_Click(object sender, RoutedEventArgs e)
         {
-            SetVisibilityForSave(Visibility.Hidden);
+            try
+            {
+                Show(_tbQuery.Text);
+                SetVisibilityForSave(Visibility.Hidden);
+            }
+            catch (Exception ex)
+            {
+                var dialog = new MessageBox("Komunikat", "Zły format zapytania");
+                dialog.ShowDialog();
+            }
             ViewsMemory.Filters.Add(new Filter(_tbName.Text, _tbQuery.Text));
             Service.SetSettings(ViewsMemory.Filters);
             Service.SaveSettings();

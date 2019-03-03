@@ -27,6 +27,7 @@ namespace Paygl.Views
         public string RepresentativeName { get; set; } = "";
         List<CheckBoxWithObject> checkboxes = new List<CheckBoxWithObject>();
         private FiltersGroup _filtersGroup;
+        private int _counter = 0;
 
         public EditFiltersGroup()
         {
@@ -49,20 +50,25 @@ namespace Paygl.Views
             _filtersGroup = group;
             LoadFiltersAndFiltersGroups();
             _lblName.Text = group.Name;
-            foreach(var item in group.Filters)
+            foreach (var item in group.Items)
             {
-                var tmp = checkboxes.Where(c => c.Object is Filter && ((Filter)c.Object).Description == item.Description).FirstOrDefault();
-                if(tmp != null)
+                if (item.Key is FiltersGroup)
                 {
-                    tmp.IsChecked = true;
+                    var tmp = checkboxes.Where(c => ((KeyValuePair<IFilter, int>)c.Object).Key is FiltersGroup && ((FiltersGroup)((KeyValuePair<IFilter, int>)c.Object).Key).Name == ((FiltersGroup)item.Key).Name).FirstOrDefault();
+                    if (tmp != null)
+                    {
+                        tmp.IsChecked = true;
+                        tmp.Content = item.Value.ToString();
+                    }
                 }
-            }
-            foreach (var item in group.ChildGroups)
-            {
-                var tmp = checkboxes.Where(c => c.Object is FiltersGroup && ((FiltersGroup)c.Object).Name == item.Name).FirstOrDefault();
-                if (tmp != null)
+                else if (item.Key is Filter)
                 {
-                    tmp.IsChecked = true;
+                    var tmp = checkboxes.Where(c => ((KeyValuePair<IFilter,int>)c.Object).Key is Filter && ((Filter)((KeyValuePair<IFilter, int>)c.Object).Key).Description == ((Filter)item.Key).Description).FirstOrDefault();
+                    if (tmp != null)
+                    {
+                        tmp.IsChecked = true;
+                        tmp.Content = item.Value.ToString();
+                    }
                 }
             }
         }
@@ -79,20 +85,21 @@ namespace Paygl.Views
 
             foreach (var elem in ViewsMemory.FiltersGroups)
             {
-                if (elem != _filtersGroup && elem.ChildGroups.Count()==0)
+                if (elem != _filtersGroup) //TODO: && elem.ChildGroups.Count()==0 maybe it is not necessary
                 {
-                    _spDisplay.Children.Add(FiltersGroupToStackPanel(elem));
+                    _spDisplay.Children.Add(FiltersGroupToStackPanel(new KeyValuePair<IFilter, int>(elem, 0)));
                 }
             }
 
             foreach (var elem in ViewsMemory.Filters)
             {
-                _spDisplay.Children.Add(FilterToStackPanel(elem));
+                _spDisplay.Children.Add(FilterToStackPanel(new KeyValuePair<IFilter, int>(elem, 0)));
             }
         }
 
-        private UIElement FiltersGroupToStackPanel(FiltersGroup group)
+        private UIElement FiltersGroupToStackPanel(KeyValuePair<IFilter, int> groupKV)
         {
+            var group = (FiltersGroup)groupKV.Key;
             var result = new StackPanel
             {
                 Orientation = Orientation.Vertical,
@@ -105,7 +112,7 @@ namespace Paygl.Views
                 BorderThickness = new Thickness(1, 1, 1, 1),
                 Height = HEIGHT,
             };
-            borderGroup.Child = FiltersGroupHeaderToStackPanel(group, result);
+            borderGroup.Child = FiltersGroupHeaderToStackPanel(groupKV, result);
             result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, borderGroup.Child, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInFilter));
 
             var stackPanel = new StackPanel
@@ -115,9 +122,12 @@ namespace Paygl.Views
                 Margin = new Thickness(0, 0, 0, 0)
             };
 
-            foreach (var item in group.Filters)
+            foreach (var item in group.Items)
             {
-                stackPanel.Children.Add(FilterToBorder(item));
+                if (item.Key is Filter)
+                {
+                    stackPanel.Children.Add(FilterToBorder((Filter)item.Key));
+                }
             }
 
             result.Children.Add(stackPanel);
@@ -149,8 +159,9 @@ namespace Paygl.Views
             return border;
         }
 
-        private UIElement FilterToStackPanel(Filter filter)
+        private UIElement FilterToStackPanel(KeyValuePair<IFilter, int> filterKV)
         {
+            var filter = (Filter)filterKV.Key;
             var result = new StackPanel
             {
                 Orientation = Orientation.Vertical,
@@ -163,7 +174,7 @@ namespace Paygl.Views
                 BorderThickness = new Thickness(1, 1, 1, 1),
                 Height = HEIGHT,
             };
-            borderGroup.Child = FilterHeaderToStackPanel(filter, result);
+            borderGroup.Child = FilterHeaderToStackPanel(filterKV, result);
             result.Children.Add(CreateButtonWithBorderContent(borderGroup, filter, borderGroup.Child, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInFilter));
 
             var stackPanel = new StackPanel
@@ -216,7 +227,7 @@ namespace Paygl.Views
             e.Handled = true;
         }
 
-        private UIElement FilterHeaderToStackPanel(Filter filter, StackPanel main)
+        private UIElement FilterHeaderToStackPanel(KeyValuePair<IFilter,int> filter, StackPanel main)
         {
             var resultStackPanel = new StackPanel
             {
@@ -228,12 +239,13 @@ namespace Paygl.Views
             var checkbox = new CheckBoxWithObject
             {
                 Object = filter,
-                VerticalAlignment=VerticalAlignment.Center,
+                Content = filter.Value.ToString(),
+                VerticalAlignment = VerticalAlignment.Center,
             };
 
-            checkbox.Checked += Checkbox_Changed;
-            checkbox.Unchecked += Checkbox_Changed;
-            var border = CreateBorderWithLabel(filter.Description);
+            checkbox.Checked += Checkbox_Checked;
+            checkbox.Unchecked += Checkbox_Unchecked;
+            var border = CreateBorderWithLabel(((Filter)filter.Key).Description);
             checkboxes.Add(checkbox);
 
             resultStackPanel.Children.Add(checkbox);
@@ -242,7 +254,7 @@ namespace Paygl.Views
             return resultStackPanel;
         }
 
-        private UIElement FiltersGroupHeaderToStackPanel(FiltersGroup group, StackPanel main)
+        private UIElement FiltersGroupHeaderToStackPanel(KeyValuePair<IFilter,int> group, StackPanel main)
         {
             var resultStackPanel = new StackPanel
             {
@@ -254,12 +266,13 @@ namespace Paygl.Views
             var checkbox = new CheckBoxWithObject
             {
                 Object = group,
+                Content = group.Value.ToString(),
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            checkbox.Checked += Checkbox_Changed;
-            checkbox.Unchecked += Checkbox_Changed;
-            var border = CreateBorderWithLabel(group.Name);
+            checkbox.Checked += Checkbox_Checked;
+            checkbox.Unchecked += Checkbox_Unchecked;
+            var border = CreateBorderWithLabel(((FiltersGroup)group.Key).Name);
             checkboxes.Add(checkbox);
 
             resultStackPanel.Children.Add(checkbox);
@@ -268,9 +281,19 @@ namespace Paygl.Views
             return resultStackPanel;
         }
 
-        private void Checkbox_Changed(object sender, RoutedEventArgs e)
+        private void Checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
+            _counter--;
             var checkbox = (CheckBoxWithObject)sender;
+            checkbox.Content = 0.ToString();
+            e.Handled = true;
+        }
+
+        private void Checkbox_Checked(object sender, RoutedEventArgs e)
+        {
+            _counter++;
+            var checkbox = (CheckBoxWithObject)sender;
+            checkbox.Content = _counter.ToString();
             e.Handled = true;
         }
 
@@ -322,21 +345,13 @@ namespace Paygl.Views
         private void _btnSave_Click(object sender, RoutedEventArgs e)
         {
             _filtersGroup.SetName(_lblName.Text);
-            _filtersGroup.Filters.Clear();
-            foreach(var item in checkboxes)
+            _filtersGroup.Items.Clear();
+            foreach (var item in checkboxes)
             {
-                if (item.IsChecked.Value==true)
+                if (item.IsChecked.Value == true)
                 {
-                    if (item.Object is Filter)
-                    {
-                        var filter = (Filter)item.Object;
-                        _filtersGroup.Filters.Add(filter);
-                    }
-                    else if(item.Object is FiltersGroup)
-                    {
-                        var group = (FiltersGroup)item.Object;
-                        _filtersGroup.ChildGroups.Add(group);
-                    }
+                    var filter = ((KeyValuePair<IFilter,int>)item.Object).Key;
+                    _filtersGroup.AddFilter(new KeyValuePair<IFilter, int>(filter, int.Parse((string)item.Content)));
                 }
             }
 

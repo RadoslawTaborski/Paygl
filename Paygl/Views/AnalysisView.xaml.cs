@@ -68,7 +68,10 @@ namespace Paygl.Views
                     AddUserControl(new AnalysisViewItem(filtersGroup.Name, filtersGroup, _tbFrom.Text, _tbTo.Text));
                 }
             }
-            OpenUserControl(_views[0]);
+            if (_views.Count > 0)
+            {
+                OpenUserControl(_views[0]);
+            }
         }
 
         private void _btnConfirm_Click(object sender, RoutedEventArgs e)

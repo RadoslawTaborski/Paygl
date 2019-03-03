@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace PayglService.Models
 {
     [Serializable]
-    public class Filter
+    public class Filter: IFilter
     {
         public string Description { get; private set; }
         public string Query { get; private set; }

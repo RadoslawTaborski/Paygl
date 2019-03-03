@@ -89,7 +89,12 @@ namespace Analyzer
                 {
                     if (!_boolOperations.Contains(itemWithoutWhiteSpace))
                     {
-                        var (substrings, separators) = itemWithoutWhiteSpace.SplitWithSeparators(_boolOperations.ToArray());
+                        var _boolOperationsCopy = new List<string>(_boolOperations);
+                        for(var i=0; i < _boolOperationsCopy.Count; ++i)
+                        {
+                            _boolOperationsCopy[i] = $"{_boolOperationsCopy[i]} ";
+                        }
+                        var (substrings, separators) = itemWithoutWhiteSpace.SplitWithSeparators(_boolOperationsCopy.ToArray());
                         for (int i = 0; i < substrings.Count; i++)
                         {
                             string substring = substrings[i];

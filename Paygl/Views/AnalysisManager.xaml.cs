@@ -72,14 +72,16 @@ namespace Paygl.Views
                 Margin = new Thickness(0, 0, 0, 0)
             };
 
-            foreach (var item in groups.ChildGroups)
+            foreach (var item in groups.Items)
             {
-                stackPanel.Children.Add(GroupToBorder(item));
-            }
-
-            foreach (var item in groups.Filters)
-            {                
-                stackPanel.Children.Add(FilterToBorder(item));
+                if (item.Key is FiltersGroup)
+                {
+                    stackPanel.Children.Add(GroupToBorder((FiltersGroup)item.Key));
+                }
+                else if(item.Key is Filter)
+                {
+                    stackPanel.Children.Add(FilterToBorder((Filter)item.Key));
+                }
             }
             
             result.Children.Add(stackPanel);
@@ -232,6 +234,7 @@ namespace Paygl.Views
             (checkbox.Object as FiltersGroup).SetVisibility(checkbox.IsChecked.Value);
             Service.SetSettings(ViewsMemory.FiltersGroups);
             Service.SaveSettings();
+            ViewsMemory.ChangeInAnalysisManager?.Invoke();
             e.Handled = true;
         }
 

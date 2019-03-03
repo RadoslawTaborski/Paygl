@@ -7,49 +7,33 @@ using System.Threading.Tasks;
 namespace PayglService.Models
 {
     [Serializable]
-    public class FiltersGroup
+    public class FiltersGroup: IFilter
     {
         public string Name { get; private set; }
-        public List<Filter> Filters { get; private set; }
         public bool Visibility { get; set; }
-        private List<FiltersGroup> _childGroups;
-        public List<FiltersGroup> ChildGroups
-        {
-            get
-            {
-                if (_childGroups == null)
-                {
-                    _childGroups = new List<FiltersGroup>();
-                }
-                return _childGroups;
-            }
-            private set
-            {
-                _childGroups = value;
-            }
-        }
+
+        public List<KeyValuePair<IFilter,int>> Items { get; private set; }
 
         public FiltersGroup(string name)
         {
             Name = name;
             Visibility = false;
-            Filters = new List<Filter>();
-            _childGroups = new List<FiltersGroup>();
+            Items = new List<KeyValuePair<IFilter, int>>();
         }
 
-        public void AddFilters(List<Filter> filters)
+        public void AddFilters(List<KeyValuePair<IFilter, int>> filters)
         {
-            Filters.AddRange(filters);
+            Items.AddRange(filters);
         }
 
-        public void AddFilter(Filter filter)
+        public void AddFilter(KeyValuePair<IFilter, int> filter)
         {
-            Filters.Add(filter);
+            Items.Add(filter);
         }
 
-        public void AddChildGroup(FiltersGroup group)
+        public void AddChildGroup(KeyValuePair<IFilter, int> group)
         {
-            ChildGroups.Add(group);
+            Items.Add(group);
         }
 
         public void SetName(string name)
