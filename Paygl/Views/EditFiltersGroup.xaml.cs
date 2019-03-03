@@ -285,6 +285,11 @@ namespace Paygl.Views
         {
             _counter--;
             var checkbox = (CheckBoxWithObject)sender;
+            var tmp = checkboxes.Where(c => int.Parse((string)c.Content) > int.Parse((string)checkbox.Content));
+            foreach(var item in tmp)
+            {
+                item.Content = (int.Parse((string)item.Content) - 1).ToString();
+            }
             checkbox.Content = 0.ToString();
             e.Handled = true;
         }

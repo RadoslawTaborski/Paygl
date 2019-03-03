@@ -109,7 +109,7 @@ namespace Paygl.Views
                 _spDisplay.Children.Add(GroupToStackPanel(item, new Thickness(0,0,0,10), HEIGHT+3));
             }
 
-            _labSum.Content = SumGroups(groups);
+            _labSum.Content = SumGroups(groups, multiGroups);
         }
 
         private UIElement GroupsToStackPanel(Groups groups, Thickness margin, int height)
@@ -425,11 +425,29 @@ namespace Paygl.Views
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
 
+            var button = new ButtonWithObject
+            {
+                Content = new Image
+                {
+                    Source = new BitmapImage(new Uri(@"..\img\edit-icon.png", UriKind.Relative)),
+                    VerticalAlignment = VerticalAlignment.Stretch
+                },
+                Width = 20,
+                Height = 20,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
+                Object = group,
+                Context = main,
+            };
+            button.Click += Edit_Click;
+
             var borderAmount = CreateBorderWithLabel($"{group.Amount}");
             var borderDescription = CreateBorderWithLabel($"{group.Filter.Description}");
 
             resultStackPanel.Children.Add(borderDescription);
             resultStackPanel.Children.Add(borderAmount);
+            resultStackPanel.Children.Add(button);
 
             return resultStackPanel;
         }
@@ -455,12 +473,18 @@ namespace Paygl.Views
             };
         }
 
-        private decimal SumGroups(List<Group> groups)
+        private decimal SumGroups(List<Group> groups, List<Groups> multiGroups)
         {
             var result = decimal.Zero;
             var operations = new List<Operation>();
+            var groupsCopy = new List<Group>(groups);
 
-            foreach (var item in groups)
+            foreach(var item in multiGroups)
+            {
+                groupsCopy.AddRange(item.ListOfGroups);
+            }
+
+            foreach (var item in groupsCopy)
             {
                 foreach (var elem in item.Operations)
                 {
