@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,6 @@ namespace PayglService.Models
     {
         public string Name { get; private set; }
         public bool Visibility { get; set; }
-
         public List<KeyValuePair<IFilter,int>> Items { get; private set; }
 
         public FiltersGroup(string name)

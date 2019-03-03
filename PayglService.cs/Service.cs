@@ -9,6 +9,7 @@ using DataBaseWithBusinessLogicConnector.Interfaces;
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using Importer;
 using PayglService.cs.Helpers;
+using PayglService.Helpers.Serializers;
 using PayglService.Models;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace PayglService.cs
 {
     public static class Service
     {
+        public static Settings2 settings;
+
         #region Entities
         public static User User { get; private set; }
         public static Language Language { get; private set; }
@@ -70,6 +73,8 @@ namespace PayglService.cs
 
         public static void SetService()
         {
+            settings = new Settings2();
+
             var dataBaseData = ConfigurationManager.DataBaseData();
             DbManager = new DatabaseManager(new MySqlConnectionFactory(), dataBaseData.Address, dataBaseData.Table, dataBaseData.Login, dataBaseData.Password);
             DbConnector = new DbConnector(DbManager);
@@ -315,25 +320,25 @@ namespace PayglService.cs
         {
             var path = @"D:\Programowanie\C#\Paygl\Queries\settings";
             if (File.Exists(path))
-                SerializeStatic.Load(typeof(Models.Settings), path);
+            {
+                settings = BinarySerializer<Settings2>.Deserialize(path);
+            }
         }
 
         public static void SaveSettings()
         {
             var path = @"D:\Programowanie\C#\Paygl\Queries\settings";
-            var filters = Models.Settings.Filters;
-            var filtersGroups = Models.Settings.FiltersGroups;
-            SerializeStatic.Save(typeof(Models.Settings), path);
+            BinarySerializer<Settings2>.Serialize(path, settings);
         }
 
         public static void SetSettings(List<FiltersGroup> filtersGroups)
         {
-            Models.Settings.FiltersGroups = filtersGroups;
+            settings.FiltersGroups = filtersGroups;
         }
 
         public static void SetSettings(List<Filter> filters)
         {
-            Models.Settings.Filters = filters;
+            settings.Filters = filters;
         }
 
         public static List<KeyValuePair<string,QueryNode>> ReadQuery()

@@ -24,7 +24,7 @@ namespace Paygl.Models
                 if (_filters == null)
                 {
                     Service.LoadSettings();
-                    _filters = PayglService.Models.Settings.Filters;
+                    _filters = Service.settings.Filters;
                 }
                 return _filters;
             }
@@ -38,7 +38,10 @@ namespace Paygl.Models
                 if (_filtersGroups == null)
                 {
                     Service.LoadSettings();
-                    _filtersGroups = PayglService.Models.Settings.FiltersGroups;
+                    _filtersGroups = Service.settings.FiltersGroups;
+                    //Service.SetSettings2(_filters);
+                    //Service.SetSettings2(_filtersGroups);
+                    //Service.SaveSettings2();
                 }
                 return _filtersGroups;
             }

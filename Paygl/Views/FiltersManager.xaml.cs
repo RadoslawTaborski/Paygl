@@ -226,6 +226,8 @@ namespace Paygl.Views
 
         private void _btnSave_Click(object sender, RoutedEventArgs e)
         {
+            Service.SetSettings(ViewsMemory.FiltersGroups);
+            Service.SetSettings(ViewsMemory.Filters);
             Service.SaveSettings();
         }
     }
