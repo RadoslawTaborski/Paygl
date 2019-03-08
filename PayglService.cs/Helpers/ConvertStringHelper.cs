@@ -1,19 +1,17 @@
 ﻿using DataBaseWithBusinessLogicConnector.Entities;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PayglService.cs.Helpers
 {
     public static class ConvertStringHelper
     {
-        public static Frequence ConvertToFrequence(string input, List<Frequence> frequencies)
+        public static Frequence ConvertToFrequency(string input, List<Frequence> frequencies)
         {
-            foreach(var frequence in frequencies)
+            foreach(var frequency in frequencies)
             {
-                if ( frequence.Text == input)
+                if ( frequency.Text == input)
                 {
-                    return frequence;
+                    return frequency;
                 }
             }
             return null;

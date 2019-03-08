@@ -223,7 +223,7 @@ namespace Paygl.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Searching.
+        ///   Looks up a localized string similar to Search.
         /// </summary>
         public static string _btnSearching {
             get {

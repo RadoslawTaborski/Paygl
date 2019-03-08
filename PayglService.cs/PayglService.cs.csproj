@@ -27,4 +27,8 @@
     <ProjectReference Include="..\Importer\Importer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>

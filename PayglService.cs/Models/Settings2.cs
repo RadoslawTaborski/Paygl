@@ -1,9 +1,7 @@
-﻿using ProtoBuf;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace PayglService.Models
+namespace PayglService.cs.Models
 {
     [Serializable]
     public class Settings2

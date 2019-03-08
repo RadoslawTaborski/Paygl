@@ -1,6 +1,6 @@
 ﻿using DataBaseWithBusinessLogicConnector.Interfaces;
-using PayglService.Models;
 using System.Collections.Generic;
+using PayglService.cs.Models;
 
 namespace Paygl.Models
 {

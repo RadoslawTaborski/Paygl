@@ -1,5 +1,4 @@
-﻿using Analyzer;
-using DataAccess;
+﻿using DataAccess;
 using DataBaseWithBusinessLogicConnector;
 using DataBaseWithBusinessLogicConnector.Dal.Adapters;
 using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
@@ -10,18 +9,18 @@ using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using Importer;
 using PayglService.cs.Helpers;
 using PayglService.Helpers.Serializers;
-using PayglService.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using PayglService.cs.Models;
 
 namespace PayglService.cs
 {
     public static class Service
     {
-        public static PayglService.Models.Settings2 settings;
+        public static Settings2 Settings;
 
         #region Entities
         public static User User { get; private set; }
@@ -73,7 +72,7 @@ namespace PayglService.cs
 
         public static void SetService()
         {
-            settings = new PayglService.Models.Settings2();
+            Settings = new Settings2();
 
             var dataBaseData = ConfigurationManager.DataBaseData();
             DbManager = new DatabaseManager(new MySqlConnectionFactory(), dataBaseData.Address, dataBaseData.Port, dataBaseData.Table, dataBaseData.Login, dataBaseData.Password);
@@ -117,20 +116,19 @@ namespace PayglService.cs
 
             DalUser dalUser;
             var dalUsers = UserAdapter.GetAll($"login='{ConfigurationManager.User().Login}'");
-            if (dalUsers.Count() == 0)
+            var enumerable = dalUsers.ToList();
+            if (enumerable.Count() == 0)
             {
-                throw new ArgumentException("User not exist");
+                throw new ArgumentException(Properties.strings.userNotExist);
+            }
+
+            if (enumerable.ElementAt(0).Password == ConfigurationManager.User().Password)
+            {
+                dalUser = enumerable.ElementAt(0);
             }
             else
             {
-                if (dalUsers.ElementAt(0).Password == ConfigurationManager.User().Password)
-                {
-                    dalUser = dalUsers.ElementAt(0);
-                }
-                else
-                {
-                    throw new ArgumentException("Bad password");
-                }
+                throw new ArgumentException(Properties.strings.wrongPassword);
             }
             User = UserMapper.ConvertToBusinessLogicEntity(dalUser);
             User.SetDetails(UserDetailsMapper.ConvertToBusinessLogicEntity(UserDetailsAdapter.GetById(dalUser.DetailsId)));
@@ -206,7 +204,7 @@ namespace PayglService.cs
             var ignored = ConfigurationManager.IgnoredTransaction();
 
             var importFactory = ImportFactory.GetFactory(ConfigurationManager.BankName());
-            IImporter importer = importFactory.CreateImporter();
+            var importer = importFactory.CreateImporter();
             var transactions = new List<Transaction>();
             var path = ConfigurationManager.PathToImportFiles();
 
@@ -301,9 +299,9 @@ namespace PayglService.cs
 
             UpdateOperation(operation);
 
-            for (int i = operation.Tags.Count-1; i > -1 ; i--)
+            for (var i = operation.Tags.Count-1; i > -1 ; i--)
             {
-                RelTag tag = operation.Tags[i];
+                var tag = operation.Tags[i];
                 if (tag.IsMarkForDeletion && !tag.IsDirty)
                 {
                     DeleteRelation(tag, operation);
@@ -318,27 +316,27 @@ namespace PayglService.cs
 
         public static void LoadSettings()
         {
-            var path = Directory.GetCurrentDirectory() + "\\settings"; // @"D:\Programowanie\C#\Paygl\Queries\settings";
+            var path = Directory.GetCurrentDirectory() + "\\settings";
             if (File.Exists(path))
             {
-                settings = BinarySerializer<PayglService.Models.Settings2>.Deserialize(path);
+                Settings = BinarySerializer<Settings2>.Deserialize(path);
             }
         }
 
         public static void SaveSettings()
         {
-            var path = Directory.GetCurrentDirectory() + "\\settings"; //@"D:\Programowanie\C#\Paygl\Queries\settings";
-            BinarySerializer<PayglService.Models.Settings2>.Serialize(path, settings);
+            var path = Directory.GetCurrentDirectory() + "\\settings";
+            BinarySerializer<Settings2>.Serialize(path, Settings);
         }
 
         public static void SetSettings(List<FiltersGroup> filtersGroups)
         {
-            settings.FiltersGroups = filtersGroups;
+            Settings.FiltersGroups = filtersGroups;
         }
 
         public static void SetSettings(List<Filter> filters)
         {
-            settings.Filters = filters;
+            Settings.Filters = filters;
         }
         #region private
         #region Updates

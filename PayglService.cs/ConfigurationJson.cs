@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace PayglService.cs
 {
@@ -44,7 +42,7 @@ namespace PayglService.cs
         public string DescriptionRegex { get; set; }
         public string TitleRegex { get; set; }
         public string Description { get; set; }
-        public string Frequence { get; set; }
+        public string Frequency { get; set; }
         public string Importance { get; set; }
         public List<string> Tags { get; set; }
     }

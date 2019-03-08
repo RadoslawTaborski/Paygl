@@ -1,9 +1,9 @@
 ﻿using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Interfaces;
 using PayglService.cs;
-using PayglService.Models;
 using System.Collections.Generic;
 using System.Linq;
+using PayglService.cs.Models;
 
 namespace Paygl.Models
 {
@@ -20,7 +20,7 @@ namespace Paygl.Models
             {
                 if (_filters != null) return _filters;
                 Service.LoadSettings();
-                _filters = Service.settings.Filters;
+                _filters = Service.Settings.Filters;
                 return _filters;
             }
         }
@@ -32,7 +32,7 @@ namespace Paygl.Models
             {
                 if (_filtersGroups != null) return _filtersGroups;
                 Service.LoadSettings();
-                _filtersGroups = Service.settings.FiltersGroups;
+                _filtersGroups = Service.Settings.FiltersGroups;
                 return _filtersGroups;
             }
         }

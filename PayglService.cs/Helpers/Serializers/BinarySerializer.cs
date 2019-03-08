@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 
 namespace PayglService.Helpers.Serializers
 {
@@ -10,32 +7,27 @@ namespace PayglService.Helpers.Serializers
     {
         public static void Serialize(string path, T obj)
         {
-            if (obj != null)
+            if (obj == null) return;
+            using (var fs = new FileStream(path, FileMode.Create))
             {
-                using (var fs = new FileStream(path, FileMode.Create))
-                {
-                    var bf = new BinaryFormatter();
-                    bf.Serialize(fs, obj);
-                }
+                var bf = new BinaryFormatter();
+                bf.Serialize(fs, obj);
             }
         }
 
         public static T Deserialize(string path)
         {
-            T temp = default(T);
+            var temp = default(T);
 
-            if (File.Exists(path))
+            if (!File.Exists(path)) return temp;
+
+            using (var fs = new FileStream(path, FileMode.Open))
             {
-                using (var fs = new FileStream(path, FileMode.Open))
-                {
-                    if (fs.Length > 0)
-                    {
-                        var bf = new BinaryFormatter();
-                        return (T)bf.Deserialize(fs);
-                    }
-                }
+                if (fs.Length <= 0) return temp;
+
+                var bf = new BinaryFormatter();
+                return (T)bf.Deserialize(fs);
             }
-            return temp;
         }
     }
 }

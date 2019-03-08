@@ -1,11 +1,11 @@
 ﻿using Paygl.Models;
 using PayglService.cs;
-using PayglService.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PayglService.cs.Models;
 
 namespace Paygl.Views
 {

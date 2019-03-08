@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace PayglService.cs
 {
@@ -12,7 +10,7 @@ namespace PayglService.cs
 
         public static void ReadConfig(string pathToJson)
         {
-            string json = File.ReadAllText(pathToJson);
+            var json = File.ReadAllText(pathToJson);
             _config = JsonConvert.DeserializeObject<RootObject>(json);
         }
 

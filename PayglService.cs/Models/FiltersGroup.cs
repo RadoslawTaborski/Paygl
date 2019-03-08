@@ -1,11 +1,7 @@
-﻿using ProtoBuf;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PayglService.Models
+namespace PayglService.cs.Models
 {
     [Serializable]
     public class FiltersGroup: IFilter

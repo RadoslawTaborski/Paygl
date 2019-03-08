@@ -2,25 +2,24 @@
 using Importer;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace PayglService.cs.Helpers
 {
     internal class TransactionToOperationMapper
     {
-        public IEnumerable<Operation> ConvertToEntitiesCollection(IEnumerable<Transaction> transactions, User user, List<Importance> importances, List<Frequence> frequences, List<Tag> tags, List<TransactionType> transactionsType, List<TransferType> transfersType)
+        public IEnumerable<Operation> ConvertToEntitiesCollection(IEnumerable<Transaction> transactions, User user, List<Importance> importances, List<Frequence> frequencies, List<Tag> tags, List<TransactionType> transactionsType, List<TransferType> transfersType)
         {
             var result = new List<Operation>();
             foreach (var item in transactions)
             {
-                result.Add(Convert(item,user,importances, frequences, tags, transactionsType,transfersType));
+                result.Add(Convert(item,user,importances, frequencies, tags, transactionsType,transfersType));
             }
 
             return result;
         }
 
-        public Operation Convert(Transaction transaction, User user, List<Importance> importances, List<Frequence> frequences, List<Tag> tags, List<TransactionType> transactionsType, List<TransferType> transfersType)
+        public Operation Convert(Transaction transaction, User user, List<Importance> importances, List<Frequence> frequencies, List<Tag> tags, List<TransactionType> transactionsType, List<TransferType> transfersType)
         {
             Operation result;
             var schematic = FindSchematicInPattern(transaction);
@@ -37,7 +36,7 @@ namespace PayglService.cs.Helpers
             if (schematic != null)
             {
                 result.SetShortDescription(schematic.Description);
-                result.SetFrequence(ConvertStringHelper.ConvertToFrequence(schematic.Frequence, frequences));
+                result.SetFrequence(ConvertStringHelper.ConvertToFrequency(schematic.Frequency, frequencies));
                 result.SetImportance(ConvertStringHelper.ConvertToImportance(schematic.Importance, importances));
                 var tagsList = new List<RelTag>();
                 foreach(var tagString in schematic.Tags)

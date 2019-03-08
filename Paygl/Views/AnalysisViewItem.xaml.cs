@@ -2,7 +2,6 @@
 using DataBaseWithBusinessLogicConnector.Interfaces;
 using Paygl.Models;
 using PayglService.cs;
-using PayglService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using PayglService.cs.Models;
 
 namespace Paygl.Views
 {
