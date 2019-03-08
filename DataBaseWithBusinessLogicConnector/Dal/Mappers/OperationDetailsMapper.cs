@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Entities;
-using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {

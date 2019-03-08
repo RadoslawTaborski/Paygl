@@ -3,7 +3,7 @@ using DataBaseWithBusinessLogicConnector.Interfaces;
 using PayglService.cs;
 using System.Collections.Generic;
 using System.Linq;
-using PayglService.cs.Models;
+using PayglService.Models;
 
 namespace Paygl.Models
 {

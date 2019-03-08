@@ -8,13 +8,13 @@ using DataBaseWithBusinessLogicConnector.Interfaces;
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using Importer;
 using PayglService.cs.Helpers;
-using PayglService.Helpers.Serializers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using PayglService.cs.Models;
+using PayglService.cs.Helpers.Serializers;
+using PayglService.Models;
 
 namespace PayglService.cs
 {
@@ -27,7 +27,7 @@ namespace PayglService.cs
         public static Language Language { get; private set; }
         public static List<TransactionType> TransactionTypes { get; private set; }
         public static List<TransferType> TransferTypes { get; private set; }
-        public static List<Frequence> Frequencies { get; private set; }
+        public static List<Frequency> Frequencies { get; private set; }
         public static List<Importance> Importances { get; private set; }
         public static List<Tag> Tags { get; private set; }
         public static List<Operation> Operations { get; private set; }
@@ -42,7 +42,7 @@ namespace PayglService.cs
         private static UserDetailsAdapter UserDetailsAdapter { get; set; }
         private static TransactionTypeAdapter TransactionTypeAdapter { get; set; }
         private static TransferTypeAdapter TransferTypeAdapter { get; set; }
-        private static FrequenceAdapter FrequenceAdapter { get; set; }
+        private static FrequencyAdapter FrequencyAdapter { get; set; }
         private static ImportanceAdapter ImportanceAdapter { get; set; }
         private static TagAdapter TagAdapter { get; set; }
         private static OperationAdapter OperationAdapter { get; set; }
@@ -58,7 +58,7 @@ namespace PayglService.cs
         private static UserDetailsMapper UserDetailsMapper { get; set; }
         private static TransactionTypeMapper TransactionTypeMapper { get; set; }
         private static TransferTypeMapper TransferTypeMapper { get; set; }
-        private static FrequenceMapper FrequenceMapper { get; set; }
+        private static FrequencyMapper FrequencyMapper { get; set; }
         private static ImportanceMapper ImportanceMapper { get; set; }
         private static TagMapper TagMapper { get; set; }
         private static OperationMapper OperationMapper { get; set; }
@@ -83,7 +83,7 @@ namespace PayglService.cs
             UserDetailsAdapter = new UserDetailsAdapter(DbConnector);
             TransactionTypeAdapter = new TransactionTypeAdapter(DbConnector);
             TransferTypeAdapter = new TransferTypeAdapter(DbConnector);
-            FrequenceAdapter = new FrequenceAdapter(DbConnector);
+            FrequencyAdapter = new FrequencyAdapter(DbConnector);
             ImportanceAdapter = new ImportanceAdapter(DbConnector);
             TagAdapter = new TagAdapter(DbConnector);
             OperationAdapter = new OperationAdapter(DbConnector);
@@ -97,7 +97,7 @@ namespace PayglService.cs
             UserDetailsMapper = new UserDetailsMapper();
             TransactionTypeMapper = new TransactionTypeMapper();
             TransferTypeMapper = new TransferTypeMapper();
-            FrequenceMapper = new FrequenceMapper();
+            FrequencyMapper = new FrequencyMapper();
             ImportanceMapper = new ImportanceMapper();
             TagMapper = new TagMapper();
             OperationMapper = new OperationMapper();
@@ -138,7 +138,7 @@ namespace PayglService.cs
         {
             TransactionTypes = TransactionTypeMapper.ConvertToBusinessLogicEntitiesCollection(TransactionTypeAdapter.GetAll($"language_id={Language.Id}")).ToList();
             TransferTypes = TransferTypeMapper.ConvertToBusinessLogicEntitiesCollection(TransferTypeAdapter.GetAll($"language_id={Language.Id}")).ToList();
-            Frequencies = FrequenceMapper.ConvertToBusinessLogicEntitiesCollection(FrequenceAdapter.GetAll($"language_id={Language.Id}")).ToList();
+            Frequencies = FrequencyMapper.ConvertToBusinessLogicEntitiesCollection(FrequencyAdapter.GetAll($"language_id={Language.Id}")).ToList();
             Importances = ImportanceMapper.ConvertToBusinessLogicEntitiesCollection(ImportanceAdapter.GetAll($"language_id={Language.Id}")).ToList();
             Tags = TagMapper.ConvertToBusinessLogicEntitiesCollection(TagAdapter.GetAll($"language_id={Language.Id}")).ToList();
         }
@@ -253,7 +253,7 @@ namespace PayglService.cs
 
             foreach(var operation in group.Operations)
             {
-                operation.SetFrequence(group.Frequence);
+                operation.SetFrequency(group.Frequency);
                 operation.SetImportance(group.Importance);
                 UpdateOperationTags(operation, group.Tags);
                 UpdateOperationComplex(operation);
@@ -371,9 +371,9 @@ namespace PayglService.cs
             return UpdateBusinessEntity(importance, ImportanceAdapter, ImportanceMapper.ConvertToDALEntity);
         }
 
-        private static int UpdateFrequence(Frequence frequence)
+        private static int UpdateFrequence(Frequency frequency)
         {
-            return UpdateBusinessEntity(frequence, FrequenceAdapter, FrequenceMapper.ConvertToDALEntity);
+            return UpdateBusinessEntity(frequency, FrequencyAdapter, FrequencyMapper.ConvertToDALEntity);
         }
 
         private static int UpdateTransactionType(TransactionType transactionType)

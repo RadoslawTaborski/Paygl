@@ -1,28 +1,26 @@
-﻿using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class AdapterHelper
     {
-        private DbConnector _connection;
-        private Queries queries;
+        private readonly DbConnector _connection;
+        private readonly Queries _queries;
 
         public AdapterHelper(DbConnector connection, string tableName, List<string> columns)
         {
             _connection = connection;
-            queries = new Queries(tableName, columns);
+            _queries = new Queries(tableName, columns);
         }
 
         public void Delete(int? id)
         {
             if (id.HasValue)
             {
-                string query = queries.Delete;
-                query += string.Format(queries.Where, $"id={id}");
+                string query = _queries.Delete;
+                query += string.Format(_queries.Where, $"id={id}");
                 _connection.DataAccess.ConnectToDb();
                 _connection.DataAccess.ExecuteNonQueryDb(query);
                 _connection.DataAccess.Disconnect();
@@ -31,10 +29,10 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         public DataSet GetAll(string filter)
         {
-            string query = queries.Select;
+            string query = _queries.Select;
             if (filter != "")
             {
-                query += string.Format(queries.Where, filter);
+                query += string.Format(_queries.Where, filter);
             }
             _connection.DataAccess.ConnectToDb();
             var data = _connection.DataAccess.ExecuteSqlCommand(query);
@@ -47,8 +45,8 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
         {
             if (id.HasValue)
             {
-                string query = queries.Select;
-                query += string.Format(queries.Where, $"id={id}");
+                string query = _queries.Select;
+                query += string.Format(_queries.Where, $"id={id}");
                 _connection.DataAccess.ConnectToDb();
                 var data = _connection.DataAccess.ExecuteSqlCommand(query);
                 _connection.DataAccess.Disconnect();
@@ -59,10 +57,10 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         public int Insert(params string[] args)
         {
-            var query = string.Format(queries.Insert, args);
+            var query = string.Format(_queries.Insert, args);
             _connection.DataAccess.ConnectToDb();
             _connection.DataAccess.ExecuteNonQueryDb(query);
-            var queryResults = _connection.DataAccess.ExecuteSqlCommand(queries.LastInsert);
+            var queryResults = _connection.DataAccess.ExecuteSqlCommand(_queries.LastInsert);
             var id = int.Parse(queryResults.Tables[0].Rows[0].ItemArray[0].ToString());
             _connection.DataAccess.Disconnect();
 
@@ -71,8 +69,8 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         public void Update(string id, params string[] args)
         {
-            string query = string.Format(queries.Update, args);
-            query += string.Format(queries.Where, $"id={id}");
+            var query = string.Format(_queries.Update, args);
+            query += string.Format(_queries.Where, $"id={id}");
             _connection.DataAccess.ConnectToDb();
             _connection.DataAccess.ExecuteNonQueryDb(query);
             _connection.DataAccess.Disconnect();
@@ -82,21 +80,21 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
         {
             switch (dt)
             {
-                case DataType.INTEGER:
+                case DataType.Integer:
                     return $"'{obj}'";
-                case DataType.INTEGER_NULLABLE:
+                case DataType.IntegerNullable:
                     var nullable = obj as int?;
                     if (nullable.HasValue)
                     {
                         return $"'{obj}'";
                     }
                     return "NULL";
-                case DataType.DECIMAL:
+                case DataType.Decimal:
                     var dec = obj as decimal?;
                     return $"'{dec.Value}'".Replace(",",".");
-                case DataType.DOUBLE:
+                case DataType.Double:
                     return $"'{obj}'".Replace(",", ".");
-                case DataType.STRING:
+                case DataType.String:
                     return $"'{obj}'";
                 default:
                     throw new NotImplementedException();
@@ -105,8 +103,8 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         private class Queries
         {
-            private string _tableName;
-            private List<string> _columns;
+            private readonly string _tableName;
+            private readonly List<string> _columns;
 
             public string Select { get; private set; }
             public string Insert { get; private set; }

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {
@@ -12,7 +11,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public User User { get; private set; }
         public decimal Amount { get; private set; }
         public string Description { get; private set; }
-        public Frequence Frequence { get; private set; }
+        public Frequency Frequency { get; private set; }
         public Importance Importance { get; private set; }
         public TransactionType TransactionType { get; private set; }
         public DateTime Date { get; private set; }
@@ -20,13 +19,13 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public List<Operation> Operations { get; private set; }
         public bool IsDirty { get; set; }
 
-        public OperationsGroup(int? id, User user, string description, Frequence frequence, Importance importance, DateTime date)
+        public OperationsGroup(int? id, User user, string description, Frequency frequency, Importance importance, DateTime date)
         {
             Id = id;
             User = user;
             Description = description;
             Amount = decimal.Zero;
-            Frequence = frequence;
+            Frequency = frequency;
             Importance = importance;
             Date = date;
             Tags = new List<RelTag>();
@@ -90,9 +89,9 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             IsDirty = true;
         }
 
-        public void SetFrequence(Frequence frequence)
+        public void SetFrequence(Frequency frequency)
         {
-            Frequence = frequence;
+            Frequency = frequency;
             IsDirty = true;
         }
 

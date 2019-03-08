@@ -11,10 +11,10 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
     public class OperationsGroupMapper : IMapper<OperationsGroup, DalOperationsGroup>
     {
         public List<Importance> _importances;
-        public List<Frequence> _frequencies;
+        public List<Frequency> _frequencies;
         public User _user;
 
-        public void Update(User user, List<Importance> importances, List<Frequence> frequencies)
+        public void Update(User user, List<Importance> importances, List<Frequency> frequencies)
         {
             _user = user;
             _importances = importances;
@@ -34,11 +34,10 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public OperationsGroup ConvertToBusinessLogicEntity(DalOperationsGroup dataEntity)
         {
-            var importance = _importances.Where(i => i.Id == dataEntity.ImportanceId).First();
-            var frequence = _frequencies.Where(f => f.Id == dataEntity.FrequenceId).First();
-            CultureInfo culture = new CultureInfo("pl-PL");
-            DateTime tempDate = Convert.ToDateTime(dataEntity.Date, culture);
-            var result = new OperationsGroup(dataEntity.Id, _user, dataEntity.Description, frequence, importance, tempDate)
+            var importance = _importances.First(i => i.Id == dataEntity.ImportanceId);
+            var frequency = _frequencies.First(f => f.Id == dataEntity.FrequencyId);
+            var tempDate = DateTime.ParseExact(dataEntity.Date, Properties.strings.dateFullFormat, CultureInfo.CurrentCulture);
+            var result = new OperationsGroup(dataEntity.Id, _user, dataEntity.Description, frequency, importance, tempDate)
             {
                 IsDirty = false
             };
@@ -58,11 +57,11 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public DalOperationsGroup ConvertToDALEntity(OperationsGroup businessEntity)
         {
-            if (businessEntity == null || businessEntity.User == null ||  businessEntity.Frequence == null || businessEntity.Importance == null)
+            if (businessEntity?.User == null || businessEntity.Frequency == null || businessEntity.Importance == null)
             {
-                throw new ArgumentException("wrong parameters");
+                throw new ArgumentException(Properties.strings.ExWrongParameters);
             }
-            var result = new DalOperationsGroup(businessEntity.Id, businessEntity.User.Id, businessEntity.Description, businessEntity.Frequence.Id, businessEntity.Importance.Id, businessEntity.Date.ToString("yyyy-MM-dd"));
+            var result = new DalOperationsGroup(businessEntity.Id, businessEntity.User.Id, businessEntity.Description, businessEntity.Frequency.Id, businessEntity.Importance.Id, businessEntity.Date.ToString("yyyy-MM-dd"));
             return result;
         }
     }

@@ -1,27 +1,26 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class TransactionTypeAdapter : IAdapter<DalTransactionType>
     {
-        private readonly string TABLE = "transaction_types";
-        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        private const string Table = "transaction_types";
+
+        private readonly Dictionary<string, DataType> _columns = new Dictionary<string, DataType>
         {
-            ["id"] = DataType.INTEGER_NULLABLE,
-            ["text"] = DataType.STRING,
-            ["language_id"] = DataType.INTEGER_NULLABLE,
+            ["id"] = DataType.IntegerNullable,
+            ["text"] = DataType.String,
+            ["language_id"] = DataType.IntegerNullable,
         };
 
-        private AdapterHelper _adapterHelper;
+        private readonly AdapterHelper _adapterHelper;
 
         public TransactionTypeAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
+            _adapterHelper = new AdapterHelper(connector, Table, _columns.Keys.ToList());
         }
 
         public void Delete(DalTransactionType entity)
@@ -61,17 +60,17 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         public int Insert(DalTransactionType entity)
         {
-            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var text = _adapterHelper.ToStr(entity.Text, COLUMNS["text"]);
-            var language = _adapterHelper.ToStr(entity.LanguageId, COLUMNS["language_id"]);
+            var id = _adapterHelper.ToStr(entity.Id, _columns["id"]);
+            var text = _adapterHelper.ToStr(entity.Text, _columns["text"]);
+            var language = _adapterHelper.ToStr(entity.LanguageId, _columns["language_id"]);
             return _adapterHelper.Insert(id, text, language);
         }
 
         public void Update(DalTransactionType entity)
         {
-            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var text = _adapterHelper.ToStr(entity.Text, COLUMNS["text"]);
-            var language = _adapterHelper.ToStr(entity.LanguageId, COLUMNS["language_id"]);
+            var id = _adapterHelper.ToStr(entity.Id, _columns["id"]);
+            var text = _adapterHelper.ToStr(entity.Text, _columns["text"]);
+            var language = _adapterHelper.ToStr(entity.LanguageId, _columns["language_id"]);
             _adapterHelper.Update(id, text, language);
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PayglService.cs.Models
+namespace PayglService.Models
 {
     [Serializable]
     public class Settings2

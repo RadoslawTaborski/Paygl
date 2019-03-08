@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace DataBaseWithBusinessLogicConnector.Interfaces.Dal
 {
-    public interface IAdapter <DalEntity>
+    public interface IAdapter <TDalEntity>
     {
-        IEnumerable<DalEntity> GetAll(string filter);
-        DalEntity GetById(int? id);
-        int Insert(DalEntity entity);
-        void Update(DalEntity entity);
-        void Delete(DalEntity entity);
+        IEnumerable<TDalEntity> GetAll(string filter);
+        TDalEntity GetById(int? id);
+        int Insert(TDalEntity entity);
+        void Update(TDalEntity entity);
+        void Delete(TDalEntity entity);
     }
 }

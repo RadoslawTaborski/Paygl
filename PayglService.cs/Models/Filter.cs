@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PayglService.cs.Models
+namespace PayglService.Models
 {
     [Serializable]
     public class Filter: IFilter

@@ -1,10 +1,10 @@
 ﻿namespace Importer
 {
-    internal class INGFactory : ImportFactory
+    internal class IngFactory : ImportFactory
     {
         public override IImporter CreateImporter()
         {
-            return new INGImporter();
+            return new IngImporter();
         }
     }
 }

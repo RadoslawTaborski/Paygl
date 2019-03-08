@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DataBaseWithBusinessLogicConnector.Interfaces.Dal
 {
-    public interface IMapper<BusinesEntity,DalEntity>
+    public interface IMapper<TBusinessEntity,TDalEntity>
     {
-        BusinesEntity ConvertToBusinessLogicEntity(DalEntity dataEntity);
-        IEnumerable<BusinesEntity> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalEntity> dataEntities);
-        DalEntity ConvertToDALEntity(BusinesEntity businessEntity);
-        IEnumerable<DalEntity> ConvertToDALEntitiesCollection(IEnumerable<BusinesEntity> dataEntities);
+        TBusinessEntity ConvertToBusinessLogicEntity(TDalEntity dataEntity);
+        IEnumerable<TBusinessEntity> ConvertToBusinessLogicEntitiesCollection(IEnumerable<TDalEntity> dataEntities);
+        TDalEntity ConvertToDALEntity(TBusinessEntity businessEntity);
+        IEnumerable<TDalEntity> ConvertToDALEntitiesCollection(IEnumerable<TBusinessEntity> dataEntities);
     }
 }

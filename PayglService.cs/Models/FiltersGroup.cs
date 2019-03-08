@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using PayglService.Models;
 
-namespace PayglService.cs.Models
+namespace PayglService.Models
 {
     [Serializable]
     public class FiltersGroup: IFilter

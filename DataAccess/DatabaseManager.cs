@@ -7,7 +7,7 @@ namespace DataAccess
     /// <summary>
     /// DataBaseManager Class allows to connect to database.
     /// </summary>
-    /// <seealso cref="NgramAnalyzer.Interfaces.IDataAccess" />
+    /// <seealso cref="DataAccess.Interfaces.IDataAccess" />
     public class DatabaseManager : IDataAccess
     {
         #region FIELDS
@@ -23,11 +23,13 @@ namespace DataAccess
         #endregion
 
         #region CONSTRUCTORS
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseManager"/> class.
         /// </summary>
         /// <param name="dbFactory">The database factory.</param>
         /// <param name="server">The server address.</param>
+        /// <param name="port"></param>
         /// <param name="database">The database name.</param>
         /// <param name="uid">The user name.</param>
         /// <param name="password">The password.</param>

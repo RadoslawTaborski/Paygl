@@ -1,4 +1,4 @@
-﻿namespace PayglService.cs.Models
+﻿namespace PayglService.Models
 {
     public interface IFilter
     {

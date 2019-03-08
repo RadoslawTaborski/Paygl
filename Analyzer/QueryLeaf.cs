@@ -3,7 +3,6 @@ using DataBaseWithBusinessLogicConnector.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Analyzer
@@ -46,54 +45,53 @@ namespace Analyzer
             if (OnlyOperations)
             {
                 var onlyOperations= result.Where(r => (r is Operation)).Select(r => (r as Operation)).ToList();
-                onlyOperations.AddRange(result.Where(r => (r is OperationsGroup)).SelectMany(r => (r as OperationsGroup).Operations).ToList());
+                onlyOperations.AddRange(result.Where(r => (r is OperationsGroup)).SelectMany(r => (r as OperationsGroup)?.Operations).ToList());
                 result = new List<IOperation>();
                 result.AddRange(onlyOperations);
             }
             foreach (var key in KeyWords.List)
             {
-                if (!this.Left.Equals(key))
+                if (!Left.Equals(key))
                 {
                     continue;
                 }
-                if (!key.Equals("Tags") && !key.Equals("Name") && !key.Equals("TransferType"))
+                if (!key.Equals(Properties.noTranslable.tags) && !key.Equals(Properties.noTranslable.name) && !key.Equals(Properties.noTranslable.transferType))
                 {
-                    switch (this.Operation)
+                    switch (Operation)
                     {
                         case string w when w == SetOperations.In:
-                            result = result.Where(o => this.Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter).Text)).ToList();
+                            result = result.Where(o => Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter)?.Text)).ToList();
                             break;
                         case string w when w == SetOperations.NotIn:
-                            result = result.Where(o => !this.Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter).Text)).ToList();
+                            result = result.Where(o => !Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter)?.Text)).ToList();
                             break;
                         default:
-                            throw new Exception($"Operations is wrong for {this.Operation}");
+                            throw new Exception(string.Format(Properties.strings.ExOperationsIsWrong,Operation));
                     }
                 }
-                else if(key.Equals("Tags"))
+                else if(key.Equals(Properties.noTranslable.tags))
                 {
-                    var tags = result.Select(r => (GetPropValue(r, KeyWords.OperationProperty[key]) as RelTag).Tag.Text);
-                    switch (this.Operation)
+                    switch (Operation)
                     {
                         case string w when w == SetOperations.NotIn:
-                            result = result.Where(o => this.Right.Intersect(o.Tags.Select(x => x.Tag.Text)).Count() == 0).ToList();
+                            result = result.Where(o => !Right.Intersect(o.Tags.Select(x => x.Tag.Text)).Any()).ToList();
                             break;
                         case string w when w == SetOperations.AllIn:
-                            result = result.Where(o => this.Right.Intersect(o.Tags.Select(x => x.Tag.Text)).Count() == this.Right.Count()).ToList();
+                            result = result.Where(o => Right.Intersect(o.Tags.Select(x => x.Tag.Text)).Count() == Right.Count()).ToList();
                             break;
                         case string w when w == SetOperations.OneIn:
-                            result = result.Where(o => this.Right.Intersect(o.Tags.Select(x => x.Tag.Text)).Count() > 0).ToList();
+                            result = result.Where(o => Right.Intersect(o.Tags.Select(x => x.Tag.Text)).Any()).ToList();
                             break;
                         default:
-                            throw new Exception($"Operations is wrong for {this.Operation}");
+                            throw new Exception(string.Format(Properties.strings.ExOperationsIsWrong, Operation));
                     }
                 }
-                else if (key.Equals("Name"))
+                else if (key.Equals(Properties.noTranslable.name))
                 {
                     var text = RightsToRegex();
-                    Regex regex = new Regex(text);
+                    var regex = new Regex(text);
 
-                    switch (this.Operation)
+                    switch (Operation)
                     {
                         case string w when w == SetOperations.NotLike:
                             result = result.Where(o => !regex.Match(o.Description).Success).ToList();
@@ -102,21 +100,21 @@ namespace Analyzer
                             result = result.Where(o => regex.Match(o.Description).Success).ToList();
                             break;
                         default:
-                            throw new Exception($"Operations is wrong for {this.Operation}");
+                            throw new Exception(string.Format(Properties.strings.ExOperationsIsWrong, Operation));
                     }
                 }
-                else if (key.Equals("TransferType"))
+                else if (key.Equals(string.Format(Properties.strings.ExOperationsIsWrong, Operation)))
                 {
-                    switch (this.Operation)
+                    switch (Operation)
                     {
                         case string w when w == SetOperations.In:
-                            result = result.Where(o => o is Operation && this.Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter).Text)).ToList();
+                            result = result.Where(o => o is Operation && Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter)?.Text)).ToList();
                             break;
                         case string w when w == SetOperations.NotIn:
-                            result = result.Where(o => o is Operation && !this.Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter).Text)).ToList();
+                            result = result.Where(o => o is Operation && !Right.Contains((GetPropValue(o, KeyWords.OperationProperty[key]) as IParameter)?.Text)).ToList();
                             break;
                         default:
-                            throw new Exception($"Operations is wrong for {this.Operation}");
+                            throw new Exception(string.Format(Properties.strings.ExOperationsIsWrong, Operation));
                     }
                 }
             }
@@ -140,7 +138,7 @@ namespace Analyzer
 
         private object GetPropValue(object src, string propName)
         {
-            return src.GetType().GetProperty(propName).GetValue(src, null);
+            return src.GetType().GetProperty(propName)?.GetValue(src, null);
         }
 
         public override string ToString()

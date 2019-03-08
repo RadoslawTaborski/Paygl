@@ -1,28 +1,27 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class UserAdapter : IAdapter<DalUser>
     {
-        private readonly string TABLE = "users";
-        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        private const string Table = "users";
+
+        private readonly Dictionary<string, DataType> _columns = new Dictionary<string, DataType>
         {
-            ["id"] = DataType.INTEGER_NULLABLE,
-            ["login"] = DataType.STRING,
-            ["password"] = DataType.STRING,
-            ["details_id"] = DataType.INTEGER_NULLABLE,
+            ["id"] = DataType.IntegerNullable,
+            ["login"] = DataType.String,
+            ["password"] = DataType.String,
+            ["details_id"] = DataType.IntegerNullable,
         };
 
-        private AdapterHelper _adapterHelper;
+        private readonly AdapterHelper _adapterHelper;
 
         public UserAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
+            _adapterHelper = new AdapterHelper(connector, Table, _columns.Keys.ToList());
         }
 
         public void Delete(DalUser entity)
@@ -62,19 +61,19 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         public int Insert(DalUser entity)
         {
-            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var login = _adapterHelper.ToStr(entity.Login, COLUMNS["login"]);
-            var password = _adapterHelper.ToStr(entity.Password, COLUMNS["password"]);
-            var detailsId = _adapterHelper.ToStr(entity.DetailsId, COLUMNS["details_id"]);
+            var id = _adapterHelper.ToStr(entity.Id, _columns["id"]);
+            var login = _adapterHelper.ToStr(entity.Login, _columns["login"]);
+            var password = _adapterHelper.ToStr(entity.Password, _columns["password"]);
+            var detailsId = _adapterHelper.ToStr(entity.DetailsId, _columns["details_id"]);
             return _adapterHelper.Insert(id, login, password, detailsId);
         }
 
         public void Update(DalUser entity)
         {
-            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var login = _adapterHelper.ToStr(entity.Login, COLUMNS["login"]);
-            var password = _adapterHelper.ToStr(entity.Password, COLUMNS["password"]);
-            var detailsId = _adapterHelper.ToStr(entity.DetailsId, COLUMNS["details_id"]);
+            var id = _adapterHelper.ToStr(entity.Id, _columns["id"]);
+            var login = _adapterHelper.ToStr(entity.Login, _columns["login"]);
+            var password = _adapterHelper.ToStr(entity.Password, _columns["password"]);
+            var detailsId = _adapterHelper.ToStr(entity.DetailsId, _columns["details_id"]);
             _adapterHelper.Update(id, login, password,detailsId);
         }
     }

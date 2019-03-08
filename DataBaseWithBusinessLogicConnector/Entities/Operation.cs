@@ -1,5 +1,4 @@
 ﻿using DataBaseWithBusinessLogicConnector.Interfaces;
-using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public decimal Amount { get; private set; }
         public TransactionType TransactionType { get; private set; }
         public TransferType TransferType { get; private set; }
-        public Frequence Frequence { get; private set; }
+        public Frequency Frequency { get; private set; }
         public Importance Importance { get; private set; }
         public DateTime Date { get; private set; }
         public string ReceiptPath { get; private set; }
@@ -24,7 +23,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public string Description { get; private set; }
         public string ShortDescription { get; private set; }
 
-        public Operation(int? id, OperationsGroup parent, User user, string description, decimal amount, TransactionType transactionType, TransferType transferType, Frequence frequence, Importance importance, DateTime date, string receiptPath)
+        public Operation(int? id, OperationsGroup parent, User user, string description, decimal amount, TransactionType transactionType, TransferType transferType, Frequency frequency, Importance importance, DateTime date, string receiptPath)
         {
             Id = id;
             Parent = parent;
@@ -34,7 +33,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Amount = amount;
             TransactionType = transactionType;
             TransferType = transferType;
-            Frequence = frequence;
+            Frequency = frequency;
             Importance = importance;
             Date = date;
             ReceiptPath = receiptPath;
@@ -42,10 +41,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             DetailsList = new List<OperationDetails>();
             IsDirty = true;
 
-            if (parent != null)
-            {
-                parent.AddOperation(this);
-            }
+            parent?.AddOperation(this);
         }
 
         public void SetDetailsList(IEnumerable<OperationDetails> detailsCollection)
@@ -62,15 +58,9 @@ namespace DataBaseWithBusinessLogicConnector.Entities
 
         public void SetParent(OperationsGroup parent)
         {
-            if (Parent != null)
-            {
-                Parent.RemoveOperation(this);
-            }
+            Parent?.RemoveOperation(this);
             Parent = parent;
-            if (Parent != null)
-            {
-                Parent.AddOperation(this);
-            }
+            Parent?.AddOperation(this);
             IsDirty = true;
         }
 
@@ -82,7 +72,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
 
         public void AddTag(Tag tag)
         {
-            if (!Tags.Any(t => t.Tag.Text == tag.Text))
+            if (Tags.All(t => t.Tag.Text != tag.Text))
             {
                 var relTag = new RelTag(null, tag, Id);
                 var relOperation = new RelOperation(null, this, tag.Id);
@@ -92,7 +82,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             }
             else
             {
-                Tags.Where(t => t.Tag.Text == tag.Text).First().IsMarkForDeletion = false;
+                Tags.First(t => t.Tag.Text == tag.Text).IsMarkForDeletion = false;
             }
             IsDirty = true;
         }
@@ -100,13 +90,13 @@ namespace DataBaseWithBusinessLogicConnector.Entities
         public void RemoveTag(RelTag tag)
         {
             Tags.Remove(tag);
-            tag.Tag.RemoveOperation(tag.Tag.Operations.Where(o => o.Operation == this).First());
+            tag.Tag.RemoveOperation(tag.Tag.Operations.First(o => o.Operation == this));
             IsDirty = true;
         }
 
-        public void SetFrequence(Frequence frequence)
+        public void SetFrequency(Frequency frequency)
         {
-            Frequence = frequence;
+            Frequency = frequency;
             IsDirty = true;
         }
 
@@ -123,7 +113,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
 
         public override string ToString()
         {
-            return Date.ToString("dd.MM.yyyy") + " " + Description;
+            return Date.ToString(Properties.strings.dateFormat) + " " + Description;
         }
 
         public void SetDescription(string text)
@@ -152,11 +142,9 @@ namespace DataBaseWithBusinessLogicConnector.Entities
 
         public void SetAmount(decimal? value)
         {
-            if (value.HasValue)
-            {
-                Amount = value.Value;
-                IsDirty = true;
-            }
+            if (!value.HasValue) return;
+            Amount = value.Value;
+            IsDirty = true;
         }
 
         public void RemoveAllTags()

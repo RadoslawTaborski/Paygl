@@ -4,14 +4,14 @@ using System.IO;
 
 namespace Importer
 {
-    internal class INGImporter : IImporter
+    internal class IngImporter : IImporter
     {
         public IEnumerable<Transaction> ReadTransactions(string path)
         {
             var result = new List<Transaction>();
             try
             {
-                using (StreamReader sr = new StreamReader(path, System.Text.Encoding.GetEncoding(1250)))
+                using (var sr = new StreamReader(path, System.Text.Encoding.GetEncoding(1250)))
                 {
                     string currentLine;
                     var flag = false;
@@ -43,12 +43,9 @@ namespace Importer
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine("The File could not be read:");
-                Console.WriteLine(e.Message);
-
-                Console.ReadLine();
+                throw new IOException(string.Format(Properties.strings.ExCouldNotBeRead, path));
             }
 
             return result;

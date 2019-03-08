@@ -1,9 +1,7 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
@@ -31,7 +29,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public RelTag ConvertToBusinessLogicEntity(DalOperationsGroupTag dataEntity)
         {
-            var result1 = new RelTag(dataEntity.Id, _tags.Where(t => t.Id == dataEntity.TagId).First(), dataEntity.OperationsGroupId);
+            var result1 = new RelTag(dataEntity.Id, _tags.First(t => t.Id == dataEntity.TagId), dataEntity.OperationsGroupId);
             result1.IsDirty = false;
             return result1;
         }

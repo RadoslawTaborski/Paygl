@@ -50,7 +50,7 @@ namespace Paygl
         public MainWindow()
         {
             InitializeComponent();
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en-GB");
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("pl-PL");
             ViewManager.SetMainWindow(this);
         }
         #endregion

@@ -1,27 +1,26 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class UserDetailsAdapter : IAdapter<DalUserDetails>
     {
-        private readonly string TABLE = "user_details";
-        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        private const string Table = "user_details";
+
+        private readonly Dictionary<string, DataType> _columns = new Dictionary<string, DataType>
         {
-            ["id"] = DataType.INTEGER_NULLABLE,
-            ["last_name"] = DataType.STRING,
-            ["first_name"] = DataType.STRING,
+            ["id"] = DataType.IntegerNullable,
+            ["last_name"] = DataType.String,
+            ["first_name"] = DataType.String,
         };
 
-        private AdapterHelper _adapterHelper;
+        private readonly AdapterHelper _adapterHelper;
 
         public UserDetailsAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
+            _adapterHelper = new AdapterHelper(connector, Table, _columns.Keys.ToList());
         }
 
         public void Delete(DalUserDetails entity)
@@ -61,17 +60,17 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         public int Insert(DalUserDetails entity)
         {
-            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var lastName = _adapterHelper.ToStr(entity.LastName, COLUMNS["last_name"]);
-            var firstName = _adapterHelper.ToStr(entity.FirstName, COLUMNS["first_name"]);
+            var id = _adapterHelper.ToStr(entity.Id, _columns["id"]);
+            var lastName = _adapterHelper.ToStr(entity.LastName, _columns["last_name"]);
+            var firstName = _adapterHelper.ToStr(entity.FirstName, _columns["first_name"]);
             return _adapterHelper.Insert(id, lastName, firstName);
         }
 
         public void Update(DalUserDetails entity)
         {
-            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var lastName = _adapterHelper.ToStr(entity.LastName, COLUMNS["last_name"]);
-            var firstName = _adapterHelper.ToStr(entity.FirstName, COLUMNS["first_name"]);
+            var id = _adapterHelper.ToStr(entity.Id, _columns["id"]);
+            var lastName = _adapterHelper.ToStr(entity.LastName, _columns["last_name"]);
+            var firstName = _adapterHelper.ToStr(entity.FirstName, _columns["first_name"]);
             _adapterHelper.Update(id, lastName, firstName);
         }
     }

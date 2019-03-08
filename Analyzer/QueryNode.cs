@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Analyzer
 {
@@ -36,24 +35,21 @@ namespace Analyzer
             if (Items.Count > 0)
             {
                 var result = Items[0].Result;
-                for (int i = 0; i < Items.Count; i++)
+                for (var i = 0; i < Items.Count; i++)
                 {
                     var item = Items[i];
-                    if (item is QueryLeafOperation)
+                    if (!(item is QueryLeafOperation operation)) continue;
+                    switch (operation.Operation)
                     {
-                        var operation = item as QueryLeafOperation;
-                        switch (operation.Operation)
-                        {
-                            case string w when w == BooleanOperations.Conjunction:
-                                result = result.Intersect(Items[i + 1].Result).ToList();
-                                break;
-                            case string w when w == BooleanOperations.Disjunction:
-                                result.AddRange(Items[i + 1].Result);
-                                result.ToArray().Distinct().ToList();
-                                break;
-                            default:
-                                throw new Exception($"Operations {operation.Operation} not exist");
-                        }
+                        case string w when w == BooleanOperations.Conjunction:
+                            result = result.Intersect(Items[i + 1].Result).ToList();
+                            break;
+                        case string w when w == BooleanOperations.Disjunction:
+                            result.AddRange(Items[i + 1].Result);
+                            result.ToArray().Distinct().ToList();
+                            break;
+                        default:
+                            throw new Exception(string.Format(Properties.strings.ExOperationsNotExist,operation.Operation));
                     }
                 }
                 Result = result;

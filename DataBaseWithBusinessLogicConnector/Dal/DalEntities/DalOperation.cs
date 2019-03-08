@@ -1,7 +1,4 @@
 ﻿using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.DalEntities
 {
@@ -14,13 +11,13 @@ namespace DataBaseWithBusinessLogicConnector.Dal.DalEntities
         public decimal Amount { get; private set; }
         public int? TransactionTypeId { get; private set; }
         public int? TransferTypeId { get; private set; }
-        public int? FrequenceId { get; private set; }
+        public int? FrequencyId { get; private set; }
         public int? ImportanceId { get; private set; }
         public string Date { get; private set; }
         public string ReceiptPath { get; private set; }
 
 
-        public DalOperation(int? id, int? parentId, int? userId, string description, decimal amount, int? transactionTypeId, int? transferTypeId, int? frequenceId, int? importanceId, string date, string receiptPath)
+        public DalOperation(int? id, int? parentId, int? userId, string description, decimal amount, int? transactionTypeId, int? transferTypeId, int? frequencyId, int? importanceId, string date, string receiptPath)
         {
             Id = id;
             ParentId = parentId;
@@ -29,7 +26,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.DalEntities
             Amount = amount;
             TransactionTypeId = transactionTypeId;
             TransferTypeId = transferTypeId;
-            FrequenceId = frequenceId;
+            FrequencyId = frequencyId;
             ImportanceId = importanceId;
             Date = date;
             ReceiptPath = receiptPath;

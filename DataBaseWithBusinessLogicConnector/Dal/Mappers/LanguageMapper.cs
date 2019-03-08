@@ -1,9 +1,6 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Entities;
-using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
@@ -22,8 +19,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public Language ConvertToBusinessLogicEntity(DalLanguage dataEntity)
         {
-            var result = new Language(dataEntity.Id, dataEntity.ShortName, dataEntity.FullName);
-            result.IsDirty = false;
+            var result = new Language(dataEntity.Id, dataEntity.ShortName, dataEntity.FullName) {IsDirty = false};
             return result;
         }
 

@@ -1,7 +1,4 @@
 ﻿using DataBaseWithBusinessLogicConnector.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {

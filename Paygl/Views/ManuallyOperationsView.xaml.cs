@@ -20,7 +20,7 @@ namespace Paygl.Views
         private Operation _operation;
         private List<Tag> _selectedTags;
 
-        private ObservableRangeCollection<Frequence> _observableFrequencies;
+        private ObservableRangeCollection<Frequency> _observableFrequencies;
         private ObservableRangeCollection<Importance> _observableImportances;
         private ObservableRangeCollection<OperationsGroup> _observableGroups;
         private ObservableRangeCollection<Tag> _observableTags;
@@ -108,7 +108,7 @@ namespace Paygl.Views
         private void SetEditableControls()
         {
             _upDownAmount.Value = 0.00M;
-            _observableFrequencies = new ObservableRangeCollection<Frequence>(Service.Frequencies);
+            _observableFrequencies = new ObservableRangeCollection<Frequency>(Service.Frequencies);
             _cbFrequent.ItemsSource = _observableFrequencies;
             _observableImportances = new ObservableRangeCollection<Importance>(Service.Importances);
             _cbImportance.ItemsSource = _observableImportances;
@@ -136,9 +136,9 @@ namespace Paygl.Views
             _tbNewDescription.Text = _operation.Description;
             _labDate.Content = _operation.Date.ToString(Properties.strings.dateFormat);
             _upDownAmount.Value = _operation.Amount;
-            if (_operation.Frequence != null)
+            if (_operation.Frequency != null)
             {
-                _cbFrequent.SelectedItem = _observableFrequencies.First(f => f.Text == _operation.Frequence.Text);
+                _cbFrequent.SelectedItem = _observableFrequencies.First(f => f.Text == _operation.Frequency.Text);
             }
             if (_operation.Importance!=null)
             {
@@ -223,7 +223,7 @@ namespace Paygl.Views
 
         private void SetRelatedAttributes(OperationsGroup group)
         {
-            _labFrequence.Content = group.Frequence;
+            _labFrequence.Content = group.Frequency;
             _labImportance.Content = group.Importance;
             foreach (var item in group.Tags)
             {
@@ -259,7 +259,7 @@ namespace Paygl.Views
             if (_operation.Parent != null)
             {
                 _operation.SetImportance(_operation.Parent.Importance);
-                _operation.SetFrequence(_operation.Parent.Frequence);
+                _operation.SetFrequency(_operation.Parent.Frequency);
                 _operation.RemoveAllTags();
                 foreach (var item in _operation.Parent.Tags)
                 {
@@ -269,7 +269,7 @@ namespace Paygl.Views
             else
             {
                 _operation.SetImportance(_cbImportance.SelectedItem as Importance);
-                _operation.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+                _operation.SetFrequency(_cbFrequent.SelectedItem as Frequency);
                 _operation.RemoveAllTags();
                 foreach (var item in _selectedTags)
                 {
@@ -405,13 +405,13 @@ namespace Paygl.Views
             if (_operation.Parent != null)
             {
                 _operation.SetImportance(_operation.Parent.Importance);
-                _operation.SetFrequence(_operation.Parent.Frequence);
+                _operation.SetFrequency(_operation.Parent.Frequency);
                 UpdateOperationTags(_operation.Parent.Tags);
             }
             else
             {
                 _operation.SetImportance(_cbImportance.SelectedItem as Importance);
-                _operation.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+                _operation.SetFrequency(_cbFrequent.SelectedItem as Frequency);
                 UpdateOperationTags();
             }
 

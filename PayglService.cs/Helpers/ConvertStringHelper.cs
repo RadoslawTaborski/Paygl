@@ -5,7 +5,7 @@ namespace PayglService.cs.Helpers
 {
     public static class ConvertStringHelper
     {
-        public static Frequence ConvertToFrequency(string input, List<Frequence> frequencies)
+        public static Frequency ConvertToFrequency(string input, List<Frequency> frequencies)
         {
             foreach(var frequency in frequencies)
             {

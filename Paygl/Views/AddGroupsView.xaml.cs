@@ -20,7 +20,7 @@ namespace Paygl.Views
         private OperationsGroup _group;
         private List<Tag> _selectedTags;
 
-        private ObservableRangeCollection<Frequence> _observableFrequencies;
+        private ObservableRangeCollection<Frequency> _observableFrequencies;
         private ObservableRangeCollection<Importance> _observableImportances;
         private ObservableRangeCollection<Tag> _observableTags;
 
@@ -88,9 +88,9 @@ namespace Paygl.Views
 
             _tbNewDescription.Text = _group.Description;
             _labDate.Content = _group.Date.ToString(Properties.strings.dateFormat);
-            if (_group.Frequence != null)
+            if (_group.Frequency != null)
             {
-                _cbFrequent.SelectedItem = _observableFrequencies.First(f => f.Text == _group.Frequence.Text);
+                _cbFrequent.SelectedItem = _observableFrequencies.First(f => f.Text == _group.Frequency.Text);
             }
             if (_group.Importance != null)
             {
@@ -109,7 +109,7 @@ namespace Paygl.Views
 
         private void SetEditableControls()
         {
-            _observableFrequencies = new ObservableRangeCollection<Frequence>(Service.Frequencies);
+            _observableFrequencies = new ObservableRangeCollection<Frequency>(Service.Frequencies);
             _cbFrequent.ItemsSource = _observableFrequencies;
             _observableImportances = new ObservableRangeCollection<Importance>(Service.Importances);
             _cbImportance.ItemsSource = _observableImportances;
@@ -148,7 +148,7 @@ namespace Paygl.Views
         private void BtnManualAccept_Click(object sender, RoutedEventArgs e)
         {
             _group.SetImportance(_cbImportance.SelectedItem as Importance);
-            _group.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+            _group.SetFrequence(_cbFrequent.SelectedItem as Frequency);
             _group.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), Properties.strings.dateFormat, System.Globalization.CultureInfo.InvariantCulture));
             UpdateOperationsGroupTags();
             _group.SetDescription(_tbNewDescription.Text);
@@ -256,7 +256,7 @@ namespace Paygl.Views
         private void _btnEditAccept_Click(object sender, RoutedEventArgs e)
         {
             _group.SetImportance(_cbImportance.SelectedItem as Importance);
-            _group.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+            _group.SetFrequence(_cbFrequent.SelectedItem as Frequency);
             _group.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), Properties.strings.dateFormat, System.Globalization.CultureInfo.InvariantCulture));
             UpdateOperationsGroupTags();
             _group.SetDescription(_tbNewDescription.Text);

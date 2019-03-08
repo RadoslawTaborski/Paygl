@@ -1,35 +1,34 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class OperationAdapter : IAdapter<DalOperation>
     {
-        private readonly string TABLE = "operations";
-        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        private const string Table = "operations";
+
+        private readonly Dictionary<string, DataType> _columns = new Dictionary<string, DataType>
         {
-            ["id"] = DataType.INTEGER_NULLABLE,
-            ["parent_id"] = DataType.INTEGER_NULLABLE,
-            ["user_id"] = DataType.INTEGER_NULLABLE,
-            ["description"] = DataType.STRING,
-            ["amount"] = DataType.DECIMAL,
-            ["transfer_type_id"] = DataType.INTEGER_NULLABLE,
-            ["transaction_type_id"] = DataType.INTEGER_NULLABLE,
-            ["frequent_id"] = DataType.INTEGER_NULLABLE,
-            ["importance_id"] = DataType.INTEGER_NULLABLE,
-            ["date"] = DataType.STRING,
-            ["receipt_path"] = DataType.STRING,
+            ["id"] = DataType.IntegerNullable,
+            ["parent_id"] = DataType.IntegerNullable,
+            ["user_id"] = DataType.IntegerNullable,
+            ["description"] = DataType.String,
+            ["amount"] = DataType.Decimal,
+            ["transfer_type_id"] = DataType.IntegerNullable,
+            ["transaction_type_id"] = DataType.IntegerNullable,
+            ["frequent_id"] = DataType.IntegerNullable,
+            ["importance_id"] = DataType.IntegerNullable,
+            ["date"] = DataType.String,
+            ["receipt_path"] = DataType.String,
         };
 
-        private AdapterHelper _adapterHelper;
+        private readonly AdapterHelper _adapterHelper;
 
         public OperationAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
+            _adapterHelper = new AdapterHelper(connector, Table, _columns.Keys.ToList());
         }
 
         public void Delete(DalOperation entity)
@@ -73,34 +72,34 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         public int Insert(DalOperation entity)
         {
-            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var parentId = _adapterHelper.ToStr(entity.ParentId, COLUMNS["parent_id"]);
-            var userId = _adapterHelper.ToStr(entity.UserId, COLUMNS["user_id"]);
-            var description = _adapterHelper.ToStr(entity.Description, COLUMNS["description"]);
-            var amount = _adapterHelper.ToStr(entity.Amount, COLUMNS["amount"]);
-            var transferTypeId = _adapterHelper.ToStr(entity.TransferTypeId, COLUMNS["transfer_type_id"]);
-            var transactionTypeId = _adapterHelper.ToStr(entity.TransactionTypeId, COLUMNS["transaction_type_id"]);
-            var frequenceId = _adapterHelper.ToStr(entity.FrequenceId, COLUMNS["frequent_id"]);
-            var importanceId = _adapterHelper.ToStr(entity.ImportanceId, COLUMNS["importance_id"]);
-            var date = _adapterHelper.ToStr(entity.Date, COLUMNS["date"]);
-            var receiptPath = _adapterHelper.ToStr(entity.ReceiptPath, COLUMNS["receipt_path"]);
-            return _adapterHelper.Insert(id, parentId,userId,description,amount,transferTypeId,transactionTypeId,frequenceId,importanceId,date,receiptPath);
+            var id = _adapterHelper.ToStr(entity.Id, _columns["id"]);
+            var parentId = _adapterHelper.ToStr(entity.ParentId, _columns["parent_id"]);
+            var userId = _adapterHelper.ToStr(entity.UserId, _columns["user_id"]);
+            var description = _adapterHelper.ToStr(entity.Description, _columns["description"]);
+            var amount = _adapterHelper.ToStr(entity.Amount, _columns["amount"]);
+            var transferTypeId = _adapterHelper.ToStr(entity.TransferTypeId, _columns["transfer_type_id"]);
+            var transactionTypeId = _adapterHelper.ToStr(entity.TransactionTypeId, _columns["transaction_type_id"]);
+            var frequencyId = _adapterHelper.ToStr(entity.FrequencyId, _columns["frequent_id"]);
+            var importanceId = _adapterHelper.ToStr(entity.ImportanceId, _columns["importance_id"]);
+            var date = _adapterHelper.ToStr(entity.Date, _columns["date"]);
+            var receiptPath = _adapterHelper.ToStr(entity.ReceiptPath, _columns["receipt_path"]);
+            return _adapterHelper.Insert(id, parentId,userId,description,amount,transferTypeId,transactionTypeId,frequencyId,importanceId,date,receiptPath);
         }
 
         public void Update(DalOperation entity)
         {
-            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var parentId = _adapterHelper.ToStr(entity.ParentId, COLUMNS["parent_id"]);
-            var userId = _adapterHelper.ToStr(entity.UserId, COLUMNS["user_id"]);
-            var description = _adapterHelper.ToStr(entity.Description, COLUMNS["description"]);
-            var amount = _adapterHelper.ToStr(entity.Amount, COLUMNS["amount"]);
-            var transferTypeId = _adapterHelper.ToStr(entity.TransferTypeId, COLUMNS["transfer_type_id"]);
-            var transactionTypeId = _adapterHelper.ToStr(entity.TransactionTypeId, COLUMNS["transaction_type_id"]);
-            var frequenceId = _adapterHelper.ToStr(entity.FrequenceId, COLUMNS["frequent_id"]);
-            var importanceId = _adapterHelper.ToStr(entity.ImportanceId, COLUMNS["importance_id"]);
-            var date = _adapterHelper.ToStr(entity.Date, COLUMNS["date"]);
-            var receiptPath = _adapterHelper.ToStr(entity.ReceiptPath, COLUMNS["receipt_path"]);
-            _adapterHelper.Update(id, id, parentId, userId, description, amount, transferTypeId, transactionTypeId, frequenceId, importanceId, date, receiptPath);
+            var id = _adapterHelper.ToStr(entity.Id, _columns["id"]);
+            var parentId = _adapterHelper.ToStr(entity.ParentId, _columns["parent_id"]);
+            var userId = _adapterHelper.ToStr(entity.UserId, _columns["user_id"]);
+            var description = _adapterHelper.ToStr(entity.Description, _columns["description"]);
+            var amount = _adapterHelper.ToStr(entity.Amount, _columns["amount"]);
+            var transferTypeId = _adapterHelper.ToStr(entity.TransferTypeId, _columns["transfer_type_id"]);
+            var transactionTypeId = _adapterHelper.ToStr(entity.TransactionTypeId, _columns["transaction_type_id"]);
+            var frequenceyId = _adapterHelper.ToStr(entity.FrequencyId, _columns["frequent_id"]);
+            var importanceId = _adapterHelper.ToStr(entity.ImportanceId, _columns["importance_id"]);
+            var date = _adapterHelper.ToStr(entity.Date, _columns["date"]);
+            var receiptPath = _adapterHelper.ToStr(entity.ReceiptPath, _columns["receipt_path"]);
+            _adapterHelper.Update(id, id, parentId, userId, description, amount, transferTypeId, transactionTypeId, frequenceyId, importanceId, date, receiptPath);
         }
     }
 }

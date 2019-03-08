@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Importer
 {
@@ -11,7 +9,7 @@ namespace Importer
             switch (type)
             {
                 case "ING":
-                    return new INGFactory();
+                    return new IngFactory();
                 default:
                     throw new NotImplementedException();
             }

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Analyzer
 {
     public static class KeyWords
     {
-        public static List<string> List = new List<string> { "Frequence", "Importance", "Tags", "TransactionType", "Name", "TransferType" };
+        public static List<string> List = new List<string> { "Frequency", "Importance", "Tags", "TransactionType", "Name", "TransferType" };
         public static Dictionary<string, string> OperationProperty = new Dictionary<string, string>
         {
-            ["Frequence"] = "Frequence",
+            ["Frequency"] = "Frequency",
             ["Importance"] = "Importance",
             ["Tags"] = "Tags",
             ["TransactionType"] = "TransactionType",

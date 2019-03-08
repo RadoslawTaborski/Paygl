@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace PayglService.Helpers.Serializers
+namespace PayglService.cs.Helpers.Serializers
 {
     public static class BinarySerializer<T>
     {

@@ -15,4 +15,28 @@
     <ProjectReference Include="..\DataBaseWithBusinessLogicConnector\DataBaseWithBusinessLogicConnector.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Properties\noTranslable.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>noTranslable.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\noTranslable.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>noTranslable.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

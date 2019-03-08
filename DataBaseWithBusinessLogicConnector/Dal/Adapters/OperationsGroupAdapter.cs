@@ -1,30 +1,29 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 {
     public class OperationsGroupAdapter : IAdapter<DalOperationsGroup>
     {
-        private readonly string TABLE = "operations_groups";
-        private readonly Dictionary<string, DataType> COLUMNS = new Dictionary<string, DataType>
+        private const string Table = "operations_groups";
+
+        private readonly Dictionary<string, DataType> _columns = new Dictionary<string, DataType>
         {
-            ["id"] = DataType.INTEGER_NULLABLE,
-            ["user_id"] = DataType.INTEGER_NULLABLE,
-            ["description"] = DataType.STRING,
-            ["frequent_id"] = DataType.INTEGER_NULLABLE,
-            ["importance_id"] = DataType.INTEGER_NULLABLE,
-            ["date"] = DataType.STRING,
+            ["id"] = DataType.IntegerNullable,
+            ["user_id"] = DataType.IntegerNullable,
+            ["description"] = DataType.String,
+            ["frequent_id"] = DataType.IntegerNullable,
+            ["importance_id"] = DataType.IntegerNullable,
+            ["date"] = DataType.String,
         };
 
-        private AdapterHelper _adapterHelper;
+        private readonly AdapterHelper _adapterHelper;
 
         public OperationsGroupAdapter(DbConnector connector)
         {
-            _adapterHelper = new AdapterHelper(connector, TABLE, COLUMNS.Keys.ToList());
+            _adapterHelper = new AdapterHelper(connector, Table, _columns.Keys.ToList());
         }
 
         public void Delete(DalOperationsGroup entity)
@@ -66,24 +65,24 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
 
         public int Insert(DalOperationsGroup entity)
         {
-            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var userId = _adapterHelper.ToStr(entity.UserId, COLUMNS["user_id"]);
-            var description = _adapterHelper.ToStr(entity.Description, COLUMNS["description"]);
-            var frequenceId = _adapterHelper.ToStr(entity.FrequenceId, COLUMNS["frequent_id"]);
-            var importanceId = _adapterHelper.ToStr(entity.ImportanceId, COLUMNS["importance_id"]);
-            var date = _adapterHelper.ToStr(entity.Date, COLUMNS["date"]);
-            return _adapterHelper.Insert(id, userId, description, frequenceId, importanceId, date);
+            var id = _adapterHelper.ToStr(entity.Id, _columns["id"]);
+            var userId = _adapterHelper.ToStr(entity.UserId, _columns["user_id"]);
+            var description = _adapterHelper.ToStr(entity.Description, _columns["description"]);
+            var frequencyId = _adapterHelper.ToStr(entity.FrequencyId, _columns["frequent_id"]);
+            var importanceId = _adapterHelper.ToStr(entity.ImportanceId, _columns["importance_id"]);
+            var date = _adapterHelper.ToStr(entity.Date, _columns["date"]);
+            return _adapterHelper.Insert(id, userId, description, frequencyId, importanceId, date);
         }
 
         public void Update(DalOperationsGroup entity)
         {
-            var id = _adapterHelper.ToStr(entity.Id, COLUMNS["id"]);
-            var userId = _adapterHelper.ToStr(entity.UserId, COLUMNS["user_id"]);
-            var description = _adapterHelper.ToStr(entity.Description, COLUMNS["description"]);
-            var frequenceId = _adapterHelper.ToStr(entity.FrequenceId, COLUMNS["frequent_id"]);
-            var importanceId = _adapterHelper.ToStr(entity.ImportanceId, COLUMNS["importance_id"]);
-            var date = _adapterHelper.ToStr(entity.Date, COLUMNS["date"]);
-            _adapterHelper.Update(id, id, userId, description, frequenceId, importanceId, date);
+            var id = _adapterHelper.ToStr(entity.Id, _columns["id"]);
+            var userId = _adapterHelper.ToStr(entity.UserId, _columns["user_id"]);
+            var description = _adapterHelper.ToStr(entity.Description, _columns["description"]);
+            var frequencyId = _adapterHelper.ToStr(entity.FrequencyId, _columns["frequent_id"]);
+            var importanceId = _adapterHelper.ToStr(entity.ImportanceId, _columns["importance_id"]);
+            var date = _adapterHelper.ToStr(entity.Date, _columns["date"]);
+            _adapterHelper.Update(id, id, userId, description, frequencyId, importanceId, date);
         }
     }
 }

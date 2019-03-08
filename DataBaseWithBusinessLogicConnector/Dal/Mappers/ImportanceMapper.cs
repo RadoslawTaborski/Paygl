@@ -1,10 +1,6 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Entities;
-using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
@@ -23,8 +19,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public Importance ConvertToBusinessLogicEntity(DalImportance dataEntity)
         {
-            var result = new Importance(dataEntity.Id, dataEntity.Text);
-            result.IsDirty = false;
+            var result = new Importance(dataEntity.Id, dataEntity.Text) {IsDirty = false};
             return result;
         }
 

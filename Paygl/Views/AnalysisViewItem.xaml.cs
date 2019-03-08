@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using PayglService.cs.Models;
+using PayglService.Models;
 
 namespace Paygl.Views
 {
@@ -306,7 +306,7 @@ namespace Paygl.Views
             var borderDescription = CreateBorderWithLabel($"{operation.Description}");
             var borderTransactionType = CreateBorderWithLabel($"{operation.TransactionType}");
             var borderImportance = CreateBorderWithLabel($"{operation.Importance}");
-            var borderFrequence = CreateBorderWithLabel($"{operation.Frequence}");
+            var borderFrequence = CreateBorderWithLabel($"{operation.Frequency}");
             var button = new ButtonWithObject()
             {
                 Content = new Image

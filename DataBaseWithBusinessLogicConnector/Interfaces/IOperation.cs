@@ -1,7 +1,6 @@
 ﻿using DataBaseWithBusinessLogicConnector.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Interfaces
 {
@@ -9,7 +8,7 @@ namespace DataBaseWithBusinessLogicConnector.Interfaces
     {
         decimal Amount { get; }
         TransactionType TransactionType { get; }
-        Frequence Frequence { get; }
+        Frequency Frequency { get; }
         Importance Importance { get; }
         DateTime Date { get; }
         List<RelTag> Tags { get; }

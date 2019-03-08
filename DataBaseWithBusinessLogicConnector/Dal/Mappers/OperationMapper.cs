@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
@@ -13,12 +12,12 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
     {
         public List<OperationsGroup> _groups;
         public List<Importance> _importances;
-        public List<Frequence> _frequencies;
+        public List<Frequency> _frequencies;
         public List<TransactionType> _transactionTypes;
         public List<TransferType> _transferTypes;
         public User _user;
 
-        public void Update(User user, List<OperationsGroup> groups, List<Importance> importances, List<Frequence> frequencies, List<TransactionType> transactionTypes, List<TransferType> transferTypes)
+        public void Update(User user, List<OperationsGroup> groups, List<Importance> importances, List<Frequency> frequencies, List<TransactionType> transactionTypes, List<TransferType> transferTypes)
         {
             _user = user;
             _groups = groups;
@@ -41,14 +40,13 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public Operation ConvertToBusinessLogicEntity(DalOperation dataEntity)
         {
-            var group = dataEntity.ParentId != null?_groups.Where(o => o.Id == dataEntity.ParentId).First():null;
-            var transaction = _transactionTypes.Where(t => t.Id == dataEntity.TransactionTypeId).First();
-            var transfer = _transferTypes.Where(t => t.Id == dataEntity.TransferTypeId).First();
-            var importance = _importances.Where(i => i.Id == dataEntity.ImportanceId).First();
-            var frequence = _frequencies.Where(f => f.Id == dataEntity.FrequenceId).First();
-            CultureInfo culture = new CultureInfo("pl-PL");
-            DateTime tempDate = Convert.ToDateTime(dataEntity.Date, culture);
-            var result = new Operation(dataEntity.Id, group, _user, dataEntity.Description, dataEntity.Amount, transaction,transfer,frequence,importance,tempDate,dataEntity.ReceiptPath);
+            var group = dataEntity.ParentId != null?_groups.First(o => o.Id == dataEntity.ParentId):null;
+            var transaction = _transactionTypes.First(t => t.Id == dataEntity.TransactionTypeId);
+            var transfer = _transferTypes.First(t => t.Id == dataEntity.TransferTypeId);
+            var importance = _importances.First(i => i.Id == dataEntity.ImportanceId);
+            var frequency = _frequencies.First(f => f.Id == dataEntity.FrequencyId);
+            var tempDate = DateTime.ParseExact(dataEntity.Date, Properties.strings.dateFullFormat, CultureInfo.CurrentCulture);
+            var result = new Operation(dataEntity.Id, group, _user, dataEntity.Description, dataEntity.Amount, transaction,transfer,frequency,importance,tempDate,dataEntity.ReceiptPath);
             result.IsDirty = false;
             return result;
         }
@@ -66,11 +64,11 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public DalOperation ConvertToDALEntity(Operation businessEntity)
         {
-            if (businessEntity == null || businessEntity.User==null || businessEntity.TransactionType == null || businessEntity.TransferType == null || businessEntity.Frequence==null || businessEntity.Importance == null)
+            if (businessEntity?.User == null || businessEntity.TransactionType == null || businessEntity.TransferType == null || businessEntity.Frequency==null || businessEntity.Importance == null)
             {
-                throw new ArgumentException("wrong parameters");
+                throw new ArgumentException(Properties.strings.ExWrongParameters);
             }
-            var result = new DalOperation(businessEntity.Id,businessEntity.Parent?.Id, businessEntity.User.Id, businessEntity.Description, businessEntity.Amount, businessEntity.TransactionType.Id,businessEntity.TransferType.Id,businessEntity.Frequence.Id,businessEntity.Importance.Id,businessEntity.Date.ToString("yyyy-MM-dd"),businessEntity.ReceiptPath);
+            var result = new DalOperation(businessEntity.Id,businessEntity.Parent?.Id, businessEntity.User.Id, businessEntity.Description, businessEntity.Amount, businessEntity.TransactionType.Id,businessEntity.TransferType.Id,businessEntity.Frequency.Id,businessEntity.Importance.Id,businessEntity.Date.ToString("yyyy-MM-dd"),businessEntity.ReceiptPath);
             return result;
         }
     }

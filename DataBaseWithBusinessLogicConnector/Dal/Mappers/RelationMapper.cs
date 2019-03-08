@@ -1,10 +1,7 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Entities;
-using DataBaseWithBusinessLogicConnector.Interfaces.Dal;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
@@ -12,8 +9,6 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
     {
         public List<Operation> _operations;
         public List<Tag> _tags;
-
-        public RelationMapper(){}
 
         public void Update(List<Operation> operations, List<Tag> tags)
         {
@@ -36,8 +31,8 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public (RelTag, RelOperation) ConvertToBusinessLogicEntity(DalOperationTags dataEntity)
         {
-            var result1 = new RelTag(dataEntity.Id, _tags.Where(t=>t.Id==dataEntity.TagId).First(), dataEntity.OperationId);
-            var result2 = new RelOperation(dataEntity.Id, _operations.Where(o => o.Id == dataEntity.OperationId).First(), dataEntity.TagId);
+            var result1 = new RelTag(dataEntity.Id, _tags.First(t => t.Id==dataEntity.TagId), dataEntity.OperationId);
+            var result2 = new RelOperation(dataEntity.Id, _operations.First(o => o.Id == dataEntity.OperationId), dataEntity.TagId);
             result1.IsDirty = false;
             result2.IsDirty = false;
             return (result1,result2);

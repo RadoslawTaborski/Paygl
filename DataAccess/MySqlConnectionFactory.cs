@@ -7,7 +7,7 @@ namespace DataAccess
     /// <summary>
     /// MySqlConnectionFactory Class create MySql instances of connections.
     /// </summary>
-    /// <seealso cref="NgramAnalyzer.Interfaces.IDataBaseManagerFactory" />
+    /// <seealso cref="DataAccess.Interfaces.IDataBaseManagerFactory" />
     public class MySqlConnectionFactory : IDataBaseManagerFactory
     {
         #region FIELDS

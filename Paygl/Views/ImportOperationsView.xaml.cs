@@ -24,7 +24,7 @@ namespace Paygl.Views
     {
         private List<Tag> _selectedTags;
 
-        private ObservableRangeCollection<Frequence> _observableFrequencies;
+        private ObservableRangeCollection<Frequency> _observableFrequencies;
         private ObservableRangeCollection<Importance> _observableImportances;
         private ObservableRangeCollection<OperationsGroup> _observableGroups;
         private ObservableRangeCollection<Tag> _observableTags;
@@ -68,7 +68,7 @@ namespace Paygl.Views
 
         private void SetStandardEditableControls()
         {
-            _observableFrequencies = new ObservableRangeCollection<Frequence>(Service.Frequencies);
+            _observableFrequencies = new ObservableRangeCollection<Frequency>(Service.Frequencies);
             _cbFrequent.ItemsSource = _observableFrequencies;
             _observableImportances = new ObservableRangeCollection<Importance>(Service.Importances);
             _cbImportance.ItemsSource = _observableImportances;
@@ -88,7 +88,7 @@ namespace Paygl.Views
         {
             var group = _cbRelated.SelectedItem as OperationsGroup;
 
-            _labFrequence.Content = group?.Frequence;
+            _labFrequence.Content = group?.Frequency;
             _labImportance.Content = group?.Importance;
             if (group?.Tags == null) return;
             foreach (var item in group.Tags)
@@ -192,7 +192,7 @@ namespace Paygl.Views
 
         private void Show(Operation operation)
         {
-            Frequence frequence = null;
+            Frequency frequency = null;
             if (operation!=null)
             {
                 ResetStandardEditableControls();
@@ -201,16 +201,16 @@ namespace Paygl.Views
                 _tbNewDescription.Text = operation.ShortDescription;
                 _labDate.Content = operation.Date.ToString(Properties.strings.dateFormat);
                 _labAmount.Content = operation.Amount;
-                if (operation.Frequence != null)
+                if (operation.Frequency != null)
                 {
-                    frequence = _observableFrequencies.First(f => f.Text == operation.Frequence.Text);
+                    frequency = _observableFrequencies.First(f => f.Text == operation.Frequency.Text);
                 }
                 Importance importance = null;
-                if (operation.Frequence != null)
+                if (operation.Frequency != null)
                 {
                     importance = _observableImportances.First(i => i.Text == operation.Importance.Text);
                 }
-                _cbFrequent.SelectedItem =  frequence;
+                _cbFrequent.SelectedItem =  frequency;
                 _cbImportance.SelectedItem = importance;
                 _labTransaction.Content = operation.TransactionType.Text;
                 _labTransfer.Content = operation.TransferType.Text;
@@ -309,7 +309,7 @@ namespace Paygl.Views
             if (operation.Parent != null)
             {
                 operation.SetImportance(operation.Parent.Importance);
-                operation.SetFrequence(operation.Parent.Frequence);
+                operation.SetFrequency(operation.Parent.Frequency);
                 operation.RemoveAllTags();
                 foreach (var item in operation.Parent.Tags)
                 {
@@ -319,7 +319,7 @@ namespace Paygl.Views
             else
             {
                 operation.SetImportance(_cbImportance.SelectedItem as Importance);
-                operation.SetFrequence(_cbFrequent.SelectedItem as Frequence);
+                operation.SetFrequency(_cbFrequent.SelectedItem as Frequency);
                 operation.RemoveAllTags();
                 foreach (var item in _selectedTags)
                 {
@@ -399,7 +399,7 @@ namespace Paygl.Views
                 operation.SetTransaction(currentOperation.TransactionType);
                 operation.SetTransfer(currentOperation.TransferType);
                 operation.SetDate(currentOperation.Date);
-                operation.SetFrequence(currentOperation.Frequence);
+                operation.SetFrequency(currentOperation.Frequency);
                 operation.SetImportance(currentOperation.Importance);
                 operation.SetTags(currentOperation.Tags);
                 operation.SetTransfer(currentOperation.TransferType);
