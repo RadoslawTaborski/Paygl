@@ -1,27 +1,19 @@
-﻿using DataAccess;
-using DataBaseWithBusinessLogicConnector;
-using DataBaseWithBusinessLogicConnector.Dal.Adapters;
-using DataBaseWithBusinessLogicConnector.Dal.Mappers;
-using DataBaseWithBusinessLogicConnector.Entities;
+﻿using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Interfaces;
-using Importer;
 using Paygl.Models;
 using PayglService.cs;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Button = System.Windows.Controls.Button;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using Label = System.Windows.Controls.Label;
+using Orientation = System.Windows.Controls.Orientation;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace Paygl.Views
 {
@@ -58,11 +50,10 @@ namespace Paygl.Views
             SetNavigateButtonVisibility(Visibility.Hidden);
 
             ViewsMemory.AddImportingOperations(Service.Import());
-            if (ViewsMemory.CurrentOperation()!=null)
-            {
-                SetNavigateButtonVisibility(Visibility.Visible);
-                Show(ViewsMemory.CurrentOperation());
-            }
+            if (ViewsMemory.CurrentOperation() == null) return;
+
+            SetNavigateButtonVisibility(Visibility.Visible);
+            Show(ViewsMemory.CurrentOperation());
         }
 
         private void AddedParameterEvent(IParameter added)
@@ -459,5 +450,19 @@ namespace Paygl.Views
             }
         }
         #endregion
+
+        private void _btnGroup_Click(object sender, RoutedEventArgs e)
+        {
+            var uc =new AddGroupsView();
+            ViewManager.AddUserControl(uc);
+            ViewManager.OpenUserControl(uc);
+        }
+
+        private void _btnManual_Click(object sender, RoutedEventArgs e)
+        {
+            var uc = new ManuallyOperationsView();
+            ViewManager.AddUserControl(uc);
+            ViewManager.OpenUserControl(uc);
+        }
     }
 }

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:resources="clr-namespace:Paygl.Properties"
              xmlns:local="clr-namespace:Paygl.Views"
              mc:Ignorable="d" 
              d:DesignHeight="564" d:DesignWidth="928">
@@ -32,8 +33,8 @@
                     <RowDefinition Height="42" />
                     <RowDefinition Height="60" />
                 </Grid.RowDefinitions>
-                <Label Style="{StaticResource MyLabel}" Content="Opis:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="0" Margin="0,0,0,0"/>
-                <Label Style="{StaticResource MyLabel}" Content="Nowy opis:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0"/>
+                <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblDescription}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="0" Margin="0,0,0,0"/>
+                <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblNewDescription}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0"/>
                 <Label Style="{StaticResource MyLabel}" Content="Kwota:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="2" Margin="0,0,0,0"/>
                 <Label Style="{StaticResource MyLabel}" Content="Data:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="3" Margin="0,0,0,0"/>
                 <Label Style="{StaticResource MyLabel}" Content="Częstotliwość:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="4" Margin="0,0,0,0"/>
@@ -58,6 +59,8 @@
                 <Label Style="{StaticResource MyLabel}" x:Name="_labTransaction" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="7"/>
                 <Label Style="{StaticResource MyLabel}" x:Name="_labTransfer" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="8"/>
                 <ComboBox x:Name="_cbRelated" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="500" Height="40" Grid.Column="1" Grid.Row="9" SelectionChanged="CbRelated_SelectionChanged"/>
+                <Button x:Name="_btnManual" Style="{StaticResource MyButton}" Content="M" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Click="_btnManual_Click"/>
+                <Button x:Name="_btnGroup" Style="{StaticResource MyButton}" Content="G" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Margin="30,0,0,0" Click="_btnGroup_Click"/>
             </Grid>
             <Grid Margin="10,10,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
                 <Grid.ColumnDefinitions>

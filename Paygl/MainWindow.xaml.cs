@@ -1,22 +1,16 @@
-﻿using Paygl;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Paygl.Views;
-using DataAccess;
-using DataBaseWithBusinessLogicConnector;
-using DataBaseWithBusinessLogicConnector.Dal.Adapters;
-using DataBaseWithBusinessLogicConnector.Entities;
-using DataBaseWithBusinessLogicConnector.Dal.Mappers;
-using MySql.Data.MySqlClient;
 using System.Windows.Markup;
 using PayglService.cs;
+using System.Globalization;
+using System.Threading;
 
 namespace Paygl
 {
@@ -26,7 +20,7 @@ namespace Paygl
     /// <summary>
     /// Interaction logic for Message.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         #region FIELDS
 
@@ -36,6 +30,8 @@ namespace Paygl
 
         private static Button _btnView;
         private static UserControl _selectedView;
+        private static UserControl _previousView;
+        private List<UserControl> _views;
         private static Button _btnAnalyse;
 
         private static ItemsControl _icOperationsButtons;
@@ -49,13 +45,13 @@ namespace Paygl
         private static Button _btnFilters;
         private static Button _btnAnalysisManager;
 
-        private List<UserControl> _views;
         #endregion
 
         #region CONSTRUCTORS
         public MainWindow()
         {
             InitializeComponent();
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("pl-PL");
             ViewManager.SetMainWindow(this);
         }
         #endregion
@@ -71,7 +67,7 @@ namespace Paygl
                 ConfigurationManager.ReadConfig("./configuration.json");
                 Service.SetService();
                 var menuButtons = new List<Button>();
-                _btnView = CreateButton("btnOperations", "Operacje", MENU_BUTTON_HEIGHT, btnOperations_Click);
+                _btnView = CreateButton("btnOperations", Properties.strings._btnTransactions, MENU_BUTTON_HEIGHT, btnOperations_Click);
                 _btnAnalyse = CreateButton("btnAnalyse", "Analiza", MENU_BUTTON_HEIGHT, btnAnalyse_Click);
                 menuButtons.Add(_btnView);
                 menuButtons.Add(_btnAnalyse);
@@ -86,7 +82,7 @@ namespace Paygl
                 b1Buttons.Add(_btnAddManually);
                 b1Buttons.Add(_btnAddGroups);
                 b1Buttons.Add(_btnShowOperations);
-                _icOperationsButtons.ItemsSource = b1Buttons;
+                if (_icOperationsButtons != null) _icOperationsButtons.ItemsSource = b1Buttons;
 
                 _icAnalyseButtons = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
                 var b2Buttons = new List<Button>();
@@ -98,7 +94,7 @@ namespace Paygl
                 b2Buttons.Add(_btnAnalysis);
                 b2Buttons.Add(_btnFilters);
                 b2Buttons.Add(_btnAnalysisManager);
-                _icAnalyseButtons.ItemsSource = b2Buttons;
+                if (_icAnalyseButtons != null) _icAnalyseButtons.ItemsSource = b2Buttons;
             }
             catch (Exception ex)
             {
@@ -380,18 +376,18 @@ namespace Paygl
         private void MouseLeave_Event(object sender, MouseEventArgs e)
         {
             var button = (ButtonWithObject)sender;
-            (button.Context as Label).Foreground = (Brush)FindResource("MyAzure");
+            ((Label) button.Context).Foreground = (Brush)FindResource("MyAzure");
         }
 
         private void MouseEnter_Event(object sender, MouseEventArgs e)
         {
             var button = (ButtonWithObject)sender;
-            (button.Context as Label).Foreground = (Brush)FindResource("MyDarkGrey");
+            ((Label) button.Context).Foreground = (Brush)FindResource("MyDarkGrey");
         }
 
         public void AddUserControl(UserControl uc)
         {
-            if (_views.Any(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName))
+            if (_views.Any(u => (u as IRepresentative)?.RepresentativeName == (uc as IRepresentative)?.RepresentativeName))
             {
                 return;
             }
@@ -400,14 +396,15 @@ namespace Paygl
 
         public void OpenUserControl(UserControl uc)
         {
-            _selectedView = _views.Where(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName).FirstOrDefault();
+            _previousView = _selectedView;
+            _selectedView = _views.FirstOrDefault(u => (u as IRepresentative)?.RepresentativeName == (uc as IRepresentative)?.RepresentativeName);
             brdMain.Child = _selectedView;
             UpdateViewBar(_selectedView);
         }
 
         public void RemoveUserControl(UserControl uc)
         {
-            var userControl = _views.Where(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName).First();
+            var userControl = _views.First(u => (u as IRepresentative)?.RepresentativeName == (uc as IRepresentative)?.RepresentativeName);
             _views.Remove(userControl);
         }
 
@@ -416,21 +413,15 @@ namespace Paygl
             _viewBarStockPanel.Children.Clear();
 
             foreach (var item in _views)
-            {           
-                if ((item as IRepresentative).RepresentativeName == (selected as IRepresentative).RepresentativeName)
-                {
-                    _btnView = CreateViewBarButton($"btn{item.ToString()}", (item as IRepresentative).RepresentativeName, VIEWBAR_BUTTON_WIDTH, item, true, BtnView_Click);
-                } else
-                {
-                    _btnView = CreateViewBarButton($"btn{item.ToString()}", (item as IRepresentative).RepresentativeName, VIEWBAR_BUTTON_WIDTH, item, false, BtnView_Click);
-                }
+            {
+                _btnView = CreateViewBarButton($"btn{item}", (item as IRepresentative)?.RepresentativeName, VIEWBAR_BUTTON_WIDTH, item, (item as IRepresentative)?.RepresentativeName == (selected as IRepresentative)?.RepresentativeName, BtnView_Click);
                 _viewBarStockPanel.Children.Add(_btnView);
             }
         }
 
         private void BtnView_Click(object sender, RoutedEventArgs e)
         {
-            var uc = (sender as ButtonWithObject).Object as UserControl;
+            var uc = (sender as ButtonWithObject)?.Object as UserControl;
             OpenUserControl(uc);
         }
 
@@ -438,7 +429,7 @@ namespace Paygl
 
         private ButtonWithObject CreateCloseButton(object uc)
         {
-            var newbutton = new ButtonWithObject
+            var newButton = new ButtonWithObject
             {
                 Content = new Image
                 {
@@ -450,16 +441,16 @@ namespace Paygl
                 Height = 20,
                 VerticalContentAlignment = VerticalAlignment.Center,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
+                Style = (Style) FindResource("MyButton"),
             };
-            newbutton.Style = (Style)FindResource("MyButton");
-            newbutton.Click += RemoveFromBarView_Click;
+            newButton.Click += RemoveFromBarView_Click;
 
-            return newbutton;
+            return newButton;
         }
 
         private void RemoveFromBarView_Click(object sender, RoutedEventArgs e)
         {
-            var uc = (sender as ButtonWithObject).Object as UserControl;
+            var uc = (sender as ButtonWithObject)?.Object as UserControl;
             RemoveFromBarView(uc);
 
             e.Handled = true;
@@ -468,18 +459,20 @@ namespace Paygl
         public void RemoveFromBarView(UserControl uc)
         {
             RemoveUserControl(uc);
-            if ((_selectedView as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName)
+            if ((_selectedView as IRepresentative)?.RepresentativeName == (uc as IRepresentative)?.RepresentativeName)
             {
-                if (_views.Count() > 0)
-                {
-                    OpenUserControl(_views[0]);
-                }
-                else
-                {
-                    OpenUserControl(null);
-                }
+                OpenUserControl(_previousView);
+            }
+            if ((_previousView as IRepresentative)?.RepresentativeName == (uc as IRepresentative)?.RepresentativeName)
+            {
+                _previousView = _views.Any() ? _views[0] : null;
             }
             UpdateViewBar(_selectedView);
+        }
+
+        private void SecondMenu_MouseLeave(object sender, MouseEventArgs e)
+        {
+            SecondMenu.Visibility = Visibility.Hidden;
         }
     }
 }

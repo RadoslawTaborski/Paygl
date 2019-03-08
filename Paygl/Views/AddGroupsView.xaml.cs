@@ -72,7 +72,7 @@ namespace Paygl.Views
             }
             else
             {
-                RepresentativeName = "Dodaj manualnie";
+                RepresentativeName = "Dodaj grupę";
                 _btnManualClear.Visibility = Visibility.Visible;
                 _btnManualAccept.Visibility = Visibility.Visible;
                 _btnEditAccept.Visibility = Visibility.Hidden;

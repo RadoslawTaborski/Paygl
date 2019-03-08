@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:resources="clr-namespace:Paygl.Properties"
         xmlns:paygl="clr-namespace:Paygl"
         xmlns:views ="clr-namespace:Paygl.Views" 
         mc:Ignorable="d"
@@ -43,7 +44,7 @@
                 <UserControl x:Name="MainControl"/>
             </Border>
 
-            <Border x:Name="SecondMenu" Style="{StaticResource MyBorder}" BorderThickness="1" Margin="-20,54,50,20" Grid.Row="0" Grid.Column="1" >
+            <Border x:Name="SecondMenu" Style="{StaticResource MyBorder}" BorderThickness="1" Margin="-20,54,50,20" Grid.Row="0" Grid.Column="1" MouseLeave="SecondMenu_MouseLeave">
                 <DockPanel>
                     <StackPanel x:Name="_secondStockPanel">
                         <ItemsControl x:Name="_secondPanel">

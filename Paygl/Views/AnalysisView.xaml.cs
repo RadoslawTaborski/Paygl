@@ -1,6 +1,4 @@
-﻿using DataBaseWithBusinessLogicConnector.Entities;
-using DataBaseWithBusinessLogicConnector.Interfaces;
-using Paygl.Models;
+﻿using Paygl.Models;
 using PayglService.cs;
 using System;
 using System.Collections.Generic;
@@ -9,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace Paygl.Views
 {
@@ -21,7 +18,7 @@ namespace Paygl.Views
         private AnalysisViewItem _selectedView;
 
         private const int HEIGHT = 27;
-        public const int VIEWBAR_BUTTON_WIDTH = 100;
+        public const int ViewbarButtonWidth = 100;
 
         public string RepresentativeName { get; set; } = "Analiza";
 
@@ -76,7 +73,7 @@ namespace Paygl.Views
 
         private void _btnConfirm_Click(object sender, RoutedEventArgs e)
         {
-            _selectedView.Show(_tbFrom.Text, _tbTo.Text);
+            _views.ForEach(v=>v.Show(_tbFrom.Text, _tbTo.Text));
         }
 
         private void _btnCalendarFrom_Click(object sender, RoutedEventArgs e)
@@ -135,7 +132,7 @@ namespace Paygl.Views
 
             var grid = new Grid
             {
-                Width = VIEWBAR_BUTTON_WIDTH,
+                Width = ViewbarButtonWidth,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Background = (Brush)FindResource("Transparent"),
             };
@@ -171,13 +168,13 @@ namespace Paygl.Views
         private void MouseLeave_Event(object sender, MouseEventArgs e)
         {
             var button = (ButtonWithObject)sender;
-            (button.Context as Label).Foreground = (Brush)FindResource("MyAzure");
+            ((Label) button.Context).Foreground = (Brush)FindResource("MyAzure");
         }
 
         private void MouseEnter_Event(object sender, MouseEventArgs e)
         {
             var button = (ButtonWithObject)sender;
-            (button.Context as Label).Foreground = (Brush)FindResource("MyDarkGrey");
+            ((Label) button.Context).Foreground = (Brush)FindResource("MyDarkGrey");
         }
 
         public void AddUserControl(AnalysisViewItem uc)
@@ -191,31 +188,31 @@ namespace Paygl.Views
 
         public void OpenUserControl(UserControl uc)
         {
-            _selectedView = _views.Where(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName).FirstOrDefault();
+            _selectedView = _views.FirstOrDefault(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative)?.RepresentativeName);
             brdMain.Child = _selectedView;
             UpdateViewBar(_selectedView);
         }
 
         public void RemoveUserControl(UserControl uc)
         {
-            var userControl = _views.Where(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative).RepresentativeName).First();
+            var userControl = _views.First(u => (u as IRepresentative).RepresentativeName == (uc as IRepresentative)?.RepresentativeName);
             _views.Remove(userControl);
         }
 
         private void UpdateViewBar(UserControl selected)
         {
             _viewBarStockPanel.Children.Clear();
-            Button btnView;
 
             foreach (var item in _views)
             {
-                if ((item as IRepresentative).RepresentativeName == (selected as IRepresentative).RepresentativeName)
+                Button btnView;
+                if (((IRepresentative) item).RepresentativeName == (selected as IRepresentative)?.RepresentativeName)
                 {
-                    btnView = CreateViewBarButton($"btn{item.ToString()}", (item as IRepresentative).RepresentativeName, VIEWBAR_BUTTON_WIDTH, item, true, BtnView_Click);
+                    btnView = CreateViewBarButton($"btn{item.ToString()}", ((IRepresentative) item).RepresentativeName, ViewbarButtonWidth, item, true, BtnView_Click);
                 }
                 else
                 {
-                    btnView = CreateViewBarButton($"btn{item.ToString()}", (item as IRepresentative).RepresentativeName, VIEWBAR_BUTTON_WIDTH, item, false, BtnView_Click);
+                    btnView = CreateViewBarButton($"btn{item.ToString()}", ((IRepresentative) item).RepresentativeName, ViewbarButtonWidth, item, false, BtnView_Click);
                 }
                 _viewBarStockPanel.Children.Add(btnView);
             }
@@ -223,7 +220,7 @@ namespace Paygl.Views
 
         private void BtnView_Click(object sender, RoutedEventArgs e)
         {
-            var uc = (sender as ButtonWithObject).Object as UserControl;
+            var uc = (sender as ButtonWithObject)?.Object as UserControl;
             OpenUserControl(uc);
         }
 

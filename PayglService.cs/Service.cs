@@ -21,7 +21,7 @@ namespace PayglService.cs
 {
     public static class Service
     {
-        public static Settings2 settings;
+        public static PayglService.Models.Settings2 settings;
 
         #region Entities
         public static User User { get; private set; }
@@ -73,7 +73,7 @@ namespace PayglService.cs
 
         public static void SetService()
         {
-            settings = new Settings2();
+            settings = new PayglService.Models.Settings2();
 
             var dataBaseData = ConfigurationManager.DataBaseData();
             DbManager = new DatabaseManager(new MySqlConnectionFactory(), dataBaseData.Address, dataBaseData.Port, dataBaseData.Table, dataBaseData.Login, dataBaseData.Password);
@@ -318,17 +318,17 @@ namespace PayglService.cs
 
         public static void LoadSettings()
         {
-            var path = @"D:\Programowanie\C#\Paygl\Queries\settings";
+            var path = Directory.GetCurrentDirectory() + "\\settings"; // @"D:\Programowanie\C#\Paygl\Queries\settings";
             if (File.Exists(path))
             {
-                settings = BinarySerializer<Settings2>.Deserialize(path);
+                settings = BinarySerializer<PayglService.Models.Settings2>.Deserialize(path);
             }
         }
 
         public static void SaveSettings()
         {
-            var path = @"D:\Programowanie\C#\Paygl\Queries\settings";
-            BinarySerializer<Settings2>.Serialize(path, settings);
+            var path = Directory.GetCurrentDirectory() + "\\settings"; //@"D:\Programowanie\C#\Paygl\Queries\settings";
+            BinarySerializer<PayglService.Models.Settings2>.Serialize(path, settings);
         }
 
         public static void SetSettings(List<FiltersGroup> filtersGroups)
@@ -340,83 +340,6 @@ namespace PayglService.cs
         {
             settings.Filters = filters;
         }
-
-        public static List<KeyValuePair<string,QueryNode>> ReadQuery()
-        {
-            var result = new List<KeyValuePair<string, QueryNode>>();
-            string line;
-            var file = new StreamReader(@"D:\Programowanie\C#\Paygl\Queries\queries.txt"); //TODO: to file
-            while ((line = file.ReadLine()) != null)
-            {
-                var substrings = line.Split(':');
-                if (substrings.Count() != 2)
-                {
-                    throw new Exception("File with queries has wrong data");
-                }
-                if (substrings[1].IndexOf("TransferType") == -1)
-                {
-                    result.Add(new KeyValuePair<string, QueryNode>(substrings[0], Analyzer.Analyzer.StringToQuery(substrings[1])));
-                } else
-                {
-                    result.Add(new KeyValuePair<string, QueryNode>(substrings[0], Analyzer.Analyzer.StringToQuery(substrings[1], true)));
-                }
-            }
-
-            return result;
-        }
-
-        public static void SaveFilter(string name, string query)
-        {
-            var added = false;
-            string sourceFile = @"D:\Programowanie\C#\Paygl\Queries\queries.txt";
-            string destinationFile = @"D:\Programowanie\C#\Paygl\Queries\queries.txt";
-
-            // Read the old file.
-            string[] lines = File.ReadAllLines(sourceFile);
-
-            // Write the new file over the old file.
-            using (StreamWriter writer = new StreamWriter(destinationFile))
-            {
-                for (int currentLine = 1; currentLine <= lines.Length; ++currentLine)
-                {
-                    var line = lines[currentLine - 1];
-                    if (line.Split(':')[0] == name)
-                    {
-                        line = $"{name}: {query}";
-                        added = true;
-                    }
-                    writer.WriteLine(line);
-                }
-                if (!added)
-                {
-                    writer.WriteLine($"{name}: {query}");
-                }
-            }
-        }
-
-        public static void RemoveFilter(string name)
-        {
-            string sourceFile = @"D:\Programowanie\C#\Paygl\Queries\queries.txt";
-            string destinationFile = @"D:\Programowanie\C#\Paygl\Queries\queries.txt";
-
-            // Read the old file.
-            string[] lines = File.ReadAllLines(sourceFile);
-
-            // Write the new file over the old file.
-            using (StreamWriter writer = new StreamWriter(destinationFile))
-            {
-                for (int currentLine = 1; currentLine <= lines.Length; ++currentLine)
-                {
-                    var line = lines[currentLine - 1];
-                    if (line.Split(':')[0] == name)
-                    {
-                        continue;
-                    }
-                    writer.WriteLine(line);
-                }
-            }
-        }
-
         #region private
         #region Updates
 
