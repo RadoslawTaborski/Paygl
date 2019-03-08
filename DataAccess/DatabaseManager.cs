@@ -15,6 +15,7 @@ namespace DataAccess
         private IDbConnection _connectionDb;
         private IDbConnection _connectionServer;
         private readonly string _server;
+        private readonly string _port;
         private readonly string _database;
         private readonly string _uid;
         private readonly string _password;
@@ -30,9 +31,10 @@ namespace DataAccess
         /// <param name="database">The database name.</param>
         /// <param name="uid">The user name.</param>
         /// <param name="password">The password.</param>
-        public DatabaseManager(IDataBaseManagerFactory dbFactory, string server, string database, string uid, string password)
+        public DatabaseManager(IDataBaseManagerFactory dbFactory, string server, string port, string database, string uid, string password)
         {
             _server = server;
+            _port = port;
             _database = database;
             _uid = uid;
             _password = password;
@@ -141,10 +143,11 @@ namespace DataAccess
         #region PRIVATE
         private string InitializeDbString()
         {
-            return "SERVER=" + _server + ";" +
-                   "DATABASE=" + _database + ";" +
-                   "UID=" + _uid + ";" +
-                   "PASSWORD=" + _password + ";" +
+            return "Server=" + _server + ";" +
+                   "Port=" + _port + ";" +
+                   "Database=" + _database + ";" +
+                   "Uid=" + _uid + ";" +
+                   "Pwd=" + _password + ";" +
                    "SslMode=none; charset=utf8;" +
                    "Allow User Variables=True;";
         }
@@ -152,8 +155,9 @@ namespace DataAccess
         private string InitializeServerString()
         {
             return $@"Server={_server};
+                Port={_port};
                 User ID={_uid};
-                Password={_password};
+                Pwd={_password};
                 Pooling=false;
                 SslMode = none;
                 charset=utf8;

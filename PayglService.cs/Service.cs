@@ -76,7 +76,7 @@ namespace PayglService.cs
             settings = new Settings2();
 
             var dataBaseData = ConfigurationManager.DataBaseData();
-            DbManager = new DatabaseManager(new MySqlConnectionFactory(), dataBaseData.Address, dataBaseData.Table, dataBaseData.Login, dataBaseData.Password);
+            DbManager = new DatabaseManager(new MySqlConnectionFactory(), dataBaseData.Address, dataBaseData.Port, dataBaseData.Table, dataBaseData.Login, dataBaseData.Password);
             DbConnector = new DbConnector(DbManager);
 
             LanguageAdapter = new LanguageAdapter(DbConnector);

@@ -9,9 +9,10 @@
       "PathToImportFiles": "D:\\Programowanie\\C#\\Paygl\\Exports\\"
     },
     "DataBase": {
-      "Address": "localhost",
-      "Login": "root",
-      "Password": "",
+      "Address": "webapp.zapto.org",
+      "Port": "3306",
+      "Login": "rado",
+      "Password": "Ameba123",
       "Table": "paygl"
     },
     "Bank":  "ING"

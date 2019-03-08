@@ -21,6 +21,7 @@ namespace Paygl.Views
     {
         private List<Operation> _operations;
         private List<OperationsGroup> _operationsGroup;
+        private Filter _filter=null;
 
         private const int HEIGHT = 27;
 
@@ -56,6 +57,7 @@ namespace Paygl.Views
         public ShowOperations(Filter filter)
         {
             InitializeComponent();
+            _filter = filter;
             RepresentativeName = $"Edycja: {filter.Description}";
 
             Service.LoadAttributes();
@@ -89,6 +91,16 @@ namespace Paygl.Views
             _labName.Visibility = v;
             _tbName.Visibility = v;
             _btnSave.Visibility = v;
+            _btnSaveAs.Visibility = v;
+
+            if (v != Visibility.Visible) return;
+            var filter = ViewsMemory.Filters.FirstOrDefault(f => f.Description == _tbName.Text);
+            _btnSave.IsEnabled = filter != null;
+
+            if (string.IsNullOrWhiteSpace(_tbName.Text))
+            {
+                _btnSaveAs.IsEnabled = false;
+            }
         }
 
         private bool OperationHasTag(Operation operation, Tag tag)
@@ -152,6 +164,7 @@ namespace Paygl.Views
             }
             catch (Exception ex)
             {
+                SetVisibilityForSave(Visibility.Hidden);
                 var dialog = new MessageBox("Komunikat", "Zły format zapytania");
                 dialog.ShowDialog();
             }
@@ -485,6 +498,26 @@ namespace Paygl.Views
             return "ShowOperationsView";
         }
 
+        private void _btnSaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Show(_tbQuery.Text);
+                SetVisibilityForSave(Visibility.Hidden);
+            }
+            catch (Exception ex)
+            {
+                var dialog = new MessageBox("Komunikat", "Zły format zapytania");
+                dialog.ShowDialog();
+            }
+
+            ViewsMemory.Filters.Add(new Filter(_tbName.Text, _tbQuery.Text));
+
+            Service.SetSettings(ViewsMemory.Filters);
+            Service.SaveSettings();
+            ViewsMemory.ChangeInFilters?.Invoke();
+        }
+
         private void _btnSave_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -497,7 +530,13 @@ namespace Paygl.Views
                 var dialog = new MessageBox("Komunikat", "Zły format zapytania");
                 dialog.ShowDialog();
             }
-            ViewsMemory.Filters.Add(new Filter(_tbName.Text, _tbQuery.Text));
+
+            var filter = ViewsMemory.Filters.First(f => f.Description == _tbName.Text);
+
+            filter.SetDescription(_tbName.Text);
+            filter.SetQuery(_tbQuery.Text);
+           
+
             Service.SetSettings(ViewsMemory.Filters);
             Service.SaveSettings();
             ViewsMemory.ChangeInFilters?.Invoke();
@@ -515,6 +554,25 @@ namespace Paygl.Views
             var endDate = DateTime.ParseExact(_tbTo.Text, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
             _tbFrom.Text = endDate.AddDays(1).ToString("dd.MM.yyyy");
             _tbTo.Text = endDate.AddDays(1).AddMonths(1).AddDays(-1).ToString("dd.MM.yyyy");
+        }
+
+        private void _tbName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(_tbName.Text))
+            {
+                _btnSaveAs.IsEnabled = false;
+            }
+            else
+            {
+                _btnSaveAs.IsEnabled = !ViewsMemory.Filters.Select(f => f.Description).Contains(_tbName.Text);
+            }
+
+            _btnSave.IsEnabled = ViewsMemory.Filters.Select(f => f.Description).Contains(_tbName.Text);
+        }
+
+        private void _tbQuery_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SetVisibilityForSave(Visibility.Hidden);
         }
     }
 }

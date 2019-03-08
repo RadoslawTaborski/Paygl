@@ -14,12 +14,16 @@ namespace Importer
                 using (StreamReader sr = new StreamReader(path, System.Text.Encoding.GetEncoding(1250)))
                 {
                     string currentLine;
-                    var index = 0;
+                    var flag = false;
                     while ((currentLine = sr.ReadLine()) != null)
                     {
-                        if(index<19)
+                        if (currentLine.Contains("\"Data transakcji\";\"Data księgowania\";"))
                         {
-                            index++;
+                            flag = true;
+                            continue;
+                        }
+                        if(!flag)
+                        {
                             continue;
                         }
                         currentLine = currentLine.Replace("\"", "");
@@ -31,14 +35,11 @@ namespace Importer
                         }
 
                         var date = DateTime.ParseExact(cells[0], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                        if(cells[1]=="")
-                        {
-                            result.Add(new Transaction(date, cells[2], cells[3], cells[4], cells[5], cells[6], decimal.Parse(cells[10]), cells[11]));
-                        }
-                        else
-                        {
-                            result.Add(new Transaction(date, cells[2], cells[3], cells[4], cells[5], cells[6], decimal.Parse(cells[8]), cells[9]));
-                        }                  
+                        result.Add(cells[1] == ""
+                            ? new Transaction(date, cells[2], cells[3], cells[4], cells[5], cells[6],
+                                decimal.Parse(cells[10]), cells[11])
+                            : new Transaction(date, cells[2], cells[3], cells[4], cells[5], cells[6],
+                                decimal.Parse(cells[8]), cells[9]));
                     }
                 }
             }
