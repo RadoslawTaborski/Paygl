@@ -9,9 +9,8 @@
 //------------------------------------------------------------------------------
 
 namespace PayglService.cs.Properties {
-    using System;
-    
-    
+    using global::System;
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
