@@ -100,11 +100,6 @@
                             <ImageBrush ImageSource="./img/minimize.png"/>
                         </Button.Background>
                     </Button>
-                    <Button x:Name="MenuButton" Style="{StaticResource MyControlButton}" DockPanel.Dock="Right" HorizontalAlignment="Left" Margin="0,3,20,3" Click="MenuButton_Click" >
-                        <Button.Background>
-                            <ImageBrush ImageSource="./img/menu.png" />
-                        </Button.Background>
-                    </Button>
 
                     <TextBlock Style="{StaticResource MyTextBlock}" Margin="15,7,70,0" DockPanel.Dock="Left" Height="23">Paygl</TextBlock>
                 </DockPanel>

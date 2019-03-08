@@ -1,11 +1,6 @@
-﻿using Analyzer;
-using DataBaseWithBusinessLogicConnector.Entities;
-using DataBaseWithBusinessLogicConnector.Interfaces;
+﻿using DataBaseWithBusinessLogicConnector.Interfaces;
 using PayglService.Models;
-using System;
 using System.Collections.Generic;
-using PayglService.Models;
-using System.Text;
 
 namespace Paygl.Models
 {
@@ -36,7 +31,7 @@ namespace Paygl.Models
             Amount = decimal.Zero;
             foreach(var item in Operations)
             {
-                if (item.TransactionType.Text =="przychód")
+                if (item.TransactionType.Text ==Properties.strings.transactionTypeIncome)
                 {
                     Amount += item.Amount;
                 }

@@ -1,10 +1,6 @@
 ﻿using DataBaseWithBusinessLogicConnector.Interfaces;
 using PayglService.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paygl.Models
 {
@@ -21,9 +17,9 @@ namespace Paygl.Models
             Group.Items.Sort((x, y) => x.Value.CompareTo(y.Value));
             foreach (var item in group.Items)
             {
-                if (item.Key is Filter)
+                if (item.Key is Filter key)
                 {
-                    ListOfGroups.Add(new Group((Filter)item.Key, operations));
+                    ListOfGroups.Add(new Group(key, operations));
                 }
             }
         }

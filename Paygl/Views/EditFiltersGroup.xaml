@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:resources="clr-namespace:Paygl.Properties"
              xmlns:local="clr-namespace:Paygl.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -20,6 +21,6 @@
                 </StackPanel>
             </ScrollViewer>
         </Border>
-        <Button Name="_btnSave" Style="{StaticResource MyButton}" Content="Zapisz" Grid.Row="2" Click="_btnSave_Click"></Button>
+        <Button Name="_btnSave" Style="{StaticResource MyButton}" Content="{x:Static resources:strings._btnSave}" Grid.Row="2" Click="_btnSave_Click"></Button>
     </Grid>
 </UserControl>

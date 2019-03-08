@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:resources="clr-namespace:Paygl.Properties"
-             xmlns:local="clr-namespace:Paygl.Views"
              mc:Ignorable="d" 
              d:DesignHeight="564" d:DesignWidth="928">
     <Grid Style="{StaticResource MyGrid}">
@@ -35,14 +34,14 @@
                 </Grid.RowDefinitions>
                 <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblDescription}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="0" Margin="0,0,0,0"/>
                 <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblNewDescription}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0"/>
-                <Label Style="{StaticResource MyLabel}" Content="Kwota:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="2" Margin="0,0,0,0"/>
-                <Label Style="{StaticResource MyLabel}" Content="Data:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="3" Margin="0,0,0,0"/>
-                <Label Style="{StaticResource MyLabel}" Content="Częstotliwość:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="4" Margin="0,0,0,0"/>
-                <Label Style="{StaticResource MyLabel}" Content="Ważność:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="5" Margin="0,0,0,0"/>
-                <Label Style="{StaticResource MyLabel}" Content="Tagi:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="6" Margin="0,0,0,0"/>
-                <Label Style="{StaticResource MyLabel}" Content="Typ transakcji:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="7" Margin="0,0,0,0"/>
-                <Label Style="{StaticResource MyLabel}" Content="Typ transferu:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="8" Margin="0,0,0,0"/>
-                <Label Style="{StaticResource MyLabel}" Content="Powiązany z:" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="9" Margin="0,0,0,0"/>
+                <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblAmount}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="2" Margin="0,0,0,0"/>
+                <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblDate}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="3" Margin="0,0,0,0"/>
+                <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblFrequence}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="4" Margin="0,0,0,0"/>
+                <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblImportance}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="5" Margin="0,0,0,0"/>
+                <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblTags}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="6" Margin="0,0,0,0"/>
+                <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblTransactionType}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="7" Margin="0,0,0,0"/>
+                <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblTransferType}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="8" Margin="0,0,0,0"/>
+                <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblAssociatedWith}" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="9" Margin="0,0,0,0"/>
 
                 <TextBlock Style="{StaticResource MyTextBlock}" x:Name="_tbDescription" HorizontalAlignment="Stretch"  VerticalAlignment="Center" Margin="10,0,10,0" TextWrapping="Wrap" Text="" Grid.Column="1" Grid.Row="0"/>
                 <TextBox Style="{StaticResource MyTextBox}" x:Name="_tbNewDescription" HorizontalAlignment="Left"  VerticalAlignment="Center" Width="500" Margin="10,0,0,0" TextWrapping="Wrap" Text="" Grid.Column="1" Grid.Row="1"/>
@@ -70,13 +69,13 @@
                     <ColumnDefinition Width="5*"/>
                     <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnBack" Content="Wstecz" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="0" Click="BtnBack_Click"/>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnImportIgnore" Content="Ignoruj" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="BtnImportIgnore_Click" />
-                <Button Style="{StaticResource MyButton}" x:Name="_btnImportClone" Content="Rozdziel na 2 transakcje" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2" Click="BtnImportClone_Click"  />
-                <Button x:Name="btnCloneCancel" Style="{StaticResource ResourceKey=MyButton}" Content="Anuluj" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2" Click="BtnImportCloneCancel_Click"/>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnImportAccept" Content="Akceptuj" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="3" Click="BtnImportAccept_Click" />
-                <Button x:Name="btnClone" Style="{StaticResource ResourceKey=MyButton}" Content="Potwierdź" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="3" Click="BtnImportCloneAccept_Click"/>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnNext" Content="Dalej" Margin="5,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="4" Click="BtnNext_Click"/>
+                <Button Style="{StaticResource MyButton}" x:Name="_btnBack" Content="{x:Static resources:strings._btnBack}" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="0" Click="BtnBack_Click"/>
+                <Button Style="{StaticResource MyButton}" x:Name="_btnImportIgnore" Content="{x:Static resources:strings._btnIgnore}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="BtnImportIgnore_Click" />
+                <Button Style="{StaticResource MyButton}" x:Name="_btnImportClone" Content="{x:Static resources:strings._btnDivideIntoTwo}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2" Click="BtnImportClone_Click"  />
+                <Button x:Name="btnCloneCancel" Style="{StaticResource ResourceKey=MyButton}" Content="{x:Static resources:strings._btnCancel}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2" Click="BtnImportCloneCancel_Click"/>
+                <Button Style="{StaticResource MyButton}" x:Name="_btnImportAccept" Content="{x:Static resources:strings._btnAccept}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="3" Click="BtnImportAccept_Click" />
+                <Button x:Name="btnClone" Style="{StaticResource ResourceKey=MyButton}" Content="{x:Static resources:strings._btnConfirm}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="3" Click="BtnImportCloneAccept_Click"/>
+                <Button Style="{StaticResource MyButton}" x:Name="_btnNext" Content="{x:Static resources:strings._btnNext}" Margin="5,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="4" Click="BtnNext_Click"/>
             </Grid>
         </Grid>
     </Grid>

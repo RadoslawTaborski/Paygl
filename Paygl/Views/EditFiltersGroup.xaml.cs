@@ -1,46 +1,37 @@
 ﻿using Paygl.Models;
 using PayglService.cs;
 using PayglService.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Paygl.Views
 {
     /// <summary>
     /// Interaction logic for EditFiltersGroup.xaml
     /// </summary>
-    public partial class EditFiltersGroup : UserControl, IRepresentative
+    public partial class EditFiltersGroup : IRepresentative
     {
-        private const int HEIGHT = 27;
-        public string RepresentativeName { get; set; } = "";
-        List<CheckBoxWithObject> checkboxes = new List<CheckBoxWithObject>();
+        private const int RefHeight = 27;
+        public string RepresentativeName { get; set; }
+        private readonly List<CheckBoxWithObject> _checkboxes = new List<CheckBoxWithObject>();
         private FiltersGroup _filtersGroup;
-        private int _counter = 0;
+        private int _counter;
 
         public EditFiltersGroup()
         {
             InitializeComponent();
             var group = new FiltersGroup("");
-            RepresentativeName = "Dodawanie widoku";
+            RepresentativeName = Properties.strings.addFiltersGroupRN;
             Init(group);
         }
 
         public EditFiltersGroup(FiltersGroup group)
         {
             InitializeComponent();
-            RepresentativeName = $"Edycja: {group.Name}";
+            RepresentativeName = $"{Properties.strings.editFiltersGroupRN} {group.Name}";
             Init(group);
         }
 
@@ -52,22 +43,29 @@ namespace Paygl.Views
             _lblName.Text = group.Name;
             foreach (var item in group.Items)
             {
-                if (item.Key is FiltersGroup)
+                switch (item.Key)
                 {
-                    var tmp = checkboxes.Where(c => ((KeyValuePair<IFilter, int>)c.Object).Key is FiltersGroup && ((FiltersGroup)((KeyValuePair<IFilter, int>)c.Object).Key).Name == ((FiltersGroup)item.Key).Name).FirstOrDefault();
-                    if (tmp != null)
+                    case FiltersGroup _:
                     {
-                        tmp.IsChecked = true;
-                        tmp.Content = item.Value.ToString();
+                        var tmp = _checkboxes.FirstOrDefault(c => ((KeyValuePair<IFilter, int>)c.Object).Key is FiltersGroup && ((FiltersGroup)((KeyValuePair<IFilter, int>)c.Object).Key).Name == ((FiltersGroup)item.Key).Name);
+                        if (tmp != null)
+                        {
+                            tmp.IsChecked = true;
+                            tmp.Content = item.Value.ToString();
+                        }
+
+                        break;
                     }
-                }
-                else if (item.Key is Filter)
-                {
-                    var tmp = checkboxes.Where(c => ((KeyValuePair<IFilter,int>)c.Object).Key is Filter && ((Filter)((KeyValuePair<IFilter, int>)c.Object).Key).Description == ((Filter)item.Key).Description).FirstOrDefault();
-                    if (tmp != null)
+                    case Filter _:
                     {
-                        tmp.IsChecked = true;
-                        tmp.Content = item.Value.ToString();
+                        var tmp = _checkboxes.FirstOrDefault(c => ((KeyValuePair<IFilter,int>)c.Object).Key is Filter && ((Filter)((KeyValuePair<IFilter, int>)c.Object).Key).Description == ((Filter)item.Key).Description);
+                        if (tmp != null)
+                        {
+                            tmp.IsChecked = true;
+                            tmp.Content = item.Value.ToString();
+                        }
+
+                        break;
                     }
                 }
             }
@@ -80,7 +78,7 @@ namespace Paygl.Views
 
         private void LoadFiltersAndFiltersGroups()
         {
-            checkboxes.Clear();
+            _checkboxes.Clear();
             _spDisplay.Children.Clear();
 
             foreach (var elem in ViewsMemory.FiltersGroups)
@@ -97,9 +95,9 @@ namespace Paygl.Views
             }
         }
 
-        private UIElement FiltersGroupToStackPanel(KeyValuePair<IFilter, int> groupKV)
+        private UIElement FiltersGroupToStackPanel(KeyValuePair<IFilter, int> groupKv)
         {
-            var group = (FiltersGroup)groupKV.Key;
+            var group = (FiltersGroup)groupKv.Key;
             var result = new StackPanel
             {
                 Orientation = Orientation.Vertical,
@@ -108,11 +106,11 @@ namespace Paygl.Views
 
             var borderGroup = new Border
             {
-                Style = (Style)FindResource("MyBorderMedium"),
+                Style = (Style) FindResource("MyBorderMedium"),
                 BorderThickness = new Thickness(1, 1, 1, 1),
-                Height = HEIGHT,
+                Height = RefHeight,
+                Child = FiltersGroupHeaderToStackPanel(groupKv),
             };
-            borderGroup.Child = FiltersGroupHeaderToStackPanel(groupKV, result);
             result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, borderGroup.Child, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInFilter));
 
             var stackPanel = new StackPanel
@@ -124,9 +122,9 @@ namespace Paygl.Views
 
             foreach (var item in group.Items)
             {
-                if (item.Key is Filter)
+                if (item.Key is Filter key)
                 {
-                    stackPanel.Children.Add(FilterToBorder((Filter)item.Key));
+                    stackPanel.Children.Add(FilterToBorder(key));
                 }
             }
 
@@ -143,7 +141,7 @@ namespace Paygl.Views
             {
                 Style = (Style)FindResource("MyBorderMedium"),
                 BorderThickness = new Thickness(0, 0, 0, 0),
-                Height = HEIGHT - 5,
+                Height = RefHeight - 5,
                 Margin = new Thickness(10, 0, 0, 0),
             };
 
@@ -151,7 +149,7 @@ namespace Paygl.Views
             {
                 Style = (Style)FindResource("MyButtonLeft"),
                 Content = filter.Description,
-                Height = HEIGHT - 5,
+                Height = RefHeight - 5,
             };
 
             border.Child = button;
@@ -159,9 +157,9 @@ namespace Paygl.Views
             return border;
         }
 
-        private UIElement FilterToStackPanel(KeyValuePair<IFilter, int> filterKV)
+        private UIElement FilterToStackPanel(KeyValuePair<IFilter, int> filterKv)
         {
-            var filter = (Filter)filterKV.Key;
+            var filter = (Filter)filterKv.Key;
             var result = new StackPanel
             {
                 Orientation = Orientation.Vertical,
@@ -170,11 +168,11 @@ namespace Paygl.Views
 
             var borderGroup = new Border
             {
-                Style = (Style)FindResource("MyBorderMedium"),
+                Style = (Style) FindResource("MyBorderMedium"),
                 BorderThickness = new Thickness(1, 1, 1, 1),
-                Height = HEIGHT,
+                Height = RefHeight,
+                Child = FilterHeaderToStackPanel(filterKv),
             };
-            borderGroup.Child = FilterHeaderToStackPanel(filterKV, result);
             result.Children.Add(CreateButtonWithBorderContent(borderGroup, filter, borderGroup.Child, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInFilter));
 
             var stackPanel = new StackPanel
@@ -188,7 +186,7 @@ namespace Paygl.Views
             var editTextBox = new TextBox
             {
                 Style = (Style)FindResource("MyTextBox"),
-                Text = $"{filter.Description}: {filter.Query.ToString()}",
+                Text = $"{filter.Description}: {filter.Query}",
                 FontSize = 13,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Center,
@@ -206,34 +204,24 @@ namespace Paygl.Views
 
         private void ClickInFilter(object sender, RoutedEventArgs e)
         {
-            if (!(e.OriginalSource is CheckBoxWithObject))
+            if (e.OriginalSource is CheckBoxWithObject) return;
+
+            var button = sender as ButtonWithObject;
+            if (button?.Parent is StackPanel parent)
             {
-                var button = sender as ButtonWithObject;
-                var parameter = button.Object;
-                var stackPanel = button.Context as StackPanel;
-                var parent = button.Parent as StackPanel;
-                parent.Children[1].Visibility = parent.Children[1].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                parent.Children[1].Visibility = parent.Children[1].Visibility == Visibility.Visible
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
             }
         }
 
-        private void OpenEditMode(object sender, RoutedEventArgs e)
-        {
-            var button = (sender as ButtonWithObject);
-            var filter = button.Object as Filter;
-            var view = new ShowOperations(filter);
-            ViewManager.AddUserControl(view);
-            ViewManager.OpenUserControl(view);
-
-            e.Handled = true;
-        }
-
-        private UIElement FilterHeaderToStackPanel(KeyValuePair<IFilter,int> filter, StackPanel main)
+        private UIElement FilterHeaderToStackPanel(KeyValuePair<IFilter,int> filter)
         {
             var resultStackPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT,
+                Height = RefHeight,
             };
 
             var checkbox = new CheckBoxWithObject
@@ -246,7 +234,7 @@ namespace Paygl.Views
             checkbox.Checked += Checkbox_Checked;
             checkbox.Unchecked += Checkbox_Unchecked;
             var border = CreateBorderWithLabel(((Filter)filter.Key).Description);
-            checkboxes.Add(checkbox);
+            _checkboxes.Add(checkbox);
 
             resultStackPanel.Children.Add(checkbox);
             resultStackPanel.Children.Add(border);
@@ -254,13 +242,13 @@ namespace Paygl.Views
             return resultStackPanel;
         }
 
-        private UIElement FiltersGroupHeaderToStackPanel(KeyValuePair<IFilter,int> group, StackPanel main)
+        private UIElement FiltersGroupHeaderToStackPanel(KeyValuePair<IFilter,int> group)
         {
             var resultStackPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT,
+                Height = RefHeight,
             };
 
             var checkbox = new CheckBoxWithObject
@@ -273,7 +261,7 @@ namespace Paygl.Views
             checkbox.Checked += Checkbox_Checked;
             checkbox.Unchecked += Checkbox_Unchecked;
             var border = CreateBorderWithLabel(((FiltersGroup)group.Key).Name);
-            checkboxes.Add(checkbox);
+            _checkboxes.Add(checkbox);
 
             resultStackPanel.Children.Add(checkbox);
             resultStackPanel.Children.Add(border);
@@ -285,7 +273,7 @@ namespace Paygl.Views
         {
             _counter--;
             var checkbox = (CheckBoxWithObject)sender;
-            var tmp = checkboxes.Where(c => int.Parse((string)c.Content) > int.Parse((string)checkbox.Content));
+            var tmp = _checkboxes.Where(c => int.Parse((string)c.Content) > int.Parse((string)checkbox.Content));
             foreach(var item in tmp)
             {
                 item.Content = (int.Parse((string)item.Content) - 1).ToString();
@@ -311,13 +299,13 @@ namespace Paygl.Views
                     Content = text,
                     Style = (Style)FindResource("MyLabel"),
                     Margin = new Thickness(0, -5, 0, 0),
-                    Height = HEIGHT,
+                    Height = RefHeight,
                     VerticalAlignment = VerticalAlignment.Stretch,
                 },
                 BorderBrush = (SolidColorBrush)FindResource("MyLight"),
                 BorderThickness = new Thickness(0, 0, 1, 0),
                 Margin = new Thickness(0, 0, 0, 0),
-                Height = HEIGHT,
+                Height = RefHeight,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
         }
@@ -351,16 +339,16 @@ namespace Paygl.Views
         {
             _filtersGroup.SetName(_lblName.Text);
             _filtersGroup.Items.Clear();
-            foreach (var item in checkboxes)
+            foreach (var item in _checkboxes)
             {
-                if (item.IsChecked.Value == true)
+                if (item.IsChecked != null && item.IsChecked.Value)
                 {
                     var filter = ((KeyValuePair<IFilter,int>)item.Object).Key;
                     _filtersGroup.AddFilter(new KeyValuePair<IFilter, int>(filter, int.Parse((string)item.Content)));
                 }
             }
 
-            bool alreadyExist = ViewsMemory.FiltersGroups.Contains(_filtersGroup);
+            var alreadyExist = ViewsMemory.FiltersGroups.Contains(_filtersGroup);
             if (!alreadyExist)
             {
                 ViewsMemory.FiltersGroups.Add(_filtersGroup);

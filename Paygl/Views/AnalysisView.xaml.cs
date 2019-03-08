@@ -13,16 +13,15 @@ namespace Paygl.Views
     /// <summary>
     /// Interaction logic for ShowOperations.xaml
     /// </summary>
-    public partial class AnalysisView : UserControl, IRepresentative
+    public partial class AnalysisView : IRepresentative
     {
         private AnalysisViewItem _selectedView;
 
-        private const int HEIGHT = 27;
         public const int ViewbarButtonWidth = 100;
 
-        public string RepresentativeName { get; set; } = "Analiza";
+        public string RepresentativeName { get; set; } = Properties.strings.analyseRN;
 
-        private List<AnalysisViewItem> _views;
+        private readonly List<AnalysisViewItem> _views;
 
         public AnalysisView()
         {
@@ -41,13 +40,13 @@ namespace Paygl.Views
             if (Service.Operations.Count != 0)
             {
                 var endDate = Service.Operations.Last().Date;
-                _tbFrom.Text = endDate.AddMonths(-1).AddDays(1).ToString("dd.MM.yyyy");
-                _tbTo.Text = endDate.ToString("dd.MM.yyyy");
+                _tbFrom.Text = endDate.AddMonths(-1).AddDays(1).ToString(Properties.strings.dateFormat);
+                _tbTo.Text = endDate.ToString(Properties.strings.dateFormat);
             }
             else
             {
-                _tbFrom.Text = DateTime.Now.ToString("dd.MM.yyyy");
-                _tbTo.Text = DateTime.Now.ToString("dd.MM.yyyy");
+                _tbFrom.Text = DateTime.Now.ToString(Properties.strings.dateFormat);
+                _tbTo.Text = DateTime.Now.ToString(Properties.strings.dateFormat);
             }
 
             ChangeInSettings();
@@ -91,7 +90,7 @@ namespace Paygl.Views
             _borderCalendarFrom.Visibility = Visibility.Hidden;
             if (_calDateFrom.SelectedDate.HasValue)
             {
-                _tbFrom.Text = _calDateFrom.SelectedDate.Value.ToString("dd.MM.yyyy");
+                _tbFrom.Text = _calDateFrom.SelectedDate.Value.ToString(Properties.strings.dateFormat);
             }
             _borderCalendarFrom.Visibility = Visibility.Hidden;
         }
@@ -101,23 +100,23 @@ namespace Paygl.Views
             _borderCalendarTo.Visibility = Visibility.Hidden;
             if (_calDateTo.SelectedDate.HasValue)
             {
-                _tbTo.Text = _calDateTo.SelectedDate.Value.ToString("dd.MM.yyyy");
+                _tbTo.Text = _calDateTo.SelectedDate.Value.ToString(Properties.strings.dateFormat);
             }
             _borderCalendarTo.Visibility = Visibility.Hidden;
         }
 
         private void _btnBack_Click(object sender, RoutedEventArgs e)
         {
-            var endDate = DateTime.ParseExact(_tbTo.Text, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            _tbFrom.Text = endDate.AddDays(1).AddMonths(-2).ToString("dd.MM.yyyy");
-            _tbTo.Text = endDate.AddDays(1).AddMonths(-1).AddDays(-1).ToString("dd.MM.yyyy");
+            var endDate = DateTime.ParseExact(_tbTo.Text, Properties.strings.dateFormat, System.Globalization.CultureInfo.InvariantCulture);
+            _tbFrom.Text = endDate.AddDays(1).AddMonths(-2).ToString(Properties.strings.dateFormat);
+            _tbTo.Text = endDate.AddDays(1).AddMonths(-1).AddDays(-1).ToString(Properties.strings.dateFormat);
         }
 
         private void _btnNext_Click(object sender, RoutedEventArgs e)
         {
-            var endDate = DateTime.ParseExact(_tbTo.Text, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            _tbFrom.Text = endDate.AddDays(1).ToString("dd.MM.yyyy");
-            _tbTo.Text = endDate.AddDays(1).AddMonths(1).AddDays(-1).ToString("dd.MM.yyyy");
+            var endDate = DateTime.ParseExact(_tbTo.Text, Properties.strings.dateFormat, System.Globalization.CultureInfo.InvariantCulture);
+            _tbFrom.Text = endDate.AddDays(1).ToString(Properties.strings.dateFormat);
+            _tbTo.Text = endDate.AddDays(1).AddMonths(1).AddDays(-1).ToString(Properties.strings.dateFormat);
         }
 
         private ButtonWithObject CreateViewBarButton(string name, string content, int width, object insideObject, bool isSelected, RoutedEventHandler operation)
@@ -208,11 +207,11 @@ namespace Paygl.Views
                 Button btnView;
                 if (((IRepresentative) item).RepresentativeName == (selected as IRepresentative)?.RepresentativeName)
                 {
-                    btnView = CreateViewBarButton($"btn{item.ToString()}", ((IRepresentative) item).RepresentativeName, ViewbarButtonWidth, item, true, BtnView_Click);
+                    btnView = CreateViewBarButton($"btn{item}", ((IRepresentative) item).RepresentativeName, ViewbarButtonWidth, item, true, BtnView_Click);
                 }
                 else
                 {
-                    btnView = CreateViewBarButton($"btn{item.ToString()}", ((IRepresentative) item).RepresentativeName, ViewbarButtonWidth, item, false, BtnView_Click);
+                    btnView = CreateViewBarButton($"btn{item}", ((IRepresentative) item).RepresentativeName, ViewbarButtonWidth, item, false, BtnView_Click);
                 }
                 _viewBarStockPanel.Children.Add(btnView);
             }

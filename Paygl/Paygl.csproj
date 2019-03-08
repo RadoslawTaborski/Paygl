@@ -112,15 +112,12 @@
     <Compile Include="Models\Groups.cs" />
     <Compile Include="Models\ViewsMemory.cs" />
     <Compile Include="Properties\strings.pl-PL.Designer.cs">
+      <DependentUpon>strings.pl-PL.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>strings.pl-PL.resx</DependentUpon>
     </Compile>
     <Compile Include="RounderProgressBarControl.xaml.cs">
       <DependentUpon>RounderProgressBarControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Settings.xaml.cs">
-      <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\strings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -177,10 +174,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="RounderProgressBarControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

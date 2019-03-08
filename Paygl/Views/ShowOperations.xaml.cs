@@ -1,5 +1,4 @@
-﻿using Analyzer;
-using DataBaseWithBusinessLogicConnector.Entities;
+﻿using DataBaseWithBusinessLogicConnector.Entities;
 using DataBaseWithBusinessLogicConnector.Interfaces;
 using Paygl.Models;
 using PayglService.cs;
@@ -17,15 +16,14 @@ namespace Paygl.Views
     /// <summary>
     /// Interaction logic for ShowOperations.xaml
     /// </summary>
-    public partial class ShowOperations : UserControl, IRepresentative
+    public partial class ShowOperations : IRepresentative
     {
         private List<Operation> _operations;
         private List<OperationsGroup> _operationsGroup;
-        private Filter _filter=null;
 
-        private const int HEIGHT = 27;
+        private const int RefHeight = 27;
 
-        public string RepresentativeName { get; set; } = "Wyszukiwanie";
+        public string RepresentativeName { get; set; } = Properties.strings.searchingRN;
 
         public ShowOperations()
         {
@@ -41,13 +39,13 @@ namespace Paygl.Views
             if (Service.Operations.Count != 0)
             {
                 var endDate = Service.Operations.Last().Date;
-                _tbFrom.Text = endDate.AddMonths(-1).AddDays(1).ToString("dd.MM.yyyy");
-                _tbTo.Text = endDate.ToString("dd.MM.yyyy");
+                _tbFrom.Text = endDate.AddMonths(-1).AddDays(1).ToString(Properties.strings.dateFormat);
+                _tbTo.Text = endDate.ToString(Properties.strings.dateFormat);
             }
             else
             {
-                _tbFrom.Text = DateTime.Now.ToString("dd.MM.yyyy");
-                _tbTo.Text = DateTime.Now.ToString("dd.MM.yyyy");
+                _tbFrom.Text = DateTime.Now.ToString(Properties.strings.dateFormat);
+                _tbTo.Text = DateTime.Now.ToString(Properties.strings.dateFormat);
             }
 
             SetVisibilityForSave(Visibility.Hidden);
@@ -57,8 +55,7 @@ namespace Paygl.Views
         public ShowOperations(Filter filter)
         {
             InitializeComponent();
-            _filter = filter;
-            RepresentativeName = $"Edycja: {filter.Description}";
+            RepresentativeName = $"{Properties.strings.editFilterRN} {filter.Description}";
 
             Service.LoadAttributes();
             Service.LoadOperationsGroups();
@@ -70,19 +67,19 @@ namespace Paygl.Views
             if (Service.Operations.Count != 0)
             {
                 var endDate = Service.Operations.Last().Date;
-                _tbFrom.Text = endDate.AddMonths(-1).AddDays(1).ToString("dd.MM.yyyy");
-                _tbTo.Text = endDate.ToString("dd.MM.yyyy");
+                _tbFrom.Text = endDate.AddMonths(-1).AddDays(1).ToString(Properties.strings.dateFormat);
+                _tbTo.Text = endDate.ToString(Properties.strings.dateFormat);
             }
             else
             {
-                _tbFrom.Text = DateTime.Now.ToString("dd.MM.yyyy");
-                _tbTo.Text = DateTime.Now.ToString("dd.MM.yyyy");
+                _tbFrom.Text = DateTime.Now.ToString(Properties.strings.dateFormat);
+                _tbTo.Text = DateTime.Now.ToString(Properties.strings.dateFormat);
             }
 
             SetVisibilityForSave(Visibility.Hidden);
-            _tbQuery.Text = filter.Query.ToString();
+            _tbQuery.Text = filter.Query;
             _tbName.Text = filter.Description;
-            Show(filter.Query.ToString());
+            Show(filter.Query);
         }
 
         private void SetVisibilityForSave(Visibility v)
@@ -103,34 +100,10 @@ namespace Paygl.Views
             }
         }
 
-        private bool OperationHasTag(Operation operation, Tag tag)
-        {
-            foreach (var item in operation.Tags)
-            {
-                if (item.Tag.Text == tag.Text)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private bool OperationHasFrequence(Operation operation, Frequence frequence)
-        {
-
-            if (operation.Frequence.Text == frequence.Text)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         private void Show(string query)
         {
-            DateTime dt1 = DateTime.Parse(_tbFrom.Text);
-            DateTime dt2 = DateTime.Parse(_tbTo.Text);
+            var dt1 = DateTime.Parse(_tbFrom.Text);
+            var dt2 = DateTime.Parse(_tbTo.Text);
             _operations = Service.Operations.Where(o => o.Parent == null && o.Date.Date <= dt2.Date && o.Date.Date >= dt1.Date).ToList();
             _operationsGroup = Service.OperationsGroups.Where(o => o.Date.Date <= dt2.Date && o.Date.Date >= dt1.Date).ToList();
             var ioperations = new List<IOperation>();
@@ -162,10 +135,10 @@ namespace Paygl.Views
                 Show(text);
                 SetVisibilityForSave(Visibility.Visible);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SetVisibilityForSave(Visibility.Hidden);
-                var dialog = new MessageBox("Komunikat", "Zły format zapytania");
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement, Properties.strings.messageBoxWrongQuery);
                 dialog.ShowDialog();
             }
         }
@@ -187,77 +160,80 @@ namespace Paygl.Views
         {
             foreach (var item in group.Operations)
             {
-                if (item is OperationsGroup)
+                switch (item)
                 {
-                    var i = item as OperationsGroup;
-                    var childStackPanel = new StackPanel
+                    case OperationsGroup i1:
                     {
-                        Orientation = Orientation.Vertical,
-                        Margin = new Thickness(0, 0, 0, 0),
-                    };
-                    var border = new Border
-                    {
-                        Style = (Style)FindResource("MyBorder2"),
-                        BorderThickness = new Thickness(1, 1, 1, 1),
-                        Height = HEIGHT,
-                    };
-                    border.Child = IOperationToStackPanel(i);
-                    childStackPanel.Children.Add(CreateButtonWithBorderContent(border, item, childStackPanel, "MyLightGrey", new Thickness(0, 0, 0, 0), ClickInOperationsGroup));
+                        var childStackPanel = new StackPanel
+                        {
+                            Orientation = Orientation.Vertical,
+                            Margin = new Thickness(0, 0, 0, 0),
+                        };
+                        var border = new Border
+                        {
+                            Style = (Style) FindResource("MyBorder2"),
+                            BorderThickness = new Thickness(1, 1, 1, 1),
+                            Height = RefHeight,
+                            Child = OperationToStackPanel(i1),
+                        };
+                        childStackPanel.Children.Add(CreateButtonWithBorderContent(border, item, childStackPanel, "MyLightGrey", new Thickness(0, 0, 0, 0), ClickInOperationsGroup));
 
-                    context.Children.Add(childStackPanel);
-                }
-                if (item is Operation)
-                {
-                    var i = item as Operation;
-                    var border = new Border
+                        context.Children.Add(childStackPanel);
+                        break;
+                    }
+                    case Operation i:
                     {
-                        Style = (Style)FindResource("MyBorderMedium"),
-                        BorderThickness = new Thickness(1, 1, 1, 1),
-                        Height = HEIGHT,
-                        Child = IOperationToStackPanel(i),
-                    };
-                    context.Children.Add(CreateButtonWithBorderContent(border, item, null, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInOperation));
+                        var border = new Border
+                        {
+                            Style = (Style)FindResource("MyBorderMedium"),
+                            BorderThickness = new Thickness(1, 1, 1, 1),
+                            Height = RefHeight,
+                            Child = OperationToStackPanel(i),
+                        };
+                        context.Children.Add(CreateButtonWithBorderContent(border, item, null, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInOperation));
+                        break;
+                    }
                 }
             }
         }
 
         private void ClickInOperationsGroup(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("click operations group");
             var button = sender as ButtonWithObject;
-            var group = (button.Object as OperationsGroup);
-            var context = (button.Context as StackPanel);
-            if (context.Children.Count == 1)
+            var group = (button?.Object as OperationsGroup);
+            var context = (button?.Context as StackPanel);
+            if (context != null && context.Children.Count == 1)
             {
+                if (group?.Operations == null) return;
                 foreach (var elem in group.Operations)
                 {
                     var border2 = new Border
                     {
-                        Style = (Style)FindResource("MyBorderMedium"),
+                        Style = (Style) FindResource("MyBorderMedium"),
                         BorderThickness = new Thickness(1, 1, 1, 1),
-                        Height = HEIGHT,
+                        Height = RefHeight,
+                        Child = OperationToStackPanel(elem),
                     };
-                    border2.Child = IOperationToStackPanel(elem);
-                    context.Children.Add(CreateButtonWithBorderContent(border2, elem, null, "MyMediumGrey", new Thickness(25, 0, 0, 0), ClickInOperation));
+                    context.Children.Add(CreateButtonWithBorderContent(border2, elem, null, "MyMediumGrey",
+                        new Thickness(25, 0, 0, 0), ClickInOperation));
                 }
             }
             else
             {
-                System.Collections.IList list = context.Children;
-                for (int i1 = 0; i1 < list.Count; i1++)
+                System.Collections.IList list = context?.Children;
+                if (list == null) return;
+                for (var i1 = 0; i1 < list.Count; i1++)
                 {
-                    if (i1 != 0)
+                    if (i1 == 0) continue;
+                    var item = list[i1];
+                    var i = item as UIElement;
+                    if (i != null && i.Visibility == Visibility.Visible)
                     {
-                        object item = list[i1];
-                        var i = item as UIElement;
-                        if (i.Visibility == Visibility.Visible)
-                        {
-                            i.Visibility = Visibility.Collapsed;
-                        }
-                        else
-                        {
-                            i.Visibility = Visibility.Visible;
-                        }
+                        i.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        if (i != null) i.Visibility = Visibility.Visible;
                     }
                 }
             }
@@ -265,8 +241,6 @@ namespace Paygl.Views
 
         private void ClickInOperation(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("click operation");
-            var parameter = ((sender as ButtonWithObject).Object as Operation);
         }
 
         private ButtonWithObject CreateButtonWithBorderContent(Border border, object objectForButton, object context, string colorName, Thickness margin, RoutedEventHandler method)
@@ -289,17 +263,17 @@ namespace Paygl.Views
             return result;
         }
 
-        private UIElement IOperationToStackPanel(IOperation operation)
+        private UIElement OperationToStackPanel(IOperation operation)
         {
             var resultStackPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT,
+                Height = RefHeight,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            var borderDate = CreateBorderWithLabel($"{operation.Date.ToString("dd.MM.yyyy")}:");
+            var borderDate = CreateBorderWithLabel($"{operation.Date.ToString(Properties.strings.dateFormat)}:");
             var borderAmount = CreateBorderWithLabel($"{operation.Amount}");
             var borderDescription = CreateBorderWithLabel($"{operation.Description}");
             var borderTransactionType = CreateBorderWithLabel($"{operation.TransactionType}");
@@ -328,9 +302,9 @@ namespace Paygl.Views
             resultStackPanel.Children.Add(borderTransactionType);
             resultStackPanel.Children.Add(borderImportance);
             resultStackPanel.Children.Add(borderFrequence);
-            if (operation is Operation)
+            if (operation is Operation operation1)
             {
-                var borderTransferType = CreateBorderWithLabel($"{(operation as Operation).TransferType}");
+                var borderTransferType = CreateBorderWithLabel($"{operation1.TransferType}");
                 resultStackPanel.Children.Add(borderTransferType);
             }
             foreach (var item in operation.Tags)
@@ -344,65 +318,39 @@ namespace Paygl.Views
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("click edit");
             var button = sender as ButtonWithObject;
-            var parameter = button.Object;
+            var parameter = button?.Object;
 
-            if (parameter is Operation)
+            switch (parameter)
             {
-                var view = new ManuallyOperationsView(parameter as Operation);
-                ViewManager.AddUserControl(view);
-                ViewManager.OpenUserControl(view);
-            }
-            else if (parameter is OperationsGroup)
-            {
-                var view = new AddGroupsView(parameter as OperationsGroup);
-                ViewManager.AddUserControl(view);
-                ViewManager.OpenUserControl(view);
-            }
-            else if (parameter is Group)
-            {
-                var stackPanel = button.Context as StackPanel;
-                stackPanel.Children[0].Visibility = stackPanel.Children[0].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                case Operation operation:
+                {
+                    var view = new ManuallyOperationsView(operation);
+                    ViewManager.AddUserControl(view);
+                    ViewManager.OpenUserControl(view);
+                    break;
+                }
+                case OperationsGroup group:
+                {
+                    var view = new AddGroupsView(group);
+                    ViewManager.AddUserControl(view);
+                    ViewManager.OpenUserControl(view);
+                    break;
+                }
+                case Group _:
+                {
+                    if (button.Context is StackPanel stackPanel)
+                    {
+                        stackPanel.Children[0].Visibility = stackPanel.Children[0].Visibility == Visibility.Visible
+                            ? Visibility.Collapsed
+                            : Visibility.Visible;
+                    }
+
+                    break;
+                }
             }
 
             e.Handled = true;
-        }
-
-        private UIElement GroupHeaderToStackPanel(Group group, StackPanel main)
-        {
-            var resultStackPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT + 3,
-            };
-
-            var borderAmount = CreateBorderWithLabel($"{group.Amount}");
-            var borderDescription = CreateBorderWithLabel($"{group.Filter.Description}");
-            var button = new ButtonWithObject()
-            {
-                Content = new Image
-                {
-                    Source = new BitmapImage(new Uri(@"..\img\edit-icon.png", UriKind.Relative)),
-                    VerticalAlignment = VerticalAlignment.Stretch
-                },
-                Width = 20,
-                Height = 20,
-                VerticalContentAlignment = VerticalAlignment.Top,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Top,
-                Object = group,
-                Context = main,
-            };
-
-            button.Click += Edit_Click;
-
-            resultStackPanel.Children.Add(borderDescription);
-            resultStackPanel.Children.Add(borderAmount);
-            resultStackPanel.Children.Add(button);
-
-            return resultStackPanel;
         }
 
         private Border CreateBorderWithLabel(string text)
@@ -414,13 +362,13 @@ namespace Paygl.Views
                     Content = text,
                     Style = (Style)FindResource("MyLabel"),
                     Margin = new Thickness(0, -5, 0, 0),
-                    Height = HEIGHT,
+                    Height = RefHeight,
                     VerticalAlignment = VerticalAlignment.Stretch,
                 },
                 BorderBrush = (SolidColorBrush)FindResource("MyLight"),
                 BorderThickness = new Thickness(0, 0, 1, 0),
                 Margin = new Thickness(0, 0, 0, 0),
-                Height = HEIGHT,
+                Height = RefHeight,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
         }
@@ -440,7 +388,7 @@ namespace Paygl.Views
             _borderCalendarFrom.Visibility = Visibility.Hidden;
             if (_calDateFrom.SelectedDate.HasValue)
             {
-                _tbFrom.Text = _calDateFrom.SelectedDate.Value.ToString("dd.MM.yyyy");
+                _tbFrom.Text = _calDateFrom.SelectedDate.Value.ToString(Properties.strings.dateFormat);
             }
             _borderCalendarFrom.Visibility = Visibility.Hidden;
         }
@@ -450,7 +398,7 @@ namespace Paygl.Views
             _borderCalendarTo.Visibility = Visibility.Hidden;
             if (_calDateTo.SelectedDate.HasValue)
             {
-                _tbTo.Text = _calDateTo.SelectedDate.Value.ToString("dd.MM.yyyy");
+                _tbTo.Text = _calDateTo.SelectedDate.Value.ToString(Properties.strings.dateFormat);
             }
             _borderCalendarTo.Visibility = Visibility.Hidden;
         }
@@ -462,17 +410,20 @@ namespace Paygl.Views
 
             foreach (var elem in group.Operations)
             {
-                if (elem is OperationsGroup)
+                switch (elem)
                 {
-                    var operationsGroup = elem as OperationsGroup;
-                    foreach (var operation in operationsGroup.Operations)
+                    case OperationsGroup operationsGroup:
                     {
-                        operations.Add(operation);
+                        foreach (var operation in operationsGroup.Operations)
+                        {
+                            operations.Add(operation);
+                        }
+
+                        break;
                     }
-                }
-                if (elem is Operation)
-                {
-                    operations.Add(elem as Operation);
+                    case Operation item:
+                        operations.Add(item);
+                        break;
                 }
             }
 
@@ -480,11 +431,11 @@ namespace Paygl.Views
 
             foreach (var operation in operations)
             {
-                if (operation.TransactionType.Text == "przychód")
+                if (operation.TransactionType.Text == Properties.strings.transactionTypeIncome)
                 {
                     result += operation.Amount;
                 }
-                if (operation.TransactionType.Text == "wydatek")
+                if (operation.TransactionType.Text == Properties.strings.transactionTypeExpense)
                 {
                     result -= operation.Amount;
                 }
@@ -505,9 +456,9 @@ namespace Paygl.Views
                 Show(_tbQuery.Text);
                 SetVisibilityForSave(Visibility.Hidden);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var dialog = new MessageBox("Komunikat", "Zły format zapytania");
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement, Properties.strings.messageBoxWrongQuery);
                 dialog.ShowDialog();
             }
 
@@ -525,9 +476,9 @@ namespace Paygl.Views
                 Show(_tbQuery.Text);
                 SetVisibilityForSave(Visibility.Hidden);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var dialog = new MessageBox("Komunikat", "Zły format zapytania");
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement, Properties.strings.messageBoxWrongQuery);
                 dialog.ShowDialog();
             }
 
@@ -544,16 +495,16 @@ namespace Paygl.Views
 
         private void _btnBack_Click(object sender, RoutedEventArgs e)
         {
-            var endDate = DateTime.ParseExact(_tbTo.Text, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            _tbFrom.Text = endDate.AddDays(1).AddMonths(-2).ToString("dd.MM.yyyy");
-            _tbTo.Text = endDate.AddDays(1).AddMonths(-1).AddDays(-1).ToString("dd.MM.yyyy");
+            var endDate = DateTime.ParseExact(_tbTo.Text, Properties.strings.dateFormat, System.Globalization.CultureInfo.InvariantCulture);
+            _tbFrom.Text = endDate.AddDays(1).AddMonths(-2).ToString(Properties.strings.dateFormat);
+            _tbTo.Text = endDate.AddDays(1).AddMonths(-1).AddDays(-1).ToString(Properties.strings.dateFormat);
         }
 
         private void _btnNext_Click(object sender, RoutedEventArgs e)
         {
-            var endDate = DateTime.ParseExact(_tbTo.Text, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-            _tbFrom.Text = endDate.AddDays(1).ToString("dd.MM.yyyy");
-            _tbTo.Text = endDate.AddDays(1).AddMonths(1).AddDays(-1).ToString("dd.MM.yyyy");
+            var endDate = DateTime.ParseExact(_tbTo.Text, Properties.strings.dateFormat, System.Globalization.CultureInfo.InvariantCulture);
+            _tbFrom.Text = endDate.AddDays(1).ToString(Properties.strings.dateFormat);
+            _tbTo.Text = endDate.AddDays(1).AddMonths(1).AddDays(-1).ToString(Properties.strings.dateFormat);
         }
 
         private void _tbName_TextChanged(object sender, TextChangedEventArgs e)

@@ -5,24 +5,17 @@ using PayglService.cs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Paygl.Views
 {
     /// <summary>
     /// Interaction logic for ManualyAddView.xaml
     /// </summary>
-    public partial class ManuallyOperationsView : UserControl, IRepresentative
+    public partial class ManuallyOperationsView : IRepresentative
     {
         private Operation _operation;
         private List<Tag> _selectedTags;
@@ -34,7 +27,7 @@ namespace Paygl.Views
         private ObservableRangeCollection<TransactionType> _observableTransactionType;
         private ObservableRangeCollection<TransferType> _observableTransferType;
 
-        public string RepresentativeName { get; set; } = "Dodaj manualnie";
+        public string RepresentativeName { get; set; } = Properties.strings.addManualyRN;
 
         public ManuallyOperationsView()
         {
@@ -94,7 +87,7 @@ namespace Paygl.Views
         {
             if (value)
             {
-                RepresentativeName = $"Edycja: {_operation.ShortDescription}";
+                RepresentativeName = $"{Properties.strings.editManualyRN} {_operation.ShortDescription}";
                 _btnManualClear.Visibility = Visibility.Hidden;
                 _btnManualAccept.Visibility = Visibility.Hidden;
                 _tbDescription.Visibility = Visibility.Visible;
@@ -103,7 +96,7 @@ namespace Paygl.Views
             }
             else
             {
-                RepresentativeName = "Dodaj manualnie";
+                RepresentativeName = Properties.strings.addManualyRN;
                 _tbDescription.Visibility = Visibility.Hidden;
                 _labDescription.Visibility = Visibility.Hidden;
                 _btnManualClear.Visibility = Visibility.Visible;
@@ -123,8 +116,7 @@ namespace Paygl.Views
             _cbTransaction.ItemsSource = _observableTransactionType;
             _observableTransferType = new ObservableRangeCollection<TransferType>(Service.TransferTypes);
             _cbTransfer.ItemsSource = _observableTransferType;
-            _observableGroups = new ObservableRangeCollection<OperationsGroup>();
-            _observableGroups.Add(null);
+            _observableGroups = new ObservableRangeCollection<OperationsGroup> {null};
             _observableGroups.AddRange(Service.OperationsGroups);
             _cbRelated.ItemsSource = _observableGroups;
             _observableTags = new ObservableRangeCollection<Tag>(Service.Tags);
@@ -142,27 +134,27 @@ namespace Paygl.Views
 
             _tbDescription.Text = _operation.Description;
             _tbNewDescription.Text = _operation.Description;
-            _labDate.Content = _operation.Date.ToString("dd.MM.yyyy");
+            _labDate.Content = _operation.Date.ToString(Properties.strings.dateFormat);
             _upDownAmount.Value = _operation.Amount;
             if (_operation.Frequence != null)
             {
-                _cbFrequent.SelectedItem = _observableFrequencies.Where(f => f.Text == _operation.Frequence.Text).First();
+                _cbFrequent.SelectedItem = _observableFrequencies.First(f => f.Text == _operation.Frequence.Text);
             }
             if (_operation.Importance!=null)
             {
-                _cbImportance.SelectedItem = _observableImportances.Where(f=>f.Text == _operation.Importance.Text).First();
+                _cbImportance.SelectedItem = _observableImportances.First(f => f.Text == _operation.Importance.Text);
             }
             if (_operation.TransactionType != null)
             {
-                _cbTransaction.SelectedItem = _observableTransactionType.Where(f => f.Text == _operation.TransactionType.Text).First();
+                _cbTransaction.SelectedItem = _observableTransactionType.First(f => f.Text == _operation.TransactionType.Text);
             }
             if (_operation.TransferType != null)
             {
-                _cbTransfer.SelectedItem = _observableTransferType.Where(f => f.Text == _operation.TransferType.Text).First();
+                _cbTransfer.SelectedItem = _observableTransferType.First(f => f.Text == _operation.TransferType.Text);
             }
             if (_operation.Parent != null)
             {
-                var tmp = _observableGroups.Where(f => f != null && f.Id == _operation.Parent.Id).First();
+                var tmp = _observableGroups.First(f => f != null && f.Id == _operation.Parent.Id);
                 _cbRelated.SelectedItem = tmp;
             }
             foreach (var tag in _operation.Tags)
@@ -239,11 +231,6 @@ namespace Paygl.Views
             }
         }
 
-        private void AddObservableOperation(OperationsGroup group)
-        {
-            _observableGroups.Add(group);
-        }
-
         private void LoadAttributes()
         {
             Service.LoadAttributes();
@@ -263,7 +250,7 @@ namespace Paygl.Views
         {
             _operation.SetTransaction(_cbTransaction.SelectedItem as TransactionType);
             _operation.SetTransfer(_cbTransfer.SelectedItem as TransferType);
-            _operation.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
+            _operation.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), Properties.strings.dateFormat, System.Globalization.CultureInfo.InvariantCulture));
             _operation.SetParent(_cbRelated.SelectedItem as OperationsGroup);
             _operation.SetDescription(_tbNewDescription.Text);
             _operation.SetShortDescription(_tbNewDescription.Text);
@@ -300,16 +287,14 @@ namespace Paygl.Views
             }
             catch(Exception ex)
             {
-                var dialog = new MessageBox("Komunikat", ex.Message);
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement, ex.Message);
                 dialog.ShowDialog();
             }
         }
 
         private void CbTags_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selected = _cbTags.SelectedItem as Tag;
-
-            if (selected != null)
+            if (_cbTags.SelectedItem is Tag selected)
             {
                 SetTagLabel(selected);
             }
@@ -332,49 +317,42 @@ namespace Paygl.Views
             if (!IsExistInSelectedTags(tag))
             {
                 _selectedTags.Add(tag);
-                var newborder = new Border();
-                newborder.Style = (Style)FindResource("MyBorder");
+                var newBorder = new Border {Style = (Style) FindResource("MyBorder")};
 
-                var newstackpanel = new StackPanel();
-                newstackpanel.Orientation = Orientation.Horizontal;
+                var newStackPanel = new StackPanel {Orientation = Orientation.Horizontal};
 
-                var newlabel = new Label
-                {
-                    Content = tag.ToString()
-                };
-                newlabel.Style = (Style)FindResource("MyLabel");
+                var newLabel = new Label {Content = tag.ToString(), Style = (Style) FindResource("MyLabel")};
 
-                var newbutton = new ButtonWithObject
+                var newButton = new ButtonWithObject
                 {
                     Content = new Image
                     {
                         Source = new BitmapImage(new Uri(@"..\img\x-icon.png", UriKind.Relative)),
                         VerticalAlignment = VerticalAlignment.Center
                     },
-                    Object=tag,
+                    Object = tag,
                     Width = 20,
                     Height = 20,
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Center,
+                    Style = (Style) FindResource("MyButton"),
                 };
-                newbutton.Style = (Style)FindResource("MyButton");
-                newbutton.Click += BtnClose_Click;
+                newButton.Click += BtnClose_Click;
 
-                newstackpanel.Children.Add(newlabel);
-                newstackpanel.Children.Add(newbutton);
-                newborder.Child = newstackpanel;
-                _spTags.Children.Add(newborder);
+                newStackPanel.Children.Add(newLabel);
+                newStackPanel.Children.Add(newButton);
+                newBorder.Child = newStackPanel;
+                _spTags.Children.Add(newBorder);
             }
         }
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as ButtonWithObject;
-            var panel = button.Parent as StackPanel;
-            var border = panel.Parent as Border;
-            var label = panel.Children[0] as Label;
+            var panel = button?.Parent as StackPanel;
+            var border = panel?.Parent as Border;
 
-            var tag = button.Object as Tag;
+            var tag = button?.Object as Tag;
             _spTags.Children.Remove(border);
             _selectedTags.Remove(tag);
         }
@@ -389,7 +367,7 @@ namespace Paygl.Views
             _borderCalendar.Visibility = Visibility.Hidden;
             if (_calDate.SelectedDate.HasValue)
             {
-                _labDate.Content = _calDate.SelectedDate.Value.ToString("dd.MM.yyyy");
+                _labDate.Content = _calDate.SelectedDate.Value.ToString(Properties.strings.dateFormat);
             }
             _borderCalendar.Visibility = Visibility.Hidden;
         }
@@ -418,7 +396,7 @@ namespace Paygl.Views
         {
             _operation.SetTransaction(_cbTransaction.SelectedItem as TransactionType);
             _operation.SetTransfer(_cbTransfer.SelectedItem as TransferType);
-            _operation.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
+            _operation.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), Properties.strings.dateFormat, System.Globalization.CultureInfo.InvariantCulture));
             _operation.SetParent(_cbRelated.SelectedItem as OperationsGroup);
             _operation.SetDescription(_tbNewDescription.Text);
             _operation.SetShortDescription(_tbNewDescription.Text);
@@ -440,7 +418,7 @@ namespace Paygl.Views
             try
             {
                 Service.UpdateOperationComplex(_operation);
-                var dialog = new MessageBox("Komunikat", "Modyfikacja udana");
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement,Properties.strings.messageBoxModificationSuccess);
                 dialog.ShowDialog();
                 ResetEditableControls();
                 SetEditableControls();
@@ -448,7 +426,7 @@ namespace Paygl.Views
             }
             catch (Exception ex)
             {
-                var dialog = new MessageBox("Komunikat", ex.Message);
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement, ex.Message);
                 dialog.ShowDialog();
             }
         }

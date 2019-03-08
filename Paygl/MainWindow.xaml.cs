@@ -24,9 +24,8 @@ namespace Paygl
     {
         #region FIELDS
 
-        public static readonly string Path = "settings.dat";
-        public const int MENU_BUTTON_HEIGHT = 50;
-        public const int VIEWBAR_BUTTON_WIDTH = 120;
+        public const int MenuButtonHeight = 50;
+        public const int ViewbarButtonWidth = 120;
 
         private static Button _btnView;
         private static UserControl _selectedView;
@@ -51,7 +50,7 @@ namespace Paygl
         public MainWindow()
         {
             InitializeComponent();
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("pl-PL");
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en-GB");
             ViewManager.SetMainWindow(this);
         }
         #endregion
@@ -67,17 +66,17 @@ namespace Paygl
                 ConfigurationManager.ReadConfig("./configuration.json");
                 Service.SetService();
                 var menuButtons = new List<Button>();
-                _btnView = CreateButton("btnOperations", Properties.strings._btnTransactions, MENU_BUTTON_HEIGHT, btnOperations_Click);
-                _btnAnalyse = CreateButton("btnAnalyse", "Analiza", MENU_BUTTON_HEIGHT, btnAnalyse_Click);
+                _btnView = CreateButton("btnOperations", Properties.strings._btnTransactions, MenuButtonHeight, btnOperations_Click);
+                _btnAnalyse = CreateButton("btnAnalyse", Properties.strings._btnAnalyse, MenuButtonHeight, btnAnalyse_Click);
                 menuButtons.Add(_btnView);
                 menuButtons.Add(_btnAnalyse);
                 _firstPanel.ItemsSource = menuButtons;
 
                 _icOperationsButtons = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
                 var b1Buttons = new List<Button>();
-                _btnImport = CreateButton("btnImport", "Importuj", MENU_BUTTON_HEIGHT, btnImport_Click);
-                _btnAddManually = CreateButton("btnAddManually", "Dodaj manualnie", MENU_BUTTON_HEIGHT, BtnAddManually_Click);
-                _btnAddGroups = CreateButton("btnAddGroups", "Dodaj grupę", MENU_BUTTON_HEIGHT, BtnAddGroups_Click);
+                _btnImport = CreateButton("btnImport", Properties.strings._btnImport, MenuButtonHeight, btnImport_Click);
+                _btnAddManually = CreateButton("btnAddManually", Properties.strings._btnAddManualy, MenuButtonHeight, BtnAddManually_Click);
+                _btnAddGroups = CreateButton("btnAddGroups", Properties.strings._btnAddGroup, MenuButtonHeight, BtnAddGroups_Click);
                 b1Buttons.Add(_btnImport);
                 b1Buttons.Add(_btnAddManually);
                 b1Buttons.Add(_btnAddGroups);
@@ -86,10 +85,10 @@ namespace Paygl
 
                 _icAnalyseButtons = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
                 var b2Buttons = new List<Button>();
-                _btnFilters = CreateButton("btnFilters", "Filtry", MENU_BUTTON_HEIGHT, btnFilters_Click);
-                _btnAnalysisManager= CreateButton("btnAnalysisManager", "Menadżer Analizy", MENU_BUTTON_HEIGHT, btnAnalysisManager_Click);
-                _btnAnalysis = CreateButton("btnAnalysis", "Analiza", MENU_BUTTON_HEIGHT, btnAnalysis_Click);
-                _btnShowOperations = CreateButton("btnShowOperations", "Wyszukiwanie", MENU_BUTTON_HEIGHT, BtnShowOperations_Click);
+                _btnFilters = CreateButton("btnFilters", Properties.strings._btnFilters, MenuButtonHeight, btnFilters_Click);
+                _btnAnalysisManager= CreateButton("btnAnalysisManager", Properties.strings._btnAnalysisManager, MenuButtonHeight, btnAnalysisManager_Click);
+                _btnAnalysis = CreateButton("btnAnalysis", Properties.strings._btnAnalysis, MenuButtonHeight, btnAnalysis_Click);
+                _btnShowOperations = CreateButton("btnShowOperations", Properties.strings._btnSearching, MenuButtonHeight, BtnShowOperations_Click);
                 b2Buttons.Add(_btnShowOperations);
                 b2Buttons.Add(_btnAnalysis);
                 b2Buttons.Add(_btnFilters);
@@ -98,7 +97,7 @@ namespace Paygl
             }
             catch (Exception ex)
             {
-                var dialog = new MessageBox("Komunikat", ex.Message);
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement, ex.Message);
                 dialog.ShowDialog();
             }
         }
@@ -157,21 +156,6 @@ namespace Paygl
         #endregion
 
         #region TITLE_BAR
-        /// <summary>
-        /// Handles the Click event of the MenuButton control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void MenuButton_Click(object sender, RoutedEventArgs e)
-        {
-            var subWindow = new Settings();
-            subWindow.ShowDialog();
-
-            if (!subWindow.ChangeSettings) return;
-
-            //TODO: do something
-        }
-
         /// <summary>
         /// Handles the MouseDown event of the TitleBar control.
         /// </summary>
@@ -269,15 +253,7 @@ namespace Paygl
         {
             if (_secondStockPanel.Children.Contains(itemsControl))
             {
-                if (SecondMenu.Visibility == Visibility.Hidden)
-                {
-                    SecondMenu.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    SecondMenu.Visibility = Visibility.Hidden;
-                }
-
+                SecondMenu.Visibility = SecondMenu.Visibility == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden;
             }
             else
             {
@@ -322,7 +298,7 @@ namespace Paygl
 
             var columnDefinition1 = new ColumnDefinition()
             {
-                Width = new GridLength(VIEWBAR_BUTTON_WIDTH - 30),
+                Width = new GridLength(ViewbarButtonWidth - 30),
             };
             var columnDefinition2 = new ColumnDefinition()
             {
@@ -330,7 +306,7 @@ namespace Paygl
             };
             var grid = new Grid
             {
-                Width = VIEWBAR_BUTTON_WIDTH - 10,
+                Width = ViewbarButtonWidth - 10,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Background = (Brush)FindResource("Transparent"),
                 ColumnDefinitions =
@@ -414,7 +390,7 @@ namespace Paygl
 
             foreach (var item in _views)
             {
-                _btnView = CreateViewBarButton($"btn{item}", (item as IRepresentative)?.RepresentativeName, VIEWBAR_BUTTON_WIDTH, item, (item as IRepresentative)?.RepresentativeName == (selected as IRepresentative)?.RepresentativeName, BtnView_Click);
+                _btnView = CreateViewBarButton($"btn{item}", (item as IRepresentative)?.RepresentativeName, ViewbarButtonWidth, item, (item as IRepresentative)?.RepresentativeName == (selected as IRepresentative)?.RepresentativeName, BtnView_Click);
                 _viewBarStockPanel.Children.Add(_btnView);
             }
         }

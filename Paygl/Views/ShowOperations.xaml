@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:resources="clr-namespace:Paygl.Properties"
              xmlns:local="clr-namespace:Paygl.Views"
              mc:Ignorable="d" 
              d:DesignHeight="564" d:DesignWidth="928">
@@ -43,25 +44,25 @@
                     <ImageBrush ImageSource="../img/next.png"/>
                 </Button.Background>
             </Button>
-            <Label Style="{StaticResource MyLabel}" Content="Od:" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="2"/>
+            <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblFrom}" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="2"/>
             <TextBox Name="_tbFrom" Style="{StaticResource MyTextBox}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="3" IsEnabled="False"/>
             <Button x:Name="_btnCalendarFrom" Style="{StaticResource MyButton}" Width="30" Height="30" Grid.Column="4"  HorizontalAlignment="Left" Click="_btnCalendarFrom_Click">
                 <Button.Background>
                     <ImageBrush ImageSource="../img/cal.png"/>
                 </Button.Background>
             </Button>
-            <Label Style="{StaticResource MyLabel}" Content="Do:" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center"  Grid.Column="6"/>
+            <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblTo}" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center"  Grid.Column="6"/>
             <TextBox Name="_tbTo" Style="{StaticResource MyTextBox}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="7" IsEnabled="False"/>
             <Button x:Name="_btnCalendarTo" Style="{StaticResource MyButton}" Width="30" Height="30" Grid.Column="8" HorizontalAlignment="Left" Click="_btnCalendarTo_Click">
                 <Button.Background>
                     <ImageBrush ImageSource="../img/cal.png"/>
                 </Button.Background>
             </Button>
-            <Button Name="_btnConfirm" Style="{StaticResource MyButton}" Content="Pokaż" HorizontalAlignment="Stretch" Grid.Column="9" Click="_btnConfirm_Click"/>
-            <Label Name="_labName" Style="{StaticResource MyLabel}" Content="Nazwa:" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center"  Grid.Column="11"/>
+            <Button Name="_btnConfirm" Style="{StaticResource MyButton}" Content="{x:Static resources:strings._btnShow}" HorizontalAlignment="Stretch" Grid.Column="9" Click="_btnConfirm_Click"/>
+            <Label Name="_labName" Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblName}" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Center"  Grid.Column="11"/>
             <TextBox Name="_tbName" Style="{StaticResource MyTextBox}" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" Grid.Column="12" IsEnabled="True" TextChanged="_tbName_TextChanged"/>
-            <Button Name="_btnSave" Style="{StaticResource MyButton}" Content="Zapisz" HorizontalAlignment="Stretch" Grid.Column="14" Click="_btnSave_Click"/>
-            <Button Name="_btnSaveAs" Style="{StaticResource MyButton}" Content="Zapisz jako" HorizontalAlignment="Stretch" Grid.Column="16" Click="_btnSaveAs_Click"/>
+            <Button Name="_btnSave" Style="{StaticResource MyButton}" Content="{x:Static resources:strings._btnSave}" HorizontalAlignment="Stretch" Grid.Column="14" Click="_btnSave_Click"/>
+            <Button Name="_btnSaveAs" Style="{StaticResource MyButton}" Content="{x:Static resources:strings._btnSaveAs}" HorizontalAlignment="Stretch" Grid.Column="16" Click="_btnSaveAs_Click"/>
         </Grid>
         <Border Style="{StaticResource MyBorderMedium}" Margin="10,5,10,5" Grid.Row="1">
             <TextBox Name="_tbQuery" Style="{StaticResource MyTextBox}" FontSize="14" VerticalContentAlignment="Center" TextChanged="_tbQuery_TextChanged"/>
@@ -80,7 +81,7 @@
             <Calendar x:Name="_calDateTo" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" Height="160" SelectedDatesChanged="_calDateTo_SelectedDatesChanged"/>
         </Border>
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10,0,10,0">
-            <Label Style="{StaticResource MyLabel}" Content="Sumarycznie: " HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center"/>
+            <Label Style="{StaticResource MyLabel}" Content="{x:Static resources:strings._lblSum}" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center"/>
             <Label Name="_labSum" Style="{StaticResource MyLabel}" Content="" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center"/>
         </StackPanel>
     </Grid>

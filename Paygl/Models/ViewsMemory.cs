@@ -2,30 +2,25 @@
 using DataBaseWithBusinessLogicConnector.Interfaces;
 using PayglService.cs;
 using PayglService.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paygl.Models
 {
     public class ViewsMemory
     {
-        private static List<Operation> _importingOperations = new List<Operation>();
+        private static readonly List<Operation> ImportingOperations = new List<Operation>();
         private static Operation _currentOperation;
-        private static int _index = 0;
+        private static int _index;
 
         private static List<Filter> _filters;
         public static List<Filter> Filters
         {
             get
             {
-                if (_filters == null)
-                {
-                    Service.LoadSettings();
-                    _filters = Service.settings.Filters;
-                }
+                if (_filters != null) return _filters;
+                Service.LoadSettings();
+                _filters = Service.settings.Filters;
                 return _filters;
             }
         }
@@ -35,14 +30,9 @@ namespace Paygl.Models
         {
             get
             {
-                if (_filtersGroups == null)
-                {
-                    Service.LoadSettings();
-                    _filtersGroups = Service.settings.FiltersGroups;
-                    //Service.SetSettings2(_filters);
-                    //Service.SetSettings2(_filtersGroups);
-                    //Service.SaveSettings2();
-                }
+                if (_filtersGroups != null) return _filtersGroups;
+                Service.LoadSettings();
+                _filtersGroups = Service.settings.FiltersGroups;
                 return _filtersGroups;
             }
         }
@@ -64,27 +54,27 @@ namespace Paygl.Models
 
         public static void AddImportingOperations(IEnumerable<Operation> operations)
         {
-           _importingOperations.AddRange(operations.ToList());
+           ImportingOperations.AddRange(operations.ToList());
         }
 
         public static void InsertOperation(Operation afterThis, Operation insertThis)
         {
-            var index = _importingOperations.IndexOf(afterThis);
-            _importingOperations.Insert(index + 1,insertThis);
+            var index = ImportingOperations.IndexOf(afterThis);
+            ImportingOperations.Insert(index + 1,insertThis);
         }
 
         public static void RemoveImportingOperations(IEnumerable<Operation> operations)
         {
-            _importingOperations.Clear();
+            ImportingOperations.Clear();
             _index = 0;
         }
 
         public static Operation NextOperation()
         {
-            if (_index < _importingOperations.Count - 1)
+            if (_index < ImportingOperations.Count - 1)
             {
                 _index++;
-                _currentOperation = _importingOperations[_index];
+                _currentOperation = ImportingOperations[_index];
             }
 
             return _currentOperation;
@@ -95,7 +85,7 @@ namespace Paygl.Models
             if (_index > 0)
             {
                 _index--;
-                _currentOperation = _importingOperations[_index];
+                _currentOperation = ImportingOperations[_index];
             }
 
             return _currentOperation;
@@ -103,9 +93,9 @@ namespace Paygl.Models
 
         public static Operation CurrentOperation()
         {
-            if (_importingOperations.Count > _index)
+            if (ImportingOperations.Count > _index)
             {
-                _currentOperation = _importingOperations[_index];
+                _currentOperation = ImportingOperations[_index];
                 return _currentOperation;
             }
 
@@ -114,17 +104,17 @@ namespace Paygl.Models
 
         internal static void RemoveImportingOperation(Operation operation)
         {
-            _importingOperations.Remove(operation);
-            if (_importingOperations.Count == 0)
+            ImportingOperations.Remove(operation);
+            if (ImportingOperations.Count == 0)
             {
                 _index = 0;
                 _currentOperation = null;
                 return;
             }
-            if (_index >= _importingOperations.Count)
+            if (_index >= ImportingOperations.Count)
             {
-                _index = _importingOperations.Count - 1;
-                _currentOperation = _importingOperations[_index];
+                _index = ImportingOperations.Count - 1;
+                _currentOperation = ImportingOperations[_index];
             }
 
         }

@@ -1,30 +1,21 @@
 ﻿using Paygl.Models;
 using PayglService.cs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using PayglService.Models;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Paygl.Views
 {
     /// <summary>
     /// Interaction logic for FiltersManager.xaml
     /// </summary>
-    public partial class FiltersManager : UserControl, IRepresentative
+    public partial class FiltersManager : IRepresentative
     {
-        private const int HEIGHT = 27;
-        public string RepresentativeName { get; set; } = "Filtry";
+        private const int RefHeight = 27;
+        public string RepresentativeName { get; set; } = Properties.strings.filtersRN;
 
         public FiltersManager()
         {
@@ -60,9 +51,9 @@ namespace Paygl.Views
             {
                 Style = (Style)FindResource("MyBorderMedium"),
                 BorderThickness = new Thickness(1, 1, 1, 1),
-                Height = HEIGHT,
+                Height = RefHeight,
             };
-            borderGroup.Child = FilterHeaderToStackPanel(filter, result);
+            borderGroup.Child = FilterHeaderToStackPanel(filter);
             result.Children.Add(CreateButtonWithBorderContent(borderGroup, filter, borderGroup.Child, "MyMediumGrey", new Thickness(0, 0, 0, 0), ClickInFilter));
 
             var stackPanel = new StackPanel
@@ -76,7 +67,7 @@ namespace Paygl.Views
             var editTextBox = new TextBox
             {
                 Style = (Style)FindResource("MyTextBox"),
-                Text = $"{filter.Description}: {filter.Query.ToString()}",
+                Text = $"{filter.Description}: {filter.Query}",
                 FontSize = 13,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Center,
@@ -134,16 +125,18 @@ namespace Paygl.Views
         private void ClickInFilter(object sender, RoutedEventArgs e)
         {
             var button = sender as ButtonWithObject;
-            var parameter = button.Object;
-            var stackPanel = button.Context as StackPanel;
-            var parent = button.Parent as StackPanel;
-            parent.Children[1].Visibility = parent.Children[1].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            if (button?.Parent is StackPanel parent)
+            {
+                parent.Children[1].Visibility = parent.Children[1].Visibility == Visibility.Visible
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            }
         }
 
         private void OpenEditMode(object sender, RoutedEventArgs e)
         {
             var button = (sender as ButtonWithObject);
-            var filter = button.Object as Filter;
+            var filter = button?.Object as Filter;
             var view = new ShowOperations(filter);
             ViewManager.AddUserControl(view);
             ViewManager.OpenUserControl(view);
@@ -151,13 +144,13 @@ namespace Paygl.Views
             e.Handled = true;
         }
 
-        private UIElement FilterHeaderToStackPanel(Filter filter, StackPanel main)
+        private UIElement FilterHeaderToStackPanel(Filter filter)
         {
             var resultStackPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT + 3,
+                Height = RefHeight + 3,
             };
 
             var borderDescription = CreateBorderWithLabel($"{filter.Description}");
@@ -169,7 +162,7 @@ namespace Paygl.Views
 
         private void RemoveFilter(object sender, RoutedEventArgs e)
         {
-            var filter = (sender as ButtonWithObject).Object as Filter;
+            var filter = (sender as ButtonWithObject)?.Object as Filter;
             ViewsMemory.Filters.Remove(filter);
             Service.SetSettings(ViewsMemory.Filters);
             Service.SaveSettings();
@@ -188,13 +181,13 @@ namespace Paygl.Views
                     Content = text,
                     Style = (Style)FindResource("MyLabel"),
                     Margin = new Thickness(0, -5, 0, 0),
-                    Height = HEIGHT,
+                    Height = RefHeight,
                     VerticalAlignment = VerticalAlignment.Stretch,
                 },
                 BorderBrush = (SolidColorBrush)FindResource("MyLight"),
                 BorderThickness = new Thickness(0, 0, 1, 0),
                 Margin = new Thickness(0, 0, 0, 0),
-                Height = HEIGHT,
+                Height = RefHeight,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
         }
@@ -222,13 +215,6 @@ namespace Paygl.Views
         public override string ToString()
         {
             return "FiltersManager";
-        }
-
-        private void _btnSave_Click(object sender, RoutedEventArgs e)
-        {
-            Service.SetSettings(ViewsMemory.FiltersGroups);
-            Service.SetSettings(ViewsMemory.Filters);
-            Service.SaveSettings();
         }
     }
 }

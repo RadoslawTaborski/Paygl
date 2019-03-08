@@ -5,24 +5,17 @@ using PayglService.cs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Paygl.Views
 {
     /// <summary>
     /// Interaction logic for AddGroupsView.xaml
     /// </summary>
-    public partial class AddGroupsView : UserControl, IRepresentative
+    public partial class AddGroupsView : IRepresentative
     {
         private OperationsGroup _group;
         private List<Tag> _selectedTags;
@@ -31,7 +24,7 @@ namespace Paygl.Views
         private ObservableRangeCollection<Importance> _observableImportances;
         private ObservableRangeCollection<Tag> _observableTags;
 
-        public string RepresentativeName { get; set; } = "Dodaj grupę";
+        public string RepresentativeName { get; set; } = Properties.strings.addGroupRN;
 
         public AddGroupsView()
         {
@@ -65,14 +58,14 @@ namespace Paygl.Views
         {
             if (value)
             {
-                RepresentativeName = $"Edycja: {_group.Description}";
+                RepresentativeName = $"{Properties.strings.editGroupRN} {_group.Description}";
                 _btnManualClear.Visibility = Visibility.Hidden;
                 _btnManualAccept.Visibility = Visibility.Hidden;
                 _btnEditAccept.Visibility = Visibility.Visible;
             }
             else
             {
-                RepresentativeName = "Dodaj grupę";
+                RepresentativeName = Properties.strings.addGroupRN;
                 _btnManualClear.Visibility = Visibility.Visible;
                 _btnManualAccept.Visibility = Visibility.Visible;
                 _btnEditAccept.Visibility = Visibility.Hidden;
@@ -94,14 +87,14 @@ namespace Paygl.Views
             ResetEditableControls();
 
             _tbNewDescription.Text = _group.Description;
-            _labDate.Content = _group.Date.ToString("dd.MM.yyyy");
+            _labDate.Content = _group.Date.ToString(Properties.strings.dateFormat);
             if (_group.Frequence != null)
             {
-                _cbFrequent.SelectedItem = _observableFrequencies.Where(f => f.Text == _group.Frequence.Text).First();
+                _cbFrequent.SelectedItem = _observableFrequencies.First(f => f.Text == _group.Frequence.Text);
             }
             if (_group.Importance != null)
             {
-                _cbImportance.SelectedItem = _observableImportances.Where(f => f.Text == _group.Importance.Text).First();
+                _cbImportance.SelectedItem = _observableImportances.First(f => f.Text == _group.Importance.Text);
             }
             foreach (var tag in _group.Tags)
             {
@@ -147,11 +140,6 @@ namespace Paygl.Views
             Service.LoadAttributes();
         }
 
-        private void LoadOperationsGroup()
-        {
-            Service.LoadOperationsGroups();
-        }
-
         private void BtnManualClear_Click(object sender, RoutedEventArgs e)
         {
             ResetEditableControls();
@@ -161,7 +149,7 @@ namespace Paygl.Views
         {
             _group.SetImportance(_cbImportance.SelectedItem as Importance);
             _group.SetFrequence(_cbFrequent.SelectedItem as Frequence);
-            _group.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
+            _group.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), Properties.strings.dateFormat, System.Globalization.CultureInfo.InvariantCulture));
             UpdateOperationsGroupTags();
             _group.SetDescription(_tbNewDescription.Text);
 
@@ -176,16 +164,14 @@ namespace Paygl.Views
             }
             catch (Exception ex)
             {
-                var dialog = new MessageBox("Komunikat", ex.Message);
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement, ex.Message);
                 dialog.ShowDialog();
             }
         }
 
         private void CbTags_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selected = _cbTags.SelectedItem as Tag;
-
-            if (selected != null)
+            if (_cbTags.SelectedItem is Tag selected)
             {
                 SetTagLabel(selected);
             }
@@ -205,52 +191,44 @@ namespace Paygl.Views
 
         private void SetTagLabel(Tag tag)
         {
-            if (!IsExistInSelectedTags(tag))
+            if (IsExistInSelectedTags(tag)) return;
+
+            _selectedTags.Add(tag);
+            var newBorder = new Border {Style = (Style) FindResource("MyBorder")};
+
+            var newStackPanel = new StackPanel {Orientation = Orientation.Horizontal};
+
+            var newLabel = new Label {Content = tag.ToString(), Style = (Style) FindResource("MyLabel")};
+
+            var newButton = new ButtonWithObject
             {
-                _selectedTags.Add(tag);
-                var newborder = new Border();
-                newborder.Style = (Style)FindResource("MyBorder");
-
-                var newstackpanel = new StackPanel();
-                newstackpanel.Orientation = Orientation.Horizontal;
-
-                var newlabel = new Label
+                Content = new Image
                 {
-                    Content = tag.ToString()
-                };
-                newlabel.Style = (Style)FindResource("MyLabel");
+                    Source = new BitmapImage(new Uri(@"..\img\x-icon.png", UriKind.Relative)),
+                    VerticalAlignment = VerticalAlignment.Center
+                },
+                Width = 20,
+                Height = 20,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Object = tag,
+                Style = (Style) FindResource("MyButton"),
+            };
+            newButton.Click += BtnClose_Click;
 
-                var newbutton = new ButtonWithObject
-                {
-                    Content = new Image
-                    {
-                        Source = new BitmapImage(new Uri(@"..\img\x-icon.png", UriKind.Relative)),
-                        VerticalAlignment = VerticalAlignment.Center
-                    },
-                    Width = 20,
-                    Height = 20,
-                    VerticalContentAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Center,
-                    Object=tag,
-                };
-                newbutton.Style = (Style)FindResource("MyButton");
-                newbutton.Click += BtnClose_Click;
-
-                newstackpanel.Children.Add(newlabel);
-                newstackpanel.Children.Add(newbutton);
-                newborder.Child = newstackpanel;
-                _spTags.Children.Add(newborder);
-            }
+            newStackPanel.Children.Add(newLabel);
+            newStackPanel.Children.Add(newButton);
+            newBorder.Child = newStackPanel;
+            _spTags.Children.Add(newBorder);
         }
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as ButtonWithObject;
-            var panel = button.Parent as StackPanel;
-            var border = panel.Parent as Border;
-            var label = panel.Children[0] as Label;
+            var panel = button?.Parent as StackPanel;
+            var border = panel?.Parent as Border;
 
-            var tag = button.Object as Tag;
+            var tag = button?.Object as Tag;
             _spTags.Children.Remove(border);
             _selectedTags.Remove(tag);
         }
@@ -265,7 +243,7 @@ namespace Paygl.Views
             _borderCalendar.Visibility = Visibility.Hidden;
             if (_calDate.SelectedDate.HasValue)
             {
-                _labDate.Content = _calDate.SelectedDate.Value.ToString("dd.MM.yyyy");
+                _labDate.Content = _calDate.SelectedDate.Value.ToString(Properties.strings.dateFormat);
             }
             _borderCalendar.Visibility = Visibility.Hidden;
         }
@@ -279,7 +257,7 @@ namespace Paygl.Views
         {
             _group.SetImportance(_cbImportance.SelectedItem as Importance);
             _group.SetFrequence(_cbFrequent.SelectedItem as Frequence);
-            _group.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture));
+            _group.SetDate(DateTime.ParseExact(_labDate.Content.ToString(), Properties.strings.dateFormat, System.Globalization.CultureInfo.InvariantCulture));
             UpdateOperationsGroupTags();
             _group.SetDescription(_tbNewDescription.Text);
 
@@ -287,12 +265,12 @@ namespace Paygl.Views
             {
                 Service.UpdateOperationsGroupComplex(_group);
                 ViewsMemory.AddedGroup?.Invoke(_group);
-                var dialog = new MessageBox("Komunikat", "Modyfikacja udana");
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement, Properties.strings.messageBoxModificationSuccess);
                 dialog.ShowDialog();
             }
             catch (Exception ex)
             {
-                var dialog = new MessageBox("Komunikat", ex.Message);
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement, ex.Message);
                 dialog.ShowDialog();
             }
         }

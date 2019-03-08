@@ -117,13 +117,166 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="dateFormat" xml:space="preserve">
+    <value>dd.MM.yyyy</value>
+  </data>
+  <data name="importRN" xml:space="preserve">
+    <value>Importuj</value>
+  </data>
+  <data name="_btnAccept" xml:space="preserve">
+    <value>Akceptuj</value>
+  </data>
+  <data name="_btnBack" xml:space="preserve">
+    <value>Wstecz</value>
+  </data>
+  <data name="_btnCancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="_btnConfirm" xml:space="preserve">
+    <value>Potwierdź</value>
+  </data>
+  <data name="_btnDivideIntoTwo" xml:space="preserve">
+    <value>Rozdziel na 2 transakcje</value>
+  </data>
+  <data name="_btnIgnore" xml:space="preserve">
+    <value>Ignoruj</value>
+  </data>
+  <data name="_btnNext" xml:space="preserve">
+    <value>Dalej</value>
+  </data>
   <data name="_btnTransactions" xml:space="preserve">
     <value>Transakcje</value>
+  </data>
+  <data name="_lblAmount" xml:space="preserve">
+    <value>Kwota:</value>
+  </data>
+  <data name="_lblAssociatedWith" xml:space="preserve">
+    <value>Powiązane z:</value>
+  </data>
+  <data name="_lblDate" xml:space="preserve">
+    <value>Data:</value>
   </data>
   <data name="_lblDescription" xml:space="preserve">
     <value>Opis:</value>
   </data>
+  <data name="_lblFrequence" xml:space="preserve">
+    <value>Częstotliwość:</value>
+  </data>
+  <data name="_lblImportance" xml:space="preserve">
+    <value>Ważność:</value>
+  </data>
   <data name="_lblNewDescription" xml:space="preserve">
     <value>Nowy opis:</value>
+  </data>
+  <data name="_lblTags" xml:space="preserve">
+    <value>Tagi:</value>
+  </data>
+  <data name="_lblTransactionType" xml:space="preserve">
+    <value>Typ transakcji:</value>
+  </data>
+  <data name="_lblTransferType" xml:space="preserve">
+    <value>Typ transferu:</value>
+  </data>
+  <data name="addFiltersGroupRN" xml:space="preserve">
+    <value>Dodawanie widoku</value>
+  </data>
+  <data name="addGroupRN" xml:space="preserve">
+    <value>Dodaj grupę</value>
+  </data>
+  <data name="addManualyRN" xml:space="preserve">
+    <value>Dodaj ręcznie</value>
+  </data>
+  <data name="analyseRN" xml:space="preserve">
+    <value>Analiza</value>
+  </data>
+  <data name="analysisManagerRN" xml:space="preserve">
+    <value>Widoki</value>
+  </data>
+  <data name="editFilterRN" xml:space="preserve">
+    <value>Edycja:</value>
+  </data>
+  <data name="editFiltersGroupRN" xml:space="preserve">
+    <value>Edycja:</value>
+  </data>
+  <data name="editGroupRN" xml:space="preserve">
+    <value>Edycja:</value>
+  </data>
+  <data name="editManualyRN" xml:space="preserve">
+    <value>Edycja:</value>
+  </data>
+  <data name="filtersRN" xml:space="preserve">
+    <value>Filtry</value>
+  </data>
+  <data name="messageBoxModificationSuccess" xml:space="preserve">
+    <value>Modyfikacja udana</value>
+  </data>
+  <data name="messageBoxStatement" xml:space="preserve">
+    <value>Komunikat</value>
+  </data>
+  <data name="messageBoxWrongQuery" xml:space="preserve">
+    <value>Zły format zapytania</value>
+  </data>
+  <data name="searchingRN" xml:space="preserve">
+    <value>Wyszukiwanie</value>
+  </data>
+  <data name="transactionTypeExpense" xml:space="preserve">
+    <value>wydatek</value>
+  </data>
+  <data name="transactionTypeIncome" xml:space="preserve">
+    <value>przychód</value>
+  </data>
+  <data name="_btnAdd" xml:space="preserve">
+    <value>Dodaj</value>
+  </data>
+  <data name="_btnAddGroup" xml:space="preserve">
+    <value>Dodaj grupę</value>
+  </data>
+  <data name="_btnAddManualy" xml:space="preserve">
+    <value>Dodaj ręcznie</value>
+  </data>
+  <data name="_btnAnalyse" xml:space="preserve">
+    <value>Analiza</value>
+  </data>
+  <data name="_btnAnalysis" xml:space="preserve">
+    <value>Analiza</value>
+  </data>
+  <data name="_btnAnalysisManager" xml:space="preserve">
+    <value>Menadżer Analizy</value>
+  </data>
+  <data name="_btnClear" xml:space="preserve">
+    <value>Wyczyść</value>
+  </data>
+  <data name="_btnFilters" xml:space="preserve">
+    <value>Filtry</value>
+  </data>
+  <data name="_btnImport" xml:space="preserve">
+    <value>Importuj</value>
+  </data>
+  <data name="_btnSave" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="_btnSaveAs" xml:space="preserve">
+    <value>Zapisz jako</value>
+  </data>
+  <data name="_btnSearching" xml:space="preserve">
+    <value>Wyszukiwanie</value>
+  </data>
+  <data name="_btnShow" xml:space="preserve">
+    <value>Pokaż</value>
+  </data>
+  <data name="_lblDateFormat" xml:space="preserve">
+    <value>dd.MM.yyyy</value>
+  </data>
+  <data name="_lblFrom" xml:space="preserve">
+    <value>Od:</value>
+  </data>
+  <data name="_lblName" xml:space="preserve">
+    <value>Nazwa:</value>
+  </data>
+  <data name="_lblSum" xml:space="preserve">
+    <value>Sumarycznie: </value>
+  </data>
+  <data name="_lblTo" xml:space="preserve">
+    <value>Do:</value>
   </data>
 </root>

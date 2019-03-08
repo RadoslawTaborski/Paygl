@@ -4,6 +4,7 @@ using Paygl.Models;
 using PayglService.cs;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,14 +14,13 @@ using Button = System.Windows.Controls.Button;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using Label = System.Windows.Controls.Label;
 using Orientation = System.Windows.Controls.Orientation;
-using UserControl = System.Windows.Controls.UserControl;
 
 namespace Paygl.Views
 {
     /// <summary>
     /// Interaction logic for ImportView.xaml
     /// </summary>
-    public partial class ImportOperationsView : UserControl, IRepresentative
+    public partial class ImportOperationsView : IRepresentative
     {
         private List<Tag> _selectedTags;
 
@@ -29,7 +29,7 @@ namespace Paygl.Views
         private ObservableRangeCollection<OperationsGroup> _observableGroups;
         private ObservableRangeCollection<Tag> _observableTags;
 
-        public string RepresentativeName { get; set; } = "Importuj";
+        public string RepresentativeName { get; set; } = Properties.strings.importRN;
 
         public ImportOperationsView()
         {
@@ -72,8 +72,7 @@ namespace Paygl.Views
             _cbFrequent.ItemsSource = _observableFrequencies;
             _observableImportances = new ObservableRangeCollection<Importance>(Service.Importances);
             _cbImportance.ItemsSource = _observableImportances;
-            _observableGroups = new ObservableRangeCollection<OperationsGroup>();
-            _observableGroups.Add(null);
+            _observableGroups = new ObservableRangeCollection<OperationsGroup> {null};
             _observableGroups.AddRange(Service.OperationsGroups);
             _cbRelated.ItemsSource = _observableGroups;
             _observableTags = new ObservableRangeCollection<Tag>(Service.Tags);
@@ -89,9 +88,10 @@ namespace Paygl.Views
         {
             var group = _cbRelated.SelectedItem as OperationsGroup;
 
-            _labFrequence.Content = group.Frequence;
-            _labImportance.Content = group.Importance;
-            foreach(var item in group.Tags)
+            _labFrequence.Content = group?.Frequence;
+            _labImportance.Content = group?.Importance;
+            if (group?.Tags == null) return;
+            foreach (var item in group.Tags)
             {
                 _labTags.Content += item.Tag + "; ";
             }
@@ -180,11 +180,6 @@ namespace Paygl.Views
             _cbTags.Visibility = v2;            
         }
 
-        private void AddObservableGroup(OperationsGroup group)
-        {
-            _observableGroups.Add(group);
-        }
-
         private void LoadAttributes()
         {
             Service.LoadAttributes();
@@ -197,23 +192,23 @@ namespace Paygl.Views
 
         private void Show(Operation operation)
         {
+            Frequence frequence = null;
             if (operation!=null)
             {
                 ResetStandardEditableControls();
 
                 _tbDescription.Text = operation.Description;
                 _tbNewDescription.Text = operation.ShortDescription;
-                _labDate.Content = operation.Date.ToString("dd.MM.yyyy");
+                _labDate.Content = operation.Date.ToString(Properties.strings.dateFormat);
                 _labAmount.Content = operation.Amount;
-                Frequence frequence = null;
                 if (operation.Frequence != null)
                 {
-                    frequence = _observableFrequencies.Where(f => f.Text == operation.Frequence.Text).First();
+                    frequence = _observableFrequencies.First(f => f.Text == operation.Frequence.Text);
                 }
                 Importance importance = null;
                 if (operation.Frequence != null)
                 {
-                    importance = _observableImportances.Where(i => i.Text == operation.Importance.Text).First();
+                    importance = _observableImportances.First(i => i.Text == operation.Importance.Text);
                 }
                 _cbFrequent.SelectedItem =  frequence;
                 _cbImportance.SelectedItem = importance;
@@ -263,23 +258,19 @@ namespace Paygl.Views
             if (!IsExistInSelectedTags(tag))
             {
                 _selectedTags.Add(tag);
-                var newborder = new Border
+                var newBorder = new Border
                 {
                     Style = (Style)FindResource("MyBorder")
                 };
 
-                var newstackpanel = new StackPanel
+                var newStackPanel = new StackPanel
                 {
                     Orientation = Orientation.Horizontal
                 };
 
-                var newlabel = new Label
-                {
-                    Content = tag.ToString()
-                };
-                newlabel.Style = (Style)FindResource("MyLabel");
+                var newLabel = new Label {Content = tag.ToString(), Style = (Style) FindResource("MyLabel")};
 
-                var newbutton = new Button
+                var newButton = new Button
                 {
                     Content = new Image
                     {
@@ -290,14 +281,14 @@ namespace Paygl.Views
                     Height = 20,
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Center,
+                    Style = (Style) FindResource("MyButton"),
                 };
-                newbutton.Style = (Style)FindResource("MyButton");
-                newbutton.Click += BtnRemoveTag_Click;
+                newButton.Click += BtnRemoveTag_Click;
 
-                newstackpanel.Children.Add(newlabel);
-                newstackpanel.Children.Add(newbutton);
-                newborder.Child = newstackpanel;
-                _spTags.Children.Add(newborder);
+                newStackPanel.Children.Add(newLabel);
+                newStackPanel.Children.Add(newButton);
+                newBorder.Child = newStackPanel;
+                _spTags.Children.Add(newBorder);
             }
         }
 
@@ -343,7 +334,7 @@ namespace Paygl.Views
             }
             catch (Exception ex)
             {
-                var dialog = new MessageBox("Komunikat", ex.Message);
+                var dialog = new MessageBox(Properties.strings.messageBoxStatement, ex.Message);
                 operation.SetDescription(tmp);
                 dialog.ShowDialog();
             }
@@ -358,9 +349,7 @@ namespace Paygl.Views
 
         private void CbTags_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selected = _cbTags.SelectedItem as Tag;
-
-            if (selected != null)
+            if (_cbTags.SelectedItem is Tag selected)
             {
                 SetTagLabel(selected);
             }
@@ -369,13 +358,13 @@ namespace Paygl.Views
         private void BtnRemoveTag_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var panel = button.Parent as StackPanel;
-            var border = panel.Parent as Border;
-            var label = panel.Children[0] as Label;
+            var panel = button?.Parent as StackPanel;
+            var border = panel?.Parent as Border;
+            var label = panel?.Children[0] as Label;
 
-            var tag = Service.Tags.Where(t => t.Text.Equals(label.Content)).First();
+            var tag = Service.Tags.First(t => t.Text.Equals(label?.Content));
             _spTags.Children.Remove(border);
-            var tag2 = _selectedTags.Where(t => t.Text == tag.Text).First();
+            var tag2 = _selectedTags.First(t => t.Text == tag.Text);
             _selectedTags.Remove(tag2);
         }
 
@@ -402,7 +391,7 @@ namespace Paygl.Views
             {
                 var difference = currentOperation.Amount - _upDownClone.Value.Value;
                 currentOperation.SetAmount(_upDownClone.Value.Value);
-                _labAmount.Content = currentOperation.Amount.ToString();
+                _labAmount.Content = currentOperation.Amount.ToString(CultureInfo.CurrentCulture);
 
                 var operation = new Operation(null, null, Service.User, "", 0M, null, null, null, null, DateTime.Now, "");
                 operation.SetDescription(currentOperation.Description);

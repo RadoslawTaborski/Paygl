@@ -16,13 +16,13 @@ namespace Paygl.Views
     /// <summary>
     /// Interaction logic for ShowOperations.xaml
     /// </summary>
-    public partial class AnalysisViewItem : UserControl, IRepresentative
+    public partial class AnalysisViewItem : IRepresentative
     {
         private List<Operation> _operations;
         private List<OperationsGroup> _operationsGroup;
-        private FiltersGroup _group;
+        private readonly FiltersGroup _group;
 
-        private const int HEIGHT = 27;
+        private const int RefHeight = 27;
 
         public string RepresentativeName { get; set; }
 
@@ -35,33 +35,10 @@ namespace Paygl.Views
             Show(from, to);
         }
 
-        private bool OperationHasTag(Operation operation, Tag tag)
-        {
-            foreach (var item in operation.Tags)
-            {
-                if (item.Tag.Text == tag.Text)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private bool OperationHasFrequence(Operation operation, Frequence frequence)
-        {
-            if (operation.Frequence.Text == frequence.Text)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         public void Show(string from, string to)
         {
-            DateTime dt1 = DateTime.Parse(from);
-            DateTime dt2 = DateTime.Parse(to);
+            var dt1 = DateTime.Parse(from);
+            var dt2 = DateTime.Parse(to);
             _operations = Service.Operations.Where(o => o.Parent == null && o.Date.Date <= dt2.Date && o.Date.Date >= dt1.Date).ToList();
             _operationsGroup = Service.OperationsGroups.Where(o => o.Date.Date <= dt2.Date && o.Date.Date >= dt1.Date).ToList();
             var ioperations = new List<IOperation>();
@@ -79,19 +56,24 @@ namespace Paygl.Views
             _group.Items.Sort((x, y) => x.Value.CompareTo(y.Value));
             foreach (var item in _group.Items)
             {
-                if (item.Key is FiltersGroup)
+                switch (item.Key)
                 {
-                    var newGroup = new Groups((FiltersGroup)item.Key, ioperations);
-                    newGroup.FilterOperations();
+                    case FiltersGroup key:
+                    {
+                        var newGroup = new Groups(key, ioperations);
+                        newGroup.FilterOperations();
 
-                    multiGroups.Add(newGroup);
-                }
-                else if (item.Key is Filter)
-                {
-                    var newGroup = new Group((Filter)item.Key, ioperations);
-                    newGroup.FilterOperations();
+                        multiGroups.Add(newGroup);
+                        break;
+                    }
+                    case Filter filter:
+                    {
+                        var newGroup = new Group(filter, ioperations);
+                        newGroup.FilterOperations();
 
-                    groups.Add(newGroup);
+                        groups.Add(newGroup);
+                        break;
+                    }
                 }
             }
 
@@ -100,13 +82,13 @@ namespace Paygl.Views
             foreach(var item in multiGroups)
             {
                 item.UpdateAmount();
-                _spDisplay.Children.Add(GroupsToStackPanel(item, new Thickness(0,0,0,10),HEIGHT+3));
+                _spDisplay.Children.Add(GroupsToStackPanel(item, new Thickness(0,0,0,10),RefHeight+3));
             }
 
             foreach (var item in groups)
             {
                 item.UpdateAmount();
-                _spDisplay.Children.Add(GroupToStackPanel(item, new Thickness(0,0,0,10), HEIGHT+3));
+                _spDisplay.Children.Add(GroupToStackPanel(item, new Thickness(0,0,0,10), RefHeight+3));
             }
 
             _labSum.Content = SumGroups(groups, multiGroups);
@@ -122,11 +104,11 @@ namespace Paygl.Views
 
             var borderGroup = new Border
             {
-                Style = (Style)FindResource("MyBorder2"),
+                Style = (Style) FindResource("MyBorder2"),
                 BorderThickness = new Thickness(1, 1, 1, 1),
                 Height = height,
+                Child = GroupsHeaderToStackPanel(groups),
             };
-            borderGroup.Child = GroupsHeaderToStackPanel(groups, result);
             result.Children.Add(CreateButtonWithBorderContent(borderGroup, groups, result, "MyLightGrey", new Thickness(0, 0, 0, 0), ClickInGroups));
 
             return result;
@@ -142,11 +124,11 @@ namespace Paygl.Views
 
             var borderGroup = new Border
             {
-                Style = (Style)FindResource("MyBorder2"),
+                Style = (Style) FindResource("MyBorder2"),
                 BorderThickness = new Thickness(1, 1, 1, 1),
                 Height = height,
+                Child = GroupHeaderToStackPanel(group, result),
             };
-            borderGroup.Child = GroupHeaderToStackPanel(group, result);
             result.Children.Add(CreateButtonWithBorderContent(borderGroup, group, result, "MyLightGrey", new Thickness(0, 0, 0, 0), ClickInGroup));
 
             return result;
@@ -154,31 +136,30 @@ namespace Paygl.Views
 
         private void ClickInGroups(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("click group");
             var button = sender as ButtonWithObject;
-            var groups = (button.Object as Groups);
-            var context = (button.Context as StackPanel);
-            if (context.Children.Count == 1)
+            var groups = (button?.Object as Groups);
+            var context = (button?.Context as StackPanel);
+            if (context != null && context.Children.Count == 1)
             {
-                foreach(var item in groups.ListOfGroups)
+                if (groups?.ListOfGroups == null) return;
+                foreach (var item in groups.ListOfGroups)
                 {
-                    context.Children.Add(GroupToStackPanel(item, new Thickness(25, 0, 0, 0), HEIGHT));
+                    context.Children.Add(GroupToStackPanel(item, new Thickness(25, 0, 0, 0), RefHeight));
                 }
             }
             else
             {
-                System.Collections.IList list = context.Children;
-                for (int i1 = 1; i1 < list.Count; i1++)
+                System.Collections.IList list = context?.Children;
+                if (list == null) return;
+
+                for (var i1 = 1; i1 < list.Count; i1++)
                 {
-                    object item = list[i1];
-                    var i = item as UIElement;
-                    if (i.Visibility == Visibility.Visible)
+                    var item = list[i1];
+                    if (item is UIElement i)
                     {
-                        i.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        i.Visibility = Visibility.Visible;
+                        i.Visibility = i.Visibility == Visibility.Visible
+                            ? Visibility.Collapsed
+                            : Visibility.Visible;
                     }
                 }
             }
@@ -186,61 +167,64 @@ namespace Paygl.Views
 
         private void ClickInGroup(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("click group");
             var button = sender as ButtonWithObject;
-            var group = (button.Object as Group);
-            var context = (button.Context as StackPanel);
-            if (context.Children.Count == 1)
+            var group = (button?.Object as Group);
+            var context = (button?.Context as StackPanel);
+            if (context != null && context.Children.Count == 1)
             {
+                if (group?.Operations == null) return;
+
                 foreach (var item in group.Operations)
                 {
-                    if (item is OperationsGroup)
+                    switch (item)
                     {
-                        var i = item as OperationsGroup;
-                        var childStackPanel = new StackPanel
+                        case OperationsGroup i1:
                         {
-                            Orientation = Orientation.Vertical,
-                            Margin = new Thickness(0, 0, 0, 0),
-                        };
-                        var border = new Border
-                        {
-                            Style = (Style)FindResource("MyBorder2"),
-                            BorderThickness = new Thickness(1, 1, 1, 1),
-                            Height = HEIGHT,
-                        };
-                        border.Child = IOperationToStackPanel(i);
-                        childStackPanel.Children.Add(CreateButtonWithBorderContent(border, item, childStackPanel, "MyLightGrey", new Thickness(25, 0, 0, 0), ClickInOperationsGroup));
+                            var childStackPanel = new StackPanel
+                            {
+                                Orientation = Orientation.Vertical,
+                                Margin = new Thickness(0, 0, 0, 0),
+                            };
+                            var border = new Border
+                            {
+                                Style = (Style) FindResource("MyBorder2"),
+                                BorderThickness = new Thickness(1, 1, 1, 1),
+                                Height = RefHeight,
+                                Child = OperationToStackPanel(i1),
+                            };
+                            childStackPanel.Children.Add(CreateButtonWithBorderContent(border, item,
+                                childStackPanel, "MyLightGrey", new Thickness(25, 0, 0, 0),
+                                ClickInOperationsGroup));
 
-                        context.Children.Add(childStackPanel);
-                    }
-                    if (item is Operation)
-                    {
-                        var i = item as Operation;
-                        var border = new Border
+                            context.Children.Add(childStackPanel);
+                            break;
+                        }
+                        case Operation i:
                         {
-                            Style = (Style)FindResource("MyBorderMedium"),
-                            BorderThickness = new Thickness(1, 1, 1, 1),
-                            Height = HEIGHT,
-                            Child = IOperationToStackPanel(i),
-                        };
-                        context.Children.Add(CreateButtonWithBorderContent(border, item, null, "MyMediumGrey", new Thickness(25, 0, 0, 0), ClickInOperation));
+                            var border = new Border
+                            {
+                                Style = (Style) FindResource("MyBorderMedium"),
+                                BorderThickness = new Thickness(1, 1, 1, 1),
+                                Height = RefHeight,
+                                Child = OperationToStackPanel(i),
+                            };
+                            context.Children.Add(CreateButtonWithBorderContent(border, item, null, "MyMediumGrey",
+                                new Thickness(25, 0, 0, 0), ClickInOperation));
+                            break;
+                        }
                     }
                 }
             }
             else
             {
-                System.Collections.IList list = context.Children;
-                for (int i1 = 1; i1 < list.Count; i1++)
+                System.Collections.IList list = context?.Children;
+                if (list == null) return;
+                for (var i1 = 1; i1 < list.Count; i1++)
                 {
-                    object item = list[i1];
-                    var i = item as UIElement;
-                    if (i.Visibility == Visibility.Visible)
+                    var item = list[i1];
+                    if (item is UIElement i)
                     {
-                        i.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        i.Visibility = Visibility.Visible;
+                        i.Visibility = i.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
                     }
                 }
             }
@@ -248,41 +232,36 @@ namespace Paygl.Views
 
         private void ClickInOperationsGroup(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("click operations group");
             var button = sender as ButtonWithObject;
-            var group = (button.Object as OperationsGroup);
-            var context = (button.Context as StackPanel);
-            if (context.Children.Count == 1)
+            var group = (button?.Object as OperationsGroup);
+            var context = (button?.Context as StackPanel);
+            if (context != null && context.Children.Count == 1)
             {
+                if (group?.Operations == null) return;
                 foreach (var elem in group.Operations)
                 {
                     var border2 = new Border
                     {
-                        Style = (Style)FindResource("MyBorderMedium"),
+                        Style = (Style) FindResource("MyBorderMedium"),
                         BorderThickness = new Thickness(1, 1, 1, 1),
-                        Height = HEIGHT,
+                        Height = RefHeight,
+                        Child = OperationToStackPanel(elem),
                     };
-                    border2.Child = IOperationToStackPanel(elem);
-                    context.Children.Add(CreateButtonWithBorderContent(border2, elem, null, "MyMediumGrey", new Thickness(50, 0, 0, 0), ClickInOperation));
+                    context.Children.Add(CreateButtonWithBorderContent(border2, elem, null, "MyMediumGrey",
+                        new Thickness(50, 0, 0, 0), ClickInOperation));
                 }
             }
             else
             {
-                System.Collections.IList list = context.Children;
-                for (int i1 = 0; i1 < list.Count; i1++)
+                System.Collections.IList list = context?.Children;
+                if (list == null) return;
+                for (var i1 = 0; i1 < list.Count; i1++)
                 {
-                    if (i1 != 0)
+                    if (i1 == 0) continue;
+                    var item = list[i1];
+                    if (item is UIElement i)
                     {
-                        object item = list[i1];
-                        var i = item as UIElement;
-                        if (i.Visibility == Visibility.Visible)
-                        {
-                            i.Visibility = Visibility.Collapsed;
-                        }
-                        else
-                        {
-                            i.Visibility = Visibility.Visible;
-                        }
+                        i.Visibility = i.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
                     }
                 }
             }
@@ -290,8 +269,6 @@ namespace Paygl.Views
 
         private void ClickInOperation(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("click operation");
-            var parameter = ((sender as ButtonWithObject).Object as Operation);
         }
 
         private ButtonWithObject CreateButtonWithBorderContent(Border border, object objectForButton, object context, string colorName, Thickness margin, RoutedEventHandler method)
@@ -314,17 +291,17 @@ namespace Paygl.Views
             return result;
         }
 
-        private UIElement IOperationToStackPanel(IOperation operation)
+        private UIElement OperationToStackPanel(IOperation operation)
         {
             var resultStackPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT,
+                Height = RefHeight,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            var borderDate = CreateBorderWithLabel($"{operation.Date.ToString("dd.MM.yyyy")}:");
+            var borderDate = CreateBorderWithLabel($"{operation.Date.ToString(Properties.strings.dateFormat)}:");
             var borderAmount = CreateBorderWithLabel($"{operation.Amount}");
             var borderDescription = CreateBorderWithLabel($"{operation.Description}");
             var borderTransactionType = CreateBorderWithLabel($"{operation.TransactionType}");
@@ -353,9 +330,9 @@ namespace Paygl.Views
             resultStackPanel.Children.Add(borderTransactionType);
             resultStackPanel.Children.Add(borderImportance);
             resultStackPanel.Children.Add(borderFrequence);
-            if (operation is Operation)
+            if (operation is Operation operation1)
             {
-                var borderTransferType = CreateBorderWithLabel($"{(operation as Operation).TransferType}");
+                var borderTransferType = CreateBorderWithLabel($"{operation1.TransferType}");
                 resultStackPanel.Children.Add(borderTransferType);
             }
             foreach (var item in operation.Tags)
@@ -369,38 +346,48 @@ namespace Paygl.Views
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("click edit");
             var button = sender as ButtonWithObject;
-            var parameter = button.Object;
+            var parameter = button?.Object;
 
-            if (parameter is Operation)
+            switch (parameter)
             {
-                var view = new ManuallyOperationsView(parameter as Operation);
-                ViewManager.AddUserControl(view);
-                ViewManager.OpenUserControl(view);
-            }
-            else if (parameter is OperationsGroup)
-            {
-                var view = new AddGroupsView(parameter as OperationsGroup);
-                ViewManager.AddUserControl(view);
-                ViewManager.OpenUserControl(view);
-            }
-            else if (parameter is Group)
-            {
-                var stackPanel = button.Context as StackPanel;
-                stackPanel.Children[0].Visibility = stackPanel.Children[0].Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                case Operation operation:
+                {
+                    var view = new ManuallyOperationsView(operation);
+                    ViewManager.AddUserControl(view);
+                    ViewManager.OpenUserControl(view);
+                    break;
+                }
+                case OperationsGroup group:
+                {
+                    var view = new AddGroupsView(group);
+                    ViewManager.AddUserControl(view);
+                    ViewManager.OpenUserControl(view);
+                    break;
+                }
+                case Group _:
+                {
+                    if (button.Context is StackPanel stackPanel)
+                    {
+                        stackPanel.Children[0].Visibility = stackPanel.Children[0].Visibility == Visibility.Visible
+                            ? Visibility.Collapsed
+                            : Visibility.Visible;
+                    }
+
+                    break;
+                }
             }
 
             e.Handled = true;
         }
 
-        private UIElement GroupsHeaderToStackPanel(Groups groups, StackPanel main)
+        private UIElement GroupsHeaderToStackPanel(Groups groups)
         {
             var resultStackPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT + 3,
+                Height = RefHeight + 3,
                 VerticalAlignment = VerticalAlignment.Stretch,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
@@ -420,7 +407,7 @@ namespace Paygl.Views
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 5),
-                Height = HEIGHT + 3,
+                Height = RefHeight + 3,
                 VerticalAlignment = VerticalAlignment.Stretch,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
@@ -461,14 +448,14 @@ namespace Paygl.Views
                     Content = text,
                     Style = (Style)FindResource("MyLabel"),
                     Margin = new Thickness(0, -5, 0, 0),
-                    Height = HEIGHT,
+                    Height = RefHeight,
                     VerticalAlignment = VerticalAlignment.Stretch,
                     VerticalContentAlignment = VerticalAlignment.Stretch,
                 },
                 BorderBrush = (SolidColorBrush)FindResource("MyLight"),
                 BorderThickness = new Thickness(0, 0, 1, 0),
                 Margin = new Thickness(0, 0, 0, 0),
-                Height = HEIGHT,
+                Height = RefHeight,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
         }
@@ -488,17 +475,20 @@ namespace Paygl.Views
             {
                 foreach (var elem in item.Operations)
                 {
-                    if (elem is OperationsGroup)
+                    switch (elem)
                     {
-                        var group = elem as OperationsGroup;
-                        foreach (var operation in group.Operations)
+                        case OperationsGroup group:
                         {
-                            operations.Add(operation);
+                            foreach (var operation in group.Operations)
+                            {
+                                operations.Add(operation);
+                            }
+
+                            break;
                         }
-                    }
-                    if (elem is Operation)
-                    {
-                        operations.Add(elem as Operation);
+                        case Operation item1:
+                            operations.Add(item1);
+                            break;
                     }
                 }
             }
@@ -507,11 +497,11 @@ namespace Paygl.Views
 
             foreach (var operation in operations)
             {
-                if (operation.TransactionType.Text == "przychód")
+                if (operation.TransactionType.Text == Properties.strings.transactionTypeIncome)
                 {
                     result += operation.Amount;
                 }
-                if (operation.TransactionType.Text == "wydatek")
+                if (operation.TransactionType.Text == Properties.strings.transactionTypeExpense)
                 {
                     result -= operation.Amount;
                 }
