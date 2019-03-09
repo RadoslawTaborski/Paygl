@@ -10,6 +10,7 @@ using Importer;
 using PayglService.cs.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -337,6 +338,19 @@ namespace PayglService.cs
         public static void SetSettings(List<Filter> filters)
         {
             Settings.Filters = filters;
+        }
+
+        public static CultureInfo ReadLanguage()
+        {
+            switch (ConfigurationManager.Language())
+            {
+                case "pl-PL":
+                    return new CultureInfo("pl-PL");
+                case "en-GB":
+                    return new CultureInfo("en-GB");
+                default:
+                    return new CultureInfo("en-GB");
+            }
         }
         #region private
         #region Updates

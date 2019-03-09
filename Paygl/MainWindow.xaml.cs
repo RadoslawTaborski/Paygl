@@ -50,7 +50,8 @@ namespace Paygl
         public MainWindow()
         {
             InitializeComponent();
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("pl-PL");
+            ConfigurationManager.ReadConfig("./configuration.json");
+            Thread.CurrentThread.CurrentUICulture = Service.ReadLanguage();
             ViewManager.SetMainWindow(this);
         }
         #endregion
@@ -63,7 +64,6 @@ namespace Paygl
                 _views = new List<UserControl>();
                 SecondMenu.Visibility = Visibility.Hidden;
 
-                ConfigurationManager.ReadConfig("./configuration.json");
                 Service.SetService();
                 var menuButtons = new List<Button>();
                 _btnView = CreateButton("btnOperations", Properties.strings._btnTransactions, MenuButtonHeight, btnOperations_Click);
