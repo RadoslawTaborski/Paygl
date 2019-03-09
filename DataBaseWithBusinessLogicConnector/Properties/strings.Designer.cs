@@ -88,11 +88,29 @@ namespace DataBaseWithBusinessLogicConnector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to expense.
+        /// </summary>
+        internal static string expense {
+            get {
+                return ResourceManager.GetString("expense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wrong parameters.
         /// </summary>
         internal static string ExWrongParameters {
             get {
                 return ResourceManager.GetString("ExWrongParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to income.
+        /// </summary>
+        internal static string income {
+            get {
+                return ResourceManager.GetString("income", resourceCulture);
             }
         }
     }

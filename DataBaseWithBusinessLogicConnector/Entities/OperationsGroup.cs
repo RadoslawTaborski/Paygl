@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataBaseWithBusinessLogicConnector.Properties;
 
 namespace DataBaseWithBusinessLogicConnector.Entities
 {
@@ -128,7 +129,7 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             Amount = decimal.Zero;
             foreach(var item in Operations)
             {
-                if (item.TransactionType.Text == "przychód")
+                if (item.TransactionType.Text == Properties.strings.income)
                 {
                     Amount += item.Amount;
                 } else
@@ -138,12 +139,12 @@ namespace DataBaseWithBusinessLogicConnector.Entities
             }
             if (Amount < 0)
             {
-                TransactionType = types.Where(t => t.Text == "wydatek").First();
+                TransactionType = types.First(t => t.Text == strings.expense);
                 Amount = Math.Abs(Amount);
             }
             else
             {
-                TransactionType = types.Where(t => t.Text == "przychód").First();
+                TransactionType = types.First(t => t.Text == strings.income);
             }
         }
     }

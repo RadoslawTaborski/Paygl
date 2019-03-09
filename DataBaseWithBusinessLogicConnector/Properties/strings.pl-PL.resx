@@ -129,4 +129,10 @@
   <data name="dateFullFormat" xml:space="preserve">
     <value>dd.MM.yyyy HH:mm:ss</value>
   </data>
+  <data name="expense" xml:space="preserve">
+    <value>wydatek</value>
+  </data>
+  <data name="income" xml:space="preserve">
+    <value>przychód</value>
+  </data>
 </root>
