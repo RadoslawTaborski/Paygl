@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:resources="clr-namespace:Paygl.Properties"
              xmlns:local="clr-namespace:Paygl.Views"
+             xmlns:paygl="clr-namespace:Paygl"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Style="{StaticResource MyGrid}">
@@ -21,6 +22,6 @@
                 </StackPanel>
             </ScrollViewer>
         </Border>
-        <Button Name="_btnSave" Style="{StaticResource MyButton}" Content="{x:Static resources:strings._btnSave}" Grid.Row="2" Click="_btnSave_Click"></Button>
+        <paygl:MyButton x:Name="_btnSave" Style="{StaticResource MyButton}" Content="{x:Static resources:strings._btnSave}" Grid.Row="2" Click="_btnSave_Click"></paygl:MyButton>
     </Grid>
 </UserControl>

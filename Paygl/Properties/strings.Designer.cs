@@ -232,6 +232,15 @@ namespace Paygl.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string _btnSettings {
+            get {
+                return ResourceManager.GetString("_btnSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show.
         /// </summary>
         public static string _btnShow {
@@ -259,11 +268,29 @@ namespace Paygl.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Application language.
+        /// </summary>
+        public static string _lblAppLanguage {
+            get {
+                return ResourceManager.GetString("_lblAppLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Associated with:.
         /// </summary>
         public static string _lblAssociatedWith {
             get {
                 return ResourceManager.GetString("_lblAssociatedWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User language.
+        /// </summary>
+        public static string _lblDataLanguage {
+            get {
+                return ResourceManager.GetString("_lblDataLanguage", resourceCulture);
             }
         }
         
@@ -525,6 +552,15 @@ namespace Paygl.Properties {
         public static string searchingRN {
             get {
                 return ResourceManager.GetString("searchingRN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string settingsRN {
+            get {
+                return ResourceManager.GetString("settingsRN", resourceCulture);
             }
         }
         

@@ -35,7 +35,7 @@ namespace Importer
                         }
 
                         var date = DateTime.ParseExact(cells[0], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                        result.Add(cells[1] == ""
+                        result.Add(cells[8] == ""
                             ? new Transaction(date, cells[2], cells[3], cells[4], cells[5], cells[6],
                                 decimal.Parse(cells[10]), cells[11])
                             : new Transaction(date, cells[2], cells[3], cells[4], cells[5], cells[6],

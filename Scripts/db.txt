@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS `paygl`;
-CREATE DATABASE IF NOT EXISTS `paygl` DEFAULT CHARACTER SET utf8 COLLATE utf8_polish_ci;
-USE `paygl`;
+DROP DATABASE IF EXISTS `paygl_test`;
+CREATE DATABASE IF NOT EXISTS `paygl_test` DEFAULT CHARACTER SET utf8 COLLATE utf8_polish_ci;
+USE `paygl_test`;
 
 DELIMITER $$
 
@@ -26,6 +26,7 @@ END$$
 DELIMITER ;
 
 CALL PROC_DROP_FOREIGN_KEY('users', 'fk__users__details_id');
+CALL PROC_DROP_FOREIGN_KEY('users', 'fk__users__language_id');
 CALL PROC_DROP_FOREIGN_KEY('operations_groups', 'fk__operations_groups__parent_id');
 CALL PROC_DROP_FOREIGN_KEY('operations_groups', 'fk__operations_groups__frequent_id');
 CALL PROC_DROP_FOREIGN_KEY('operations_groups', 'fk__operations_groups__importance_id');
@@ -51,7 +52,8 @@ CREATE TABLE `users` (
 `id` INT NOT NULL AUTO_INCREMENT 
 , `login` VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL
 , `password` VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL 
-, `details_id` INT NOT NULL 
+, `details_id` INT NOT NULL
+, `language_id` INT NOT NULL
 , PRIMARY KEY (`id`)
 , UNIQUE (`details_id`)
 )ENGINE = InnoDB CHARSET=cp1250 COLLATE cp1250_polish_ci;
@@ -219,6 +221,9 @@ ALTER TABLE `operations_group_tags` ADD INDEX (`operation_group_id`);
 
 ALTER TABLE `users` ADD CONSTRAINT `fk__users__details_id`
 FOREIGN KEY (`details_id`) REFERENCES `user_details`(`id`);
+
+ALTER TABLE `users` ADD CONSTRAINT `fk__users__language_id`
+FOREIGN KEY (`language_id`) REFERENCES `languages`(`id`);
 
 ALTER TABLE `operations_groups` ADD CONSTRAINT `fk__operations_groups__user_id`
 FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);

@@ -15,6 +15,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             ["login"] = DataType.String,
             ["password"] = DataType.String,
             ["details_id"] = DataType.IntegerNullable,
+            ["language_id"] = DataType.IntegerNullable,
         };
 
         private readonly AdapterHelper _adapterHelper;
@@ -38,7 +39,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             for (var i = 0; i < data.Tables[0].Rows.Count; ++i)
             {
                 var dataRow = data.Tables[0].Rows[i].ItemArray;
-                result.Add(new DalUser(int.Parse(dataRow[0].ToString()), dataRow[1].ToString(), dataRow[2].ToString(), int.Parse(dataRow[3].ToString())));
+                result.Add(new DalUser(int.Parse(dataRow[0].ToString()), dataRow[1].ToString(), dataRow[2].ToString(), int.Parse(dataRow[4].ToString()), int.Parse(dataRow[3].ToString())));
             }
 
             return result;
@@ -53,7 +54,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Adapters
             if (data.Tables.Count > 0)
             {
                 var dataRow = data.Tables[0].Rows[0].ItemArray;
-                result = new DalUser(int.Parse(dataRow[0].ToString()), dataRow[1].ToString(), dataRow[2].ToString(), int.Parse(dataRow[3].ToString()));
+                result = new DalUser(int.Parse(dataRow[0].ToString()), dataRow[1].ToString(), dataRow[2].ToString(), int.Parse(dataRow[4].ToString()), int.Parse(dataRow[3].ToString()));
             }
 
             return result;

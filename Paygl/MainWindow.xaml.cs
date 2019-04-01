@@ -27,22 +27,24 @@ namespace Paygl
         public const int MenuButtonHeight = 50;
         public const int ViewbarButtonWidth = 120;
 
-        private static Button _btnView;
+        private static MyButton _btnView;
         private static UserControl _selectedView;
         private static UserControl _previousView;
         private List<UserControl> _views;
-        private static Button _btnAnalyse;
+        private static MyButton _btnAnalyse;
 
         private static ItemsControl _icOperationsButtons;
-        private static Button _btnImport;
-        private static Button _btnAddManually;
-        private static Button _btnAddGroups;
+        private static MyButton _btnImport;
+        private static MyButton _btnAddManually;
+        private static MyButton _btnAddGroups;
 
         private static ItemsControl _icAnalyseButtons;
-        private static Button _btnShowOperations;
-        private static Button _btnAnalysis;
-        private static Button _btnFilters;
-        private static Button _btnAnalysisManager;
+        private static MyButton _btnShowOperations;
+        private static MyButton _btnAnalysis;
+        private static MyButton _btnFilters;
+        private static MyButton _btnAnalysisManager;
+
+        private static MyButton _btnSettings;
 
         #endregion
 
@@ -65,15 +67,17 @@ namespace Paygl
                 SecondMenu.Visibility = Visibility.Hidden;
 
                 Service.SetService();
-                var menuButtons = new List<Button>();
+                var menuButtons = new List<MyButton>();
                 _btnView = CreateButton("btnOperations", Properties.strings._btnTransactions, MenuButtonHeight, btnOperations_Click);
                 _btnAnalyse = CreateButton("btnAnalyse", Properties.strings._btnAnalyse, MenuButtonHeight, btnAnalyse_Click);
+                _btnSettings = CreateButton("btnSettings", Properties.strings._btnSettings, MenuButtonHeight, btnSettings_Click);
                 menuButtons.Add(_btnView);
                 menuButtons.Add(_btnAnalyse);
+                menuButtons.Add(_btnSettings);
                 _firstPanel.ItemsSource = menuButtons;
 
                 _icOperationsButtons = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
-                var b1Buttons = new List<Button>();
+                var b1Buttons = new List<MyButton>();
                 _btnImport = CreateButton("btnImport", Properties.strings._btnImport, MenuButtonHeight, btnImport_Click);
                 _btnAddManually = CreateButton("btnAddManually", Properties.strings._btnAddManualy, MenuButtonHeight, BtnAddManually_Click);
                 _btnAddGroups = CreateButton("btnAddGroups", Properties.strings._btnAddGroup, MenuButtonHeight, BtnAddGroups_Click);
@@ -84,7 +88,7 @@ namespace Paygl
                 if (_icOperationsButtons != null) _icOperationsButtons.ItemsSource = b1Buttons;
 
                 _icAnalyseButtons = XamlReader.Parse(XamlWriter.Save(_secondPanel)) as ItemsControl;
-                var b2Buttons = new List<Button>();
+                var b2Buttons = new List<MyButton>();
                 _btnFilters = CreateButton("btnFilters", Properties.strings._btnFilters, MenuButtonHeight, btnFilters_Click);
                 _btnAnalysisManager= CreateButton("btnAnalysisManager", Properties.strings._btnAnalysisManager, MenuButtonHeight, btnAnalysisManager_Click);
                 _btnAnalysis = CreateButton("btnAnalysis", Properties.strings._btnAnalysis, MenuButtonHeight, btnAnalysis_Click);
@@ -113,6 +117,11 @@ namespace Paygl
         {
             ShowOrHideSecondMenu(_icAnalyseButtons);
             SetSecondMenu(_icAnalyseButtons);
+        }
+
+        private void btnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            CreateAndOpenNewView(new SettingsView());
         }
         #endregion
 
@@ -272,9 +281,9 @@ namespace Paygl
             OpenUserControl(view);
         }
 
-        private Button CreateButton(string name, string content, int height, RoutedEventHandler operation)
+        private MyButton CreateButton(string name, string content, int height, RoutedEventHandler operation)
         {
-            var button = new Button
+            var button = new MyButton
             {
                 Name = name,
                 Content = content,
@@ -390,8 +399,8 @@ namespace Paygl
 
             foreach (var item in _views)
             {
-                _btnView = CreateViewBarButton($"btn{item}", (item as IRepresentative)?.RepresentativeName, ViewbarButtonWidth, item, (item as IRepresentative)?.RepresentativeName == (selected as IRepresentative)?.RepresentativeName, BtnView_Click);
-                _viewBarStockPanel.Children.Add(_btnView);
+                var tmp = CreateViewBarButton($"btn{item}", (item as IRepresentative)?.RepresentativeName, ViewbarButtonWidth, item, (item as IRepresentative)?.RepresentativeName == (selected as IRepresentative)?.RepresentativeName, BtnView_Click);
+                _viewBarStockPanel.Children.Add(tmp);
             }
         }
 

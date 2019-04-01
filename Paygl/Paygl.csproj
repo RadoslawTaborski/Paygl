@@ -111,6 +111,7 @@
     <Compile Include="Models\Group.cs" />
     <Compile Include="Models\Groups.cs" />
     <Compile Include="Models\ViewsMemory.cs" />
+    <Compile Include="MyButton.cs" />
     <Compile Include="Properties\strings.pl-PL.Designer.cs">
       <DependentUpon>strings.pl-PL.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -148,6 +149,9 @@
     </Compile>
     <Compile Include="Views\ManuallyOperationsView.xaml.cs">
       <DependentUpon>ManuallyOperationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ShowOperations.xaml.cs">
       <DependentUpon>ShowOperations.xaml</DependentUpon>
@@ -206,6 +210,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ManuallyOperationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

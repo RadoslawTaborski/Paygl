@@ -1,11 +1,19 @@
 ﻿using DataBaseWithBusinessLogicConnector.Dal.DalEntities;
 using DataBaseWithBusinessLogicConnector.Entities;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 {
     public class UserMapper
     {
+        private List<Language> _languages;
+
+        public void Update(List<Language> languages)
+        {
+            _languages = languages;
+        }
+
         public IEnumerable<User> ConvertToBusinessLogicEntitiesCollection(IEnumerable<DalUser> dataEntities)
         {
             var result = new List<User>();
@@ -19,7 +27,8 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public User ConvertToBusinessLogicEntity(DalUser dataEntity)
         {
-            var result = new User(dataEntity.Id, dataEntity.Login, dataEntity.Password, null);
+            var language = _languages.First(t => t.Id == dataEntity.LanguageId);
+            var result = new User(dataEntity.Id, dataEntity.Login, dataEntity.Password, language, null);
             result.IsDirty = false;
             return result;
         }
@@ -37,7 +46,7 @@ namespace DataBaseWithBusinessLogicConnector.Dal.Mappers
 
         public DalUser ConvertToDALEntity(User businessEntity)
         {
-            var result = new DalUser(businessEntity.Id, businessEntity.Login, businessEntity.Password, businessEntity.Details!=null? businessEntity.Details.Id:0);
+            var result = new DalUser(businessEntity.Id, businessEntity.Login, businessEntity.Password, businessEntity.Language.Id, businessEntity.Details!=null? businessEntity.Details.Id:0);
             return result;
         }
     }

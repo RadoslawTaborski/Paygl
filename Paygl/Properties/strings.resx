@@ -279,4 +279,16 @@
   <data name="_lblTo" xml:space="preserve">
     <value>To:</value>
   </data>
+  <data name="settingsRN" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="_btnSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="_lblAppLanguage" xml:space="preserve">
+    <value>Application language</value>
+  </data>
+  <data name="_lblDataLanguage" xml:space="preserve">
+    <value>User language</value>
+  </data>
 </root>

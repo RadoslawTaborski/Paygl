@@ -93,7 +93,7 @@ namespace Paygl.Views
                 Margin = new Thickness(10, 0, 0, 0),
             };
 
-            var button = new Button
+            var button = new MyButton
             {
                 Style = (Style)FindResource("MyButtonLeft"),
                 Content = group.Name,
@@ -115,7 +115,7 @@ namespace Paygl.Views
                 Margin = new Thickness(10, 0, 0, 0),
             };
 
-            var button = new Button
+            var button = new MyButton
             {
                 Style = (Style)FindResource("MyButtonLeft"),
                 Content = filter.Description,

@@ -26,6 +26,7 @@ namespace PayglService.cs
         #region Entities
         public static User User { get; private set; }
         public static Language Language { get; private set; }
+        public static List<Language> Languages { get; private set; }
         public static List<TransactionType> TransactionTypes { get; private set; }
         public static List<TransferType> TransferTypes { get; private set; }
         public static List<Frequency> Frequencies { get; private set; }
@@ -112,8 +113,9 @@ namespace PayglService.cs
 
         private static void SetMainConfigurations()
         {
-            var languages = LanguageMapper.ConvertToBusinessLogicEntitiesCollection(LanguageAdapter.GetAll());
-            Language = languages.Where(l => l.ShortName == ConfigurationManager.Language()).First();
+            Languages = LanguageMapper.ConvertToBusinessLogicEntitiesCollection(LanguageAdapter.GetAll()).ToList();
+
+            UserMapper.Update(Languages);
 
             DalUser dalUser;
             var dalUsers = UserAdapter.GetAll($"login='{ConfigurationManager.User().Login}'");
@@ -133,6 +135,8 @@ namespace PayglService.cs
             }
             User = UserMapper.ConvertToBusinessLogicEntity(dalUser);
             User.SetDetails(UserDetailsMapper.ConvertToBusinessLogicEntity(UserDetailsAdapter.GetById(dalUser.DetailsId)));
+
+            Language = Languages.Where(l => l.Id == User.Language.Id).First();
         }
 
         public static void LoadAttributes()

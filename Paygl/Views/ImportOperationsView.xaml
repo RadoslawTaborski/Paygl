@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:resources="clr-namespace:Paygl.Properties"
+             xmlns:paygl="clr-namespace:Paygl"
              mc:Ignorable="d" 
              d:DesignHeight="564" d:DesignWidth="928">
     <Grid Style="{StaticResource MyGrid}">
@@ -58,8 +59,8 @@
                 <Label Style="{StaticResource MyLabel}" x:Name="_labTransaction" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="7"/>
                 <Label Style="{StaticResource MyLabel}" x:Name="_labTransfer" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,10,0" Content="" Grid.Column="1" Grid.Row="8"/>
                 <ComboBox x:Name="_cbRelated" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="500" Height="40" Grid.Column="1" Grid.Row="9" SelectionChanged="CbRelated_SelectionChanged"/>
-                <Button x:Name="_btnManual" Style="{StaticResource MyButton}" Content="M" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Click="_btnManual_Click"/>
-                <Button x:Name="_btnGroup" Style="{StaticResource MyButton}" Content="G" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Margin="30,0,0,0" Click="_btnGroup_Click"/>
+                <paygl:MyButton x:Name="_btnManual" Style="{StaticResource MyButton}" Content="M" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Click="_btnManual_Click"/>
+                <paygl:MyButton x:Name="_btnGroup" Style="{StaticResource MyButton}" Content="G" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="30" Margin="30,0,0,0" Click="_btnGroup_Click"/>
             </Grid>
             <Grid Margin="10,10,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -69,13 +70,13 @@
                     <ColumnDefinition Width="5*"/>
                     <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnBack" Content="{x:Static resources:strings._btnBack}" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="0" Click="BtnBack_Click"/>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnImportIgnore" Content="{x:Static resources:strings._btnIgnore}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="BtnImportIgnore_Click" />
-                <Button Style="{StaticResource MyButton}" x:Name="_btnImportClone" Content="{x:Static resources:strings._btnDivideIntoTwo}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2" Click="BtnImportClone_Click"  />
-                <Button x:Name="btnCloneCancel" Style="{StaticResource ResourceKey=MyButton}" Content="{x:Static resources:strings._btnCancel}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2" Click="BtnImportCloneCancel_Click"/>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnImportAccept" Content="{x:Static resources:strings._btnAccept}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="3" Click="BtnImportAccept_Click" />
-                <Button x:Name="btnClone" Style="{StaticResource ResourceKey=MyButton}" Content="{x:Static resources:strings._btnConfirm}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="3" Click="BtnImportCloneAccept_Click"/>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnNext" Content="{x:Static resources:strings._btnNext}" Margin="5,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="4" Click="BtnNext_Click"/>
+                <paygl:MyButton Style="{StaticResource MyButton}" x:Name="_btnBack" Content="{x:Static resources:strings._btnBack}" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="0" Click="BtnBack_Click"/>
+                <paygl:MyButton Style="{StaticResource MyButton}" x:Name="_btnImportIgnore" Content="{x:Static resources:strings._btnIgnore}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="BtnImportIgnore_Click" />
+                <paygl:MyButton Style="{StaticResource MyButton}" x:Name="_btnImportClone" Content="{x:Static resources:strings._btnDivideIntoTwo}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2" Click="BtnImportClone_Click"  />
+                <paygl:MyButton x:Name="btnCloneCancel" Style="{StaticResource ResourceKey=MyButton}" Content="{x:Static resources:strings._btnCancel}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2" Click="BtnImportCloneCancel_Click"/>
+                <paygl:MyButton Style="{StaticResource MyButton}" x:Name="_btnImportAccept" Content="{x:Static resources:strings._btnAccept}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="3" Click="BtnImportAccept_Click" />
+                <paygl:MyButton x:Name="btnClone" Style="{StaticResource ResourceKey=MyButton}" Content="{x:Static resources:strings._btnConfirm}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="3" Click="BtnImportCloneAccept_Click"/>
+                <paygl:MyButton Style="{StaticResource MyButton}" x:Name="_btnNext" Content="{x:Static resources:strings._btnNext}" Margin="5,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="4" Click="BtnNext_Click"/>
             </Grid>
         </Grid>
     </Grid>

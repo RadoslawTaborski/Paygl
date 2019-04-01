@@ -5,7 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Paygl.Views"
              xmlns:resources="clr-namespace:Paygl.Properties"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="Paygl.Views.AddGroupsView"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:paygl="clr-namespace:Paygl"
+             x:Class="Paygl.Views.AddGroupsView"
              mc:Ignorable="d" 
              d:DesignHeight="564" d:DesignWidth="928">
     <Grid Style="{StaticResource MyGrid}">
@@ -44,11 +46,11 @@
                 <TextBox Style="{StaticResource MyTextBox}" x:Name="_tbNewDescription" HorizontalAlignment="Left"  VerticalAlignment="Center" Width="500" Margin="10,0,0,0" TextWrapping="Wrap" Text="" Grid.Column="1" Grid.Row="1"/>
                 <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3">
                     <Label Style="{StaticResource MyLabel}" x:Name="_labDate" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,0,0,0" Content="{x:Static resources:strings._lblDateFormat}"/>
-                    <Button x:Name="_btnCalendar" Style="{StaticResource MyButton}" Click="BtnCalendar_Click" Width="30" Height="30">
+                    <paygl:MyButton x:Name="_btnCalendar" Style="{StaticResource MyButton}" Click="BtnCalendar_Click" Width="30" Height="30">
                         <Button.Background>
                             <ImageBrush ImageSource="../img/cal.png"/>
                         </Button.Background>
-                    </Button>
+                    </paygl:MyButton>
                 </StackPanel>
                 <ComboBox x:Name="_cbFrequent" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Width="500"/>
                 <ComboBox x:Name="_cbImportance" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Width="500"/>
@@ -60,9 +62,9 @@
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnManualClear" Content="{x:Static resources:strings._btnClear}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="0" Click="BtnManualClear_Click"/>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnManualAccept" Content="{x:Static resources:strings._btnAccept}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="BtnManualAccept_Click"/>
-                <Button Style="{StaticResource MyButton}" x:Name="_btnEditAccept" Content="{x:Static resources:strings._btnAccept}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="_btnEditAccept_Click" />
+                <paygl:MyButton Style="{StaticResource MyButton}" x:Name="_btnManualClear" Content="{x:Static resources:strings._btnClear}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="0" Click="BtnManualClear_Click"/>
+                <paygl:MyButton Style="{StaticResource MyButton}" x:Name="_btnManualAccept" Content="{x:Static resources:strings._btnAccept}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="BtnManualAccept_Click"/>
+                <paygl:MyButton Style="{StaticResource MyButton}" x:Name="_btnEditAccept" Content="{x:Static resources:strings._btnAccept}" Margin="0,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="1" Click="_btnEditAccept_Click" />
             </Grid>
         </Grid>
         <Border x:Name="_borderCalendar" Style ="{StaticResource MyBorder}" HorizontalAlignment="Right" Margin="0,189,479,216" Width="180">

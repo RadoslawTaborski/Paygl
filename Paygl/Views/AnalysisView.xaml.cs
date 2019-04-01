@@ -204,7 +204,7 @@ namespace Paygl.Views
 
             foreach (var item in _views)
             {
-                Button btnView;
+                MyButton btnView;
                 if (((IRepresentative) item).RepresentativeName == (selected as IRepresentative)?.RepresentativeName)
                 {
                     btnView = CreateViewBarButton($"btn{item}", ((IRepresentative) item).RepresentativeName, ViewbarButtonWidth, item, true, BtnView_Click);

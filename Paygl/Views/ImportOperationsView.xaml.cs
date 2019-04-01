@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Button = System.Windows.Controls.Button;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using Label = System.Windows.Controls.Label;
 using Orientation = System.Windows.Controls.Orientation;
@@ -192,9 +191,9 @@ namespace Paygl.Views
 
         private void Show(Operation operation)
         {
-            Frequency frequency = null;
             if (operation!=null)
             {
+                Frequency frequency = null;
                 ResetStandardEditableControls();
 
                 _tbDescription.Text = operation.Description;
@@ -206,7 +205,7 @@ namespace Paygl.Views
                     frequency = _observableFrequencies.First(f => f.Text == operation.Frequency.Text);
                 }
                 Importance importance = null;
-                if (operation.Frequency != null)
+                if (operation.Importance != null)
                 {
                     importance = _observableImportances.First(i => i.Text == operation.Importance.Text);
                 }
@@ -270,7 +269,7 @@ namespace Paygl.Views
 
                 var newLabel = new Label {Content = tag.ToString(), Style = (Style) FindResource("MyLabel")};
 
-                var newButton = new Button
+                var newButton = new MyButton
                 {
                     Content = new Image
                     {
@@ -357,7 +356,7 @@ namespace Paygl.Views
 
         private void BtnRemoveTag_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
+            var button = sender as MyButton;
             var panel = button?.Parent as StackPanel;
             var border = panel?.Parent as Border;
             var label = panel?.Children[0] as Label;
