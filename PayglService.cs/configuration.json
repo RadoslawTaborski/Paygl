@@ -13,7 +13,7 @@
       "Port": "3306",
       "Login": "rado",
       "Password": "Ameba123",
-      "Table": "paygl_test"
+      "Table": "paygl"
     },
     "Bank":  "ING"
   },

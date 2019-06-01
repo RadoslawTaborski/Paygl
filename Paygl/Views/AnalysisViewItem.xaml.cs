@@ -365,17 +365,6 @@ namespace Paygl.Views
                     ViewManager.OpenUserControl(view);
                     break;
                 }
-                case Group _:
-                {
-                    if (button.Context is StackPanel stackPanel)
-                    {
-                        stackPanel.Children[0].Visibility = stackPanel.Children[0].Visibility == Visibility.Visible
-                            ? Visibility.Collapsed
-                            : Visibility.Visible;
-                    }
-
-                    break;
-                }
             }
 
             e.Handled = true;
@@ -412,29 +401,11 @@ namespace Paygl.Views
                 HorizontalAlignment = HorizontalAlignment.Stretch,
             };
 
-            var button = new ButtonWithObject
-            {
-                Content = new Image
-                {
-                    Source = new BitmapImage(new Uri(@"..\img\edit-icon.png", UriKind.Relative)),
-                    VerticalAlignment = VerticalAlignment.Stretch
-                },
-                Width = 20,
-                Height = 20,
-                VerticalContentAlignment = VerticalAlignment.Center,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Top,
-                Object = group,
-                Context = main,
-            };
-            button.Click += Edit_Click;
-
             var borderAmount = CreateBorderWithLabel($"{group.Amount}");
             var borderDescription = CreateBorderWithLabel($"{group.Filter.Description}");
 
             resultStackPanel.Children.Add(borderDescription);
             resultStackPanel.Children.Add(borderAmount);
-            resultStackPanel.Children.Add(button);
 
             return resultStackPanel;
         }
