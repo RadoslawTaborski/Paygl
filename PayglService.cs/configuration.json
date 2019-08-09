@@ -6,7 +6,7 @@
       "Password": "1234"
     },
     "System": {
-      "PathToImportFiles": "D:\\Programowanie\\C#\\Paygl\\Exports\\"
+      "PathToImportFiles": "C:\\Users\\rados\\Desktop\\Exports\\"
     },
     "DataBase": {
       "Address": "webapp.zapto.org",

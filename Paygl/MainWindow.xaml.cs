@@ -307,7 +307,7 @@ namespace Paygl
 
             var columnDefinition1 = new ColumnDefinition()
             {
-                Width = new GridLength(ViewbarButtonWidth - 30),
+                Width = new GridLength((width - 30 < 0)?0:width-30),
             };
             var columnDefinition2 = new ColumnDefinition()
             {
@@ -315,7 +315,7 @@ namespace Paygl
             };
             var grid = new Grid
             {
-                Width = ViewbarButtonWidth - 10,
+                Width = (width - 10 < 0) ? 0 : width - 10,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Background = (Brush)FindResource("Transparent"),
                 ColumnDefinitions =
@@ -396,10 +396,16 @@ namespace Paygl
         private void UpdateViewBar(UserControl selected)
         {
             _viewBarStockPanel.Children.Clear();
+            var barWidth = _viewBarStockPanel.ActualWidth;
+            var defaultButtonWidth = ViewbarButtonWidth;
+            if (_views.Count * defaultButtonWidth > barWidth)
+            {
+                defaultButtonWidth = (int) barWidth / _views.Count;
+            }
 
             foreach (var item in _views)
             {
-                var tmp = CreateViewBarButton($"btn{item}", (item as IRepresentative)?.RepresentativeName, ViewbarButtonWidth, item, (item as IRepresentative)?.RepresentativeName == (selected as IRepresentative)?.RepresentativeName, BtnView_Click);
+                var tmp = CreateViewBarButton($"btn{item}", (item as IRepresentative)?.RepresentativeName, defaultButtonWidth, item, (item as IRepresentative)?.RepresentativeName == (selected as IRepresentative)?.RepresentativeName, BtnView_Click);
                 _viewBarStockPanel.Children.Add(tmp);
             }
         }

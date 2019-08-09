@@ -131,7 +131,7 @@ namespace Paygl.Views
 
             var grid = new Grid
             {
-                Width = ViewbarButtonWidth,
+                Width = width,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Background = (Brush)FindResource("Transparent"),
             };
@@ -202,16 +202,23 @@ namespace Paygl.Views
         {
             _viewBarStockPanel.Children.Clear();
 
+            var barWidth = _viewBarStockPanel.ActualWidth;
+            var defaultButtonWidth = ViewbarButtonWidth;
+            if (_views.Count * defaultButtonWidth > barWidth)
+            {
+                defaultButtonWidth = (int)barWidth / _views.Count;
+            }
+
             foreach (var item in _views)
             {
                 MyButton btnView;
                 if (((IRepresentative) item).RepresentativeName == (selected as IRepresentative)?.RepresentativeName)
                 {
-                    btnView = CreateViewBarButton($"btn{item}", ((IRepresentative) item).RepresentativeName, ViewbarButtonWidth, item, true, BtnView_Click);
+                    btnView = CreateViewBarButton($"btn{item}", ((IRepresentative) item).RepresentativeName, defaultButtonWidth, item, true, BtnView_Click);
                 }
                 else
                 {
-                    btnView = CreateViewBarButton($"btn{item}", ((IRepresentative) item).RepresentativeName, ViewbarButtonWidth, item, false, BtnView_Click);
+                    btnView = CreateViewBarButton($"btn{item}", ((IRepresentative) item).RepresentativeName, defaultButtonWidth, item, false, BtnView_Click);
                 }
                 _viewBarStockPanel.Children.Add(btnView);
             }
