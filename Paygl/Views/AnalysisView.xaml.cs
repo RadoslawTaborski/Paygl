@@ -48,8 +48,6 @@ namespace Paygl.Views
                 _tbFrom.Text = DateTime.Now.ToString(Properties.strings.dateFormat);
                 _tbTo.Text = DateTime.Now.ToString(Properties.strings.dateFormat);
             }
-
-            ChangeInSettings();
         }
 
         private void ChangeInSettings()
@@ -233,6 +231,11 @@ namespace Paygl.Views
         public override string ToString()
         {
             return "AnalysisView";
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            ChangeInSettings();
         }
     }
 }
